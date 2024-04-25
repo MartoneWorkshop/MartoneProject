@@ -122,10 +122,6 @@ class FormularioRegistrosDesign():
         self.buttonClean = customtkinter.CTkButton(cuerpo_principal, image=self.buttonClean_img, text="Limpiar", font=("Roboto", 18),
         width=50, height=40, text_color="black", fg_color='transparent', bg_color='transparent', hover=False, command=self.Depurador)
         self.buttonClean.place(x=520, y=400)
-
-        self.buttonTest = tk.Button(cuerpo_principal, image=self.buttonClean_img, text="Guardar", font=("Robotoo", 180))
-        self.buttonTest.place(x=450, y=200)
-
         
         self.testimg = customtkinter.CTkImage(Image.open("imagenes/delete-white.png"))
         self.buttonTEST = customtkinter.CTkButton(cuerpo_principal, image=self.testimg, text="Limpiar", font=("Roboto", 18),
