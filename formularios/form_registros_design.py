@@ -4,9 +4,9 @@ import customtkinter
 from customtkinter import CTkFont
 from functions.ClientsDao import Clients, SaveClient, listarCliente, client_Delete, consulClient, EditClient
 from config import COLOR_BOTON_CURSOR_ENCIMA, COLOR_BOTON_CURSOR_FUERA
-from tkinter import Image, ttk, messagebox
+from tkinter import Image, ttk, messagebox, Canvas
 import PIL 
-from PIL import ImageTk, Image
+from PIL import ImageTk, Image, ImageDraw
 import sqlite3
 
 
@@ -127,6 +127,37 @@ class FormularioRegistrosDesign():
         self.buttonTEST = customtkinter.CTkButton(cuerpo_principal, image=self.testimg, text="Limpiar", font=("Roboto", 18),
         width=50, height=40, text_color="white", corner_radius=50, fg_color="#6F6F6F", hover_color="#535353",)
         self.buttonTEST.place(x=650, y=200)
+
+        image = Image.open("imagenes/delete-white.png")
+        tkimage = ImageTk.PhotoImage(image)
+
+        # Define los dos colores para el degradado
+        color1 = "#FF0000"  # Color 1 (ejemplo: rojo)
+        color2 = "#0000FF"  # Color 2 (ejemplo: azul)
+
+        # Crea el botón con el degradado de colores
+        canvas = Canvas(cuerpo_principal, highlightthickness=0)
+        canvas.place(x=650, y=350)
+
+        # Dibuja el degradado en el canvas
+        gradient_image = Image.new("RGB", (50, 40))
+        draw = ImageDraw.Draw(gradient_image)
+        for y in range(40):
+            r = int((y / 40) * (int(color2[1:3], 16) - int(color1[1:3], 16)) + int(color1[1:3], 16))
+            g = int((y / 40) * (int(color2[3:5], 16) - int(color1[3:5], 16)) + int(color1[3:5], 16))
+            b = int((y / 40) * (int(color2[5:7], 16) - int(color1[5:7], 16)) + int(color1[5:7], 16))
+            draw.line((0, y, 50, y), fill=(r, g, b))
+
+        # Convierte la imagen en un PhotoImage
+        gradient_photo = ImageTk.PhotoImage(gradient_image)
+
+        # Establece la imagen degradada como fondo del canvas
+        canvas.create_image(0, 0, anchor="nw", image=gradient_photo)
+
+        # Crea el botón con la imagen y sin fondo
+        button = tk.Button(canvas, image=tkimage, text="Limpiar", font=("Roboto", 18),
+                        width=50, height=40, fg='#6F6F6F', bd=0, relief='flat')
+        button.place(x=0, y=0)
         
         self.binding_hover_buttons_event(self.buttonSave_client)
         self.binding_hover_buttons_event(self.buttonEdit_client)
