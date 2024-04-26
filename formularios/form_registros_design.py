@@ -16,7 +16,9 @@ import sqlite3
 class FormularioRegistrosDesign():
 
     def __init__(self, cuerpo_principal, logo):
-
+        #STYLE INPUTS
+        style = ttk.Style()
+        style.configure('Entry.TEntry', background='white', foreground='black')
 
         # Crear paneles: barra superior
         self.barra_superior = tk.Frame(cuerpo_principal)
@@ -43,29 +45,35 @@ class FormularioRegistrosDesign():
         #self.lblLogo.place(x=700, y=15)
         ###################################################     1       #################################################    
         #Label del Nombre
-        self.lblclient_firstname = customtkinter.CTkLabel(cuerpo_principal, text='Nombre:', font=("Roboto", 16))
+        self.lblclient_firstname = customtkinter.CTkLabel(cuerpo_principal, text='Nombre:', font=("Roboto", 14))
         self.lblclient_firstname.place(x=50, y=30)
         #Entry del Nombre
         self.svclient_firstname = customtkinter.StringVar()
-        self.entryclient_firstname = customtkinter.CTkEntry(cuerpo_principal, textvariable=self.svclient_firstname, width=200)
+        self.entryclient_firstname = ttk.Entry(cuerpo_principal, width=30, style='Modern.TEntry', textvariable=self.svclient_firstname)
         self.entryclient_firstname.place(x=50, y=55)
+        self.entryclient_firstname.configure(style='Entry.TEntry')
         
         ###################################################     2       #################################################  
         #Label del Apellido
-        self.lblclient_lastname = customtkinter.CTkLabel(cuerpo_principal, text='Apellido:', font=("Roboto", 16))
+        self.lblclient_lastname = customtkinter.CTkLabel(cuerpo_principal, text='Apellido:', font=("Roboto", 14))
         self.lblclient_lastname.place(x=365, y=30)
         #Entry del Apellido
         self.svclient_lastname = customtkinter.StringVar()
-        self.entryclient_lastname = customtkinter.CTkEntry(cuerpo_principal, textvariable=self.svclient_lastname, width=200)
+        self.entryclient_lastname = ttk.Entry(cuerpo_principal, width=30, style='Modern.TEntry', textvariable=self.svclient_lastname)
         self.entryclient_lastname.place(x=365, y=55)
+        self.entryclient_lastname.configure(style='Entry.TEntry')
+
+        #self.entryclient_lastname = customtkinter.CTkEntry(cuerpo_principal, textvariable=self.svclient_lastname, width=200)
+        #self.entryclient_lastname.place(x=365, y=55)
 
         ###################################################     3         #################################################
-        self.lblclient_ci = customtkinter.CTkLabel(cuerpo_principal, text='Cedula:', font=("Roboto", 16))
+        self.lblclient_ci = customtkinter.CTkLabel(cuerpo_principal, text='Cedula:', font=("Roboto", 14))
         self.lblclient_ci.place(x=50, y=125)
         #Entry de la Cedula
         self.svclient_ci = customtkinter.StringVar()
-        self.entryclient_ci = customtkinter.CTkEntry(cuerpo_principal, textvariable=self.svclient_ci, width=200)
-        self.entryclient_ci.place(x=50, y=150)
+        self.entryclient_ci = ttk.Entry(cuerpo_principal, width=30, style='Modern.TEntry', textvariable=self.svclient_ci)
+        self.entryclient_ci.place(x=50, y=155)
+        self.entryclient_ci.configure(style='Entry.TEntry')
         self.entryclient_ci.bind('<KeyRelease>', self.check_entry_content)
         #Status Label
         self.status_label = tk.Label(cuerpo_principal)
@@ -73,43 +81,47 @@ class FormularioRegistrosDesign():
 
         ###################################################     4       #################################################  
         #Label del Correo
-        self.lblclient_mail = customtkinter.CTkLabel(cuerpo_principal, text='Correo:', font=("Roboto", 16))
+        self.lblclient_mail = customtkinter.CTkLabel(cuerpo_principal, text='Correo:', font=("Roboto", 14))
         self.lblclient_mail.place(x=365, y=125)
         #Entry del Correo
         self.svclient_mail = customtkinter.StringVar()
-        self.entryclient_mail = customtkinter.CTkEntry(cuerpo_principal, textvariable=self.svclient_mail, width=200)
+        self.entryclient_mail = ttk.Entry(cuerpo_principal, width=30, style='Modern.TEntry', textvariable=self.svclient_mail)
         self.entryclient_mail.place(x=365, y=150)
+        self.entryclient_mail.configure(style='Entry.TEntry')
 
         ###################################################     5       #################################################  
         #Label del Telefono
-        self.lblclient_phone = customtkinter.CTkLabel(cuerpo_principal, text='NºTelefono:', font=("Roboto", 16))
+        self.lblclient_phone = customtkinter.CTkLabel(cuerpo_principal, text='NºTelefono:', font=("Roboto", 14))
         self.lblclient_phone.place(x=50, y=225)
 
         #Entry del Telefono
         self.svclient_phone = customtkinter.StringVar()
-        self.entryclient_phone = customtkinter.CTkEntry(cuerpo_principal, textvariable=self.svclient_phone, width=200)
+        self.entryclient_phone = ttk.Entry(cuerpo_principal, width=30, style='Modern.TEntry', textvariable=self.svclient_phone)
         self.entryclient_phone.place(x=50, y=250)
+        self.entryclient_phone.configure(style='Entry.TEntry')
+
         ###################################################     6       #################################################  
             
         #Label de la Direccion
-        self.lblclient_address = customtkinter.CTkLabel(cuerpo_principal, text='Direccion:', font=("Roboto", 16))
+        self.lblclient_address = customtkinter.CTkLabel(cuerpo_principal, text='Direccion:', font=("Roboto", 14))
         self.lblclient_address.place(x=365, y=225)
 
         #Entry de la Direccion
         self.svclient_address = customtkinter.StringVar()
-        self.entryclient_address = customtkinter.CTkEntry(cuerpo_principal, textvariable=self.svclient_address, width=200)
+        self.entryclient_address = ttk.Entry(cuerpo_principal, width=30, style='Modern.TEntry', textvariable=self.svclient_address)
         self.entryclient_address.place(x=365, y=250)
+        self.entryclient_address.configure(style='Entry.TEntry')
         self.entryclient_address.bind("<Return>", lambda event: self.GuardarCliente())
 
+        #TESTING ZONE
 
-        style = ttk.Style()
-        style.configure('Entry.TEntry', background='white', foreground='black')
+        #style = ttk.Style()
+        #style.configure('Entry.TEntry', background='white', foreground='black')
+        ## Crear el Entry utilizando ttk.Entry
+        #self.entryTEST = ttk.Entry(cuerpo_principal, width=30, style='Modern.TEntry')
+        #self.entryTEST.place(x=605, y=250)
+        #self.entryTEST.configure(style='Entry.TEntry')
         
-       
-# Crear el Entry utilizando ttk.Entry
-        self.entryTEST = ttk.Entry(cuerpo_principal, width=50, style='Modern.TEntry')
-        self.entryTEST.place(x=605, y=250)
-        self.entryTEST.configure(style='Entry.TEntry')
         
         ######################################### FIN DE ENTRYS Y LABELS ####################################################
     
