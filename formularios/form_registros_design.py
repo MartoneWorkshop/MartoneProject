@@ -3,7 +3,7 @@ from config import  COLOR_CUERPO_PRINCIPAL
 import customtkinter
 from customtkinter import CTkFont
 from functions.ClientsDao import Clients, SaveClient, listarCliente, client_Delete, consulClient, EditClient
-from config import COLOR_BOTON_CURSOR_ENCIMA, COLOR_BOTON_CURSOR_FUERA
+from config import COLOR_BOTON_CURSOR_ENCIMA, COLOR_BOTON_CURSOR_FUERA, COLOR_FG, COLOR_TEXTO, COLOR_HOVER
 from tkinter import Image, ttk, messagebox, Canvas
 import PIL 
 from PIL import ImageTk, Image, ImageDraw
@@ -100,70 +100,40 @@ class FormularioRegistrosDesign():
         self.entryclient_address = customtkinter.CTkEntry(cuerpo_principal, textvariable=self.svclient_address, width=200)
         self.entryclient_address.place(x=365, y=250)
         self.entryclient_address.bind("<Return>", lambda event: self.GuardarCliente())
+
+
+        style = ttk.Style()
+        style.configure('Entry.TEntry', background='white', foreground='black')
+        
+       
+# Crear el Entry utilizando ttk.Entry
+        self.entryTEST = ttk.Entry(cuerpo_principal, width=50, style='Modern.TEntry')
+        self.entryTEST.place(x=605, y=250)
+        self.entryTEST.configure(style='Entry.TEntry')
+        
         ######################################### FIN DE ENTRYS Y LABELS ####################################################
     
         ################################################ BOTONES DE EDITAR Y ELIMINAR ##################################################
-        self.buttonSave_client_img = customtkinter.CTkImage(Image.open("imagenes/user_save-black.png"))
+        self.buttonSave_client_img = customtkinter.CTkImage(Image.open("imagenes/user_save-white.png"))
         self.buttonSave_client = customtkinter.CTkButton(cuerpo_principal, image=self.buttonSave_client_img, text="Guardar", font=("Roboto", 18), 
-        width=50, height=40, corner_radius=100, text_color="black", fg_color='transparent', bg_color='transparent', hover=False, command=self.GuardarCliente)
-        self.buttonSave_client.place(x=90, y=400)
+        width=50, height=40, corner_radius=50, text_color=COLOR_TEXTO, fg_color=COLOR_FG, hover_color=COLOR_HOVER, command=self.GuardarCliente)
+        self.buttonSave_client.place(x=70, y=350)
 
-        self.buttonEdit_client_img = customtkinter.CTkImage(Image.open("imagenes/user_edit-black.png"))
+        self.buttonEdit_client_img = customtkinter.CTkImage(Image.open("imagenes/user_edit-white.png"))
         self.buttonEdit_client = customtkinter.CTkButton(cuerpo_principal, image=self.buttonEdit_client_img, text="Editar", font=("Roboto", 18), 
-        width=50, height=40, text_color="black", fg_color='transparent', bg_color='transparent', hover=False, command=self.editarCliente)
+        width=50, height=40,  corner_radius=50, text_color=COLOR_TEXTO, fg_color=COLOR_FG, hover_color=COLOR_HOVER, command=self.editarCliente)
         self.buttonEdit_client.place(x=240, y=400)
     
-        self.buttonDelete_client_img = customtkinter.CTkImage(Image.open("imagenes/user_delete-black.png"))
+        self.buttonDelete_client_img = customtkinter.CTkImage(Image.open("imagenes/user_delete-white.png"))
         self.buttonDelete_client = customtkinter.CTkButton(cuerpo_principal, image=self.buttonDelete_client_img, text="Eliminar", font=("Roboto", 18), 
-        width=50, height=40, text_color="black", fg_color='transparent', bg_color='transparent', hover=False, command=self.eliminarCliente)
+        width=50, height=40,  corner_radius=50, text_color=COLOR_TEXTO, fg_color=COLOR_FG, hover_color=COLOR_HOVER, command=self.eliminarCliente)
         self.buttonDelete_client.place(x=380, y=400)
         
-        self.buttonClean_img = customtkinter.CTkImage(Image.open("imagenes/delete-black.png"))
+        self.buttonClean_img = customtkinter.CTkImage(Image.open("imagenes/delete-white.png"))
         self.buttonClean = customtkinter.CTkButton(cuerpo_principal, image=self.buttonClean_img, text="Limpiar", font=("Roboto", 18),
-        width=50, height=40, text_color="black", fg_color='transparent', bg_color='transparent', hover=False, command=self.Depurador)
+        width=50, height=40,  corner_radius=50, text_color=COLOR_TEXTO, fg_color=COLOR_FG, hover_color=COLOR_HOVER,command=self.Depurador)
         self.buttonClean.place(x=520, y=400)
         
-        self.testimg = customtkinter.CTkImage(Image.open("imagenes/delete-white.png"))
-        self.buttonTEST = customtkinter.CTkButton(cuerpo_principal, image=self.testimg, text="Limpiar", font=("Roboto", 18),
-        width=50, height=40, text_color="white", corner_radius=50, fg_color="#6F6F6F", hover_color="#535353",)
-        self.buttonTEST.place(x=650, y=200)
-
-        image = Image.open("imagenes/delete-white.png")
-        tkimage = ImageTk.PhotoImage(image)
-
-        # Define los dos colores para el degradado
-        color1 = "#FF0000"  # Color 1 (ejemplo: rojo)
-        color2 = "#0000FF"  # Color 2 (ejemplo: azul)
-
-        # Crea el botón con el degradado de colores
-        canvas = Canvas(cuerpo_principal, highlightthickness=0)
-        canvas.place(x=650, y=350)
-
-        # Dibuja el degradado en el canvas
-        gradient_image = Image.new("RGB", (50, 40))
-        draw = ImageDraw.Draw(gradient_image)
-        for y in range(40):
-            r = int((y / 40) * (int(color2[1:3], 16) - int(color1[1:3], 16)) + int(color1[1:3], 16))
-            g = int((y / 40) * (int(color2[3:5], 16) - int(color1[3:5], 16)) + int(color1[3:5], 16))
-            b = int((y / 40) * (int(color2[5:7], 16) - int(color1[5:7], 16)) + int(color1[5:7], 16))
-            draw.line((0, y, 50, y), fill=(r, g, b))
-
-        # Convierte la imagen en un PhotoImage
-        gradient_photo = ImageTk.PhotoImage(gradient_image)
-
-        # Establece la imagen degradada como fondo del canvas
-        canvas.create_image(0, 0, anchor="nw", image=gradient_photo)
-
-        # Crea el botón con la imagen y sin fondo
-        button = tk.Button(canvas, image=tkimage, text="Limpiar", font=("Roboto", 18),
-                        width=50, height=40, fg='#6F6F6F', bd=0, relief='flat')
-        button.place(x=0, y=0)
-        
-        self.binding_hover_buttons_event(self.buttonSave_client)
-        self.binding_hover_buttons_event(self.buttonEdit_client)
-        self.binding_hover_buttons_event(self.buttonDelete_client)
-        self.binding_hover_buttons_event(self.buttonClean)
-    
         ####################################################### ENTRY DE BUSQUEDA #######################################################
         self.lblsearch_clients = customtkinter.CTkLabel(cuerpo_principal, text='Buscar:', fg_color="#dbdbdb", bg_color="#dbdbdb")
         self.lblsearch_clients.place(x=915, y=542)
