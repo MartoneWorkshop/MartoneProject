@@ -6,7 +6,7 @@ from functions.ClientsDao import Clients, SaveClient, listarCliente, client_Dele
 from config import COLOR_BOTON_CURSOR_ENCIMA, COLOR_BOTON_CURSOR_FUERA, COLOR_FG, COLOR_TEXTO, COLOR_HOVER
 from tkinter import Image, ttk, messagebox, Canvas
 import PIL 
-from PIL import ImageTk, Image, ImageDraw
+from PIL import ImageTk, Image, ImageDraw, ImageGrab
 import sqlite3
 
 
@@ -15,7 +15,7 @@ import sqlite3
 
 class FormularioRegistrosDesign():
 
-    def __init__(self, cuerpo_principal, logo):
+    def __init__(self, cuerpo_principal, bg):
         #STYLE INPUTS
         style = ttk.Style()
         style.configure('Entry.TEntry', background='white', foreground='black')
@@ -28,16 +28,11 @@ class FormularioRegistrosDesign():
         self.barra_inferior = tk.Frame(cuerpo_principal)
         self.barra_inferior.pack(side=tk.BOTTOM, fill='both', expand=True)  
 
-        # Primer Label con texto
-        #self.labelTitulo = tk.Label(
-        #    self.barra_superior, text="SECCION REGISTROS")
-        #self.labelTitulo.config(fg="#222d33", font=("Roboto", 30), bg=COLOR_CUERPO_PRINCIPAL)
-        #self.labelTitulo.pack(side=tk.TOP, fill='both', expand=True)
-
-        # Segundo Label con la imagen
-        self.label_imagen = tk.Label(self.barra_inferior, image=logo)
+        # IMAGEN DEL FONDO
+        self.label_imagen = tk.Label(self.barra_inferior, image=bg)
         self.label_imagen.place(x=0, y=0, relwidth=1, relheight=1)
-        self.label_imagen.config(fg="#fff", font=("Roboto", 10), bg=COLOR_FONDO)
+        self.label_imagen.config(fg="#fff", font=("Roboto", 10))
+        
 
         ############################################ INICIO DE LABELS ###################################################
         #self.logo_img = customtkinter.CTkImage(Image.open("imagenes/logo.png"), size=(300,300))
@@ -45,8 +40,18 @@ class FormularioRegistrosDesign():
         #self.lblLogo.place(x=700, y=15)
         ###################################################     1       #################################################    
         #Label del Nombre
-        self.lblclient_firstname = tk.Label(cuerpo_principal, text='Nombre:', font=("Roboto", 14))
+        parent_widget = cuerpo_principal
+
+        self.lblclient_firstname = customtkinter.CTkLabel(cuerpo_principal, text='Nombre:', font=("Roboto", 14), compound='center')
         self.lblclient_firstname.place(x=50, y=30)
+
+        x = self.lblclient_firstname.winfo_x()
+        y = self.lblclient_firstname.winfo_y()
+
+        pixel_color = parent_widget.winfo_rgb(parent_widget.winfo_rgb())
+        rgb_color = "#%02x%02x%02x" % pixel_color
+        
+        self.lblclient_firstname.configure(bg=rgb_color)
         #Entry del Nombre
         self.svclient_firstname = customtkinter.StringVar()
         self.entryclient_firstname = ttk.Entry(cuerpo_principal, width=30, style='Modern.TEntry', textvariable=self.svclient_firstname)
@@ -247,6 +252,17 @@ class FormularioRegistrosDesign():
         self.cursor.close()
         self.connection.close()
 
+    def get_background_color(self, x, y, width, height):
+        # Captura la imagen de la región detrás del label
+        image = ImageGrab.grab(bbox=(x, y, x + width, y + height))
+
+        # Obtiene el color más frecuente en la imagen
+        background_color = image.getcolors(width * height)[0][1]
+
+        # Convierte el color a su representación hexadecimal
+        hex_color = '#{:02x}{:02x}{:02x}'.format(*background_color)
+
+        return hex_color
 ############################################################# FUNCIONES DE BOTONES ##############################################################
     def binding_hover_buttons_event(self, button):
         button.bind("<Enter>", lambda event: self.buttons_on_enter(event, button))

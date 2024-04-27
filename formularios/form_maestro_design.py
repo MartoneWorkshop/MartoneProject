@@ -219,8 +219,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
     def controles_cuerpo(self):
         # Imagen en el cuerpo principal
-        label = tk.Label(self.cuerpo_principal, image=self.bg,
-                    bg=COLOR_FONDO)
+        label = tk.Label(self.cuerpo_principal, image=self.bg)
         label.place(x=0, y=0, relwidth=1, relheight=1)
     
     def abrir_registros_clientes(self):   
