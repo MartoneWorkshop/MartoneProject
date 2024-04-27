@@ -1,11 +1,11 @@
 import tkinter as tk
-from config import  COLOR_CUERPO_PRINCIPAL
+from config import  COLOR_FONDO
 
 
 
 class FormularioHomeDesign():
 
-    def __init__(self, cuerpo_principal, logo):
+    def __init__(self, cuerpo_principal, bg):
 
         # Crear paneles: barra superior
         self.barra_superior = tk.Frame(cuerpo_principal)
@@ -18,12 +18,12 @@ class FormularioHomeDesign():
         # Primer Label con texto
         self.labelTitulo = tk.Label(
             self.barra_superior, text="SECCION HOME")
-        self.labelTitulo.config(fg="#222d33", font=("Roboto", 30), bg=COLOR_CUERPO_PRINCIPAL)
+        self.labelTitulo.config(fg="#222d33", font=("Roboto", 30), bg=COLOR_FONDO)
         self.labelTitulo.pack(side=tk.TOP, fill='both', expand=True)
 
         # Segundo Label con la imagen
-        self.label_imagen = tk.Label(self.barra_inferior, image=logo)
+        self.label_imagen = tk.Label(self.barra_inferior, image=bg)
         self.label_imagen.place(x=0, y=0, relwidth=1, relheight=1)
-        self.label_imagen.config(fg="#fff", font=("Roboto", 10), bg=COLOR_CUERPO_PRINCIPAL)
+        self.label_imagen.config(fg="#fff", font=("Roboto", 10), bg=COLOR_FONDO)
         
         

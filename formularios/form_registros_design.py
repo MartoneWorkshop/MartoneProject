@@ -1,5 +1,5 @@
 import tkinter as tk
-from config import  COLOR_CUERPO_PRINCIPAL
+from config import  COLOR_FONDO
 import customtkinter
 from customtkinter import CTkFont
 from functions.ClientsDao import Clients, SaveClient, listarCliente, client_Delete, consulClient, EditClient
@@ -37,7 +37,7 @@ class FormularioRegistrosDesign():
         # Segundo Label con la imagen
         self.label_imagen = tk.Label(self.barra_inferior, image=logo)
         self.label_imagen.place(x=0, y=0, relwidth=1, relheight=1)
-        self.label_imagen.config(fg="#fff", font=("Roboto", 10), bg=COLOR_CUERPO_PRINCIPAL)
+        self.label_imagen.config(fg="#fff", font=("Roboto", 10), bg=COLOR_FONDO)
 
         ############################################ INICIO DE LABELS ###################################################
         #self.logo_img = customtkinter.CTkImage(Image.open("imagenes/logo.png"), size=(300,300))
@@ -45,7 +45,7 @@ class FormularioRegistrosDesign():
         #self.lblLogo.place(x=700, y=15)
         ###################################################     1       #################################################    
         #Label del Nombre
-        self.lblclient_firstname = customtkinter.CTkLabel(cuerpo_principal, text='Nombre:', font=("Roboto", 14))
+        self.lblclient_firstname = tk.Label(cuerpo_principal, text='Nombre:', font=("Roboto", 14))
         self.lblclient_firstname.place(x=50, y=30)
         #Entry del Nombre
         self.svclient_firstname = customtkinter.StringVar()
@@ -114,7 +114,6 @@ class FormularioRegistrosDesign():
         self.entryclient_address.bind("<Return>", lambda event: self.GuardarCliente())
 
         #TESTING ZONE
-
         #style = ttk.Style()
         #style.configure('Entry.TEntry', background='white', foreground='black')
         ## Crear el Entry utilizando ttk.Entry

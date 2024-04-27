@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import font
-from config import COLOR_BARRA_SUPERIOR, COLOR_MENU_LATERAL, COLOR_CUERPO_PRINCIPAL, COLOR_MENU_CURSOR_ENCIMA, COLOR_SUBMENU_LATERAL, COLOR_SUBMENU_CURSOR_ENCIMA, ANCHO_MENU, ALTO_MENU, WIDTH_LOGO, HEIGHT_LOGO
+from config import COLOR_BARRA_SUPERIOR, COLOR_MENU_LATERAL, COLOR_FONDO, COLOR_MENU_CURSOR_ENCIMA, COLOR_SUBMENU_LATERAL, COLOR_SUBMENU_CURSOR_ENCIMA, ANCHO_MENU, ALTO_MENU, WIDTH_LOGO, HEIGHT_LOGO
 from PIL import Image, ImageTk
 import util.util_ventana as util_ventana
 import util.util_imagenes as util_img
@@ -21,6 +21,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
     def __init__(self):
         super().__init__()
         self.logo = util_img.leer_imagen("./imagenes/logo.png", (590, 423))
+        self.bg = util_img.leer_imagen("./imagenes/bg.jpg", (1440, 900))
         self.perfil = util_img.leer_imagen("./imagenes/Perfil.png", (100, 100))
         self.w, self.h = 1440, 900
         self.config_window()
@@ -55,7 +56,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.menu_lateral.pack(side=tk.LEFT, fill='both', expand=False) 
         
         self.cuerpo_principal = tk.Frame(
-            self, bg=COLOR_CUERPO_PRINCIPAL)
+            self, bg=COLOR_FONDO)
         self.cuerpo_principal.pack(side=tk.RIGHT, fill='both', expand=True)
 
     def close_window(self):
@@ -218,17 +219,17 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
     def controles_cuerpo(self):
         # Imagen en el cuerpo principal
-        label = tk.Label(self.cuerpo_principal, image=self.logo,
-                    bg=COLOR_CUERPO_PRINCIPAL)
+        label = tk.Label(self.cuerpo_principal, image=self.bg,
+                    bg=COLOR_FONDO)
         label.place(x=0, y=0, relwidth=1, relheight=1)
     
     def abrir_registros_clientes(self):   
         self.limpiar_panel(self.cuerpo_principal)     
-        FormularioRegistrosDesign(self.cuerpo_principal,self.logo)
+        FormularioRegistrosDesign(self.cuerpo_principal,self.bg)
         
     def abrir_home(self):   
         self.limpiar_panel(self.cuerpo_principal)     
-        FormularioHomeDesign(self.cuerpo_principal,self.logo) 
+        FormularioHomeDesign(self.cuerpo_principal,self.bg) 
 
     def limpiar_panel(self,panel):
     # Función para limpiar el contenido del panel
