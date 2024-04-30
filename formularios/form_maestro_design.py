@@ -198,15 +198,15 @@ class FormularioMaestroDesign(customtkinter.CTk):
             del self.buttonHistoria
 
         else:
-            self.buttonClientes = tk.Button(self.menu_lateral, text="Clientes", font=("Roboto", 14), image=self.clientes_icon, highlightthickness=20, width=ANCHO_MENU,
+            self.buttonClientes = tk.Button(self.menu_lateral, text="Clientes", font=("Roboto", 12), image=self.clientes_icon, highlightthickness=20, width=ANCHO_MENU,
         bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.abrir_registros_clientes)
             self.buttonClientes.pack()
 
-            self.buttonEquipos = tk.Button(self.menu_lateral, text="Equipos", font=("Roboto", 14), image=self.equipos_icon, highlightthickness=20, width=ANCHO_MENU,
+            self.buttonEquipos = tk.Button(self.menu_lateral, text="Equipos", font=("Roboto", 12), image=self.equipos_icon, highlightthickness=20, width=ANCHO_MENU,
         bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
             self.buttonEquipos.pack()
 
-            self.buttonHistoria = tk.Button(self.menu_lateral, text="Historia", font=("Roboto", 14), image=self.historia_icon, highlightthickness=20, width=ANCHO_MENU,
+            self.buttonHistoria = tk.Button(self.menu_lateral, text="Historia", font=("Roboto", 12), image=self.historia_icon, highlightthickness=20, width=ANCHO_MENU,
         bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
             self.buttonHistoria.pack()
 
@@ -219,9 +219,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.binding_hover_submenu_event(self.buttonHistoria)
 
     def controles_cuerpo(self):
-        # Imagen en el cuerpo principal
-        label = tk.Label(self.cuerpo_principal, image=self.bg)
-        label.place(x=0, y=0, relwidth=1, relheight=1)
+        self.abrir_home()
     
     def abrir_registros_clientes(self):   
         self.limpiar_panel(self.cuerpo_principal)     
@@ -231,7 +229,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.limpiar_panel(self.cuerpo_principal)     
         FormularioHomeDesign(self.cuerpo_principal,self.bg) 
 
-    def limpiar_panel(self,panel):
+    def limpiar_panel(self, panel):
     # Función para limpiar el contenido del panel
         for widget in panel.winfo_children():
             widget.destroy()

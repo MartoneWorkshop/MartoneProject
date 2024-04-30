@@ -9,25 +9,18 @@ import PIL
 from PIL import ImageTk, Image, ImageDraw, ImageGrab
 import sqlite3
 
-
-
-
-
 class FormularioRegistrosDesign():
 
     def __init__(self, cuerpo_principal):
-        #STYLE INPUTS
-        style = ttk.Style()
-        style.configure('Entry.TEntry', foreground='black')
 
-        # Crear paneles: barra superior
+        ## Crear paneles: barra superior
         self.barra_superior = tk.Frame(cuerpo_principal)
         self.barra_superior.pack(side=tk.TOP, fill=tk.X, expand=False)
- 
-        # Crear paneles: barra inferiorw
+#
+        # Crear paneles: barra inferior
         self.barra_inferior = tk.Frame(cuerpo_principal)
         self.barra_inferior.pack(side=tk.BOTTOM, fill='both', expand=True)  
-
+    
         # IMAGEN DEL FONDO
         self.ruta_imagen = "imagenes/bg.jpg"
         self.fondo_original_image = Image.open(self.ruta_imagen)
@@ -36,8 +29,12 @@ class FormularioRegistrosDesign():
         self.label_imagen = tk.Label(self.barra_inferior, image=self.fondo_image)
         self.label_imagen.pack(fill="both", expand=True)
         self.label_imagen.bind("<Configure>", self.ajustar_imagen)
-        self.ajustar_imagen(None)
+        #self.ajustar_imagen(None)
         
+        #STYLE INPUTS
+        style = ttk.Style()
+        style.configure('Entry.TEntry', foreground='black')
+
 
         ############################################ INICIO DE LABELS ###################################################
         #self.logo_img = customtkinter.CTkImage(Image.open("imagenes/logo.png"), size=(300,300))
@@ -234,7 +231,7 @@ class FormularioRegistrosDesign():
         height = self.label_imagen.winfo_height()
 
         # Redimensionar la imagen de fondo para que se ajuste al tamaño del label
-        imagen_redimensionada = self.fondo_original_image.resize((width, height), Image.BILINEAR)
+        imagen_redimensionada = self.fondo_original_image.resize((width, height))
 
         # Crear una instancia de PhotoImage para poder establecerla como imagen del label
         imagen_tk = ImageTk.PhotoImage(imagen_redimensionada)
@@ -278,8 +275,7 @@ class FormularioRegistrosDesign():
             self.tablaClientes.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6]))
         self.cursor.close()
         self.connection.close()
-
-     
+ 
 ############################################################# FUNCIONES DE BOTONES ##############################################################
 
     def binding_hover_buttons_event(self, button):
