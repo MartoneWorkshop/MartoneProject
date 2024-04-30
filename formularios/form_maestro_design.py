@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import font
-from config import COLOR_BARRA_SUPERIOR, COLOR_MENU_LATERAL, COLOR_FONDO, COLOR_MENU_CURSOR_ENCIMA, COLOR_SUBMENU_LATERAL, COLOR_SUBMENU_CURSOR_ENCIMA, ANCHO_MENU, ALTO_MENU, WIDTH_LOGO, HEIGHT_LOGO
+from config import COLOR_BARRA_SUPERIOR, COLOR_MENU_LATERAL, COLOR_FONDO, COLOR_MENU_CURSOR_ENCIMA, COLOR_SUBMENU_LATERAL, COLOR_SUBMENU_CURSOR_ENCIMA, ANCHO_MENU, MITAD_MENU, ALTO_MENU, WIDTH_LOGO, HEIGHT_LOGO
 from PIL import Image, ImageTk
 import util.util_ventana as util_ventana
 import util.util_imagenes as util_img
@@ -24,6 +24,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.bg = util_img.leer_imagen("./imagenes/bg.jpg", (1440, 900))
         self.perfil = util_img.leer_imagen("./imagenes/Perfil.png", (100, 100))
         self.w, self.h = 1440, 900
+        self.title("Martone Workshop - Registro")
         self.config_window()
         self.paneles()
         self.controles_barra_superior()        
@@ -198,15 +199,15 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
         else:
             self.buttonClientes = tk.Button(self.menu_lateral, text="Clientes", font=("Roboto", 14), image=self.clientes_icon, highlightthickness=20, width=ANCHO_MENU,
-        bd=0, height=ALTO_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.abrir_registros_clientes)
+        bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.abrir_registros_clientes)
             self.buttonClientes.pack()
 
             self.buttonEquipos = tk.Button(self.menu_lateral, text="Equipos", font=("Roboto", 14), image=self.equipos_icon, highlightthickness=20, width=ANCHO_MENU,
-        bd=0, height=ALTO_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
+        bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
             self.buttonEquipos.pack()
 
             self.buttonHistoria = tk.Button(self.menu_lateral, text="Historia", font=("Roboto", 14), image=self.historia_icon, highlightthickness=20, width=ANCHO_MENU,
-        bd=0, height=ALTO_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
+        bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
             self.buttonHistoria.pack()
 
         self.buttonDatabase.pack()
@@ -224,7 +225,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
     
     def abrir_registros_clientes(self):   
         self.limpiar_panel(self.cuerpo_principal)     
-        FormularioRegistrosDesign(self.cuerpo_principal,self.bg)
+        FormularioRegistrosDesign(self.cuerpo_principal)
         
     def abrir_home(self):   
         self.limpiar_panel(self.cuerpo_principal)     
@@ -243,17 +244,17 @@ class FormularioMaestroDesign(customtkinter.CTk):
         button.config(bg=COLOR_MENU_CURSOR_ENCIMA, fg='white', anchor="w")
 
     def on_leave(self, event, button):
-        button.config(bg=COLOR_MENU_LATERAL, fg='white', anchor="w", )
+        button.config(bg=COLOR_MENU_LATERAL, fg='white', anchor="w")
 
     def binding_hover_submenu_event(self, button):
         button.bind("<Enter>", lambda event: self.submenu_on_enter(event, button))
         button.bind("<Leave>", lambda event: self.submenu_on_leave(event, button))
 
     def submenu_on_enter(self, event, button):
-        button.config(bg=COLOR_SUBMENU_CURSOR_ENCIMA, fg='white', anchor="w")
+        button.config(bg=COLOR_SUBMENU_CURSOR_ENCIMA, fg='white', anchor="w", height=ALTO_MENU)
 
     def submenu_on_leave(self, event, button):
-        button.config(bg=COLOR_SUBMENU_LATERAL, fg='white', anchor="w", )
+        button.config(bg=COLOR_SUBMENU_LATERAL, fg='white', anchor="w", height=MITAD_MENU)
 
     def toggle_panel(self):
         # Alternar visibilidad del menú lateral
