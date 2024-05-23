@@ -17,7 +17,7 @@ class FormularioHomeDesign():
 
         # Primer Label con texto
         self.labelTitulo = tk.Label(
-            self.barra_superior, text="SECCION HOME")
+        self.barra_superior, text="SECCION HOME")
         self.labelTitulo.config(fg="#222d33", font=("Roboto", 30), bg=COLOR_FONDO)
         self.labelTitulo.pack(side=tk.TOP, fill='both', expand=True)
 

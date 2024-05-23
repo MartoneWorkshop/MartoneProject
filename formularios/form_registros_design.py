@@ -2,48 +2,73 @@ import tkinter as tk
 from config import  COLOR_FONDO
 import customtkinter
 from customtkinter import CTkFont
-from functions.ClientsDao import Clients, SaveClient, listarCliente, client_Delete, consulClient, EditClient
+import imageio
+from functions.ClientsDao import Clients, SaveClient, listarCliente, client_Delete, consulClient, EditClient    
 from config import COLOR_BOTON_CURSOR_ENCIMA, COLOR_MENU_LATERAL, COLOR_BOTON_CURSOR_FUERA, COLOR_FG, COLOR_TEXTO, COLOR_HOVER
 from tkinter import Image, ttk, messagebox, Canvas
-import PIL 
+import PIL
+import util.util_imagenes as util_img 
 from PIL import ImageTk, Image, ImageDraw, ImageGrab
 import sqlite3
 
-class FormularioRegistrosDesign():
 
+class FormularioRegistrosDesign():
+    
     def __init__(self, cuerpo_principal):
 
-        ## Crear paneles: barra superior
-        self.barra_superior = tk.Frame(cuerpo_principal)
-        self.barra_superior.pack(side=tk.TOP, fill=tk.X, expand=False)
-#
-        # Crear paneles: barra inferior
-        self.barra_inferior = tk.Frame(cuerpo_principal)
-        self.barra_inferior.pack(side=tk.BOTTOM, fill='both', expand=True)  
-    
-        # IMAGEN DEL FONDO
-        self.ruta_imagen = "imagenes/bg.jpg"
-        self.fondo_original_image = Image.open(self.ruta_imagen)
-        self.fondo_image = ImageTk.PhotoImage(self.fondo_original_image)
-        
-        self.label_imagen = tk.Label(self.barra_inferior, image=self.fondo_image)
-        self.label_imagen.pack(fill="both", expand=True)
-        self.label_imagen.bind("<Configure>", self.ajustar_imagen)
-        #self.ajustar_imagen(None)
+        self.id_client = None
+        self.cuerpo_principal = cuerpo_principal
+        self.cuerpo_principal.bind('<Configure>', self.on_resize)
+        self.original_width = 1120
+        self.original_height = 800
         
         #STYLE INPUTS
         style = ttk.Style()
         style.configure('Entry.TEntry', foreground='black')
 
+        # Crear paneles: barra superior
+        self.barra_superior = tk.Frame(cuerpo_principal)
+        self.barra_superior.pack(side=tk.TOP, fill=tk.X, expand=False)
 
-        ############################################ INICIO DE LABELS ###################################################
-        #self.logo_img = customtkinter.CTkImage(Image.open("imagenes/logo.png"), size=(300,300))
-        #self.lblLogo = customtkinter.CTkLabel(cuerpo_principal, image=self.logo_img, text="", fg_color='transparent', bg_color='transparent')
-        #self.lblLogo.place(x=700, y=15)
+        # Crear paneles: barra inferiorw
+        self.panel_principal = tk.Frame(cuerpo_principal, bg="white")
+        self.panel_principal.pack(side=tk.BOTTOM, fill='both', expand=True)    
+        
+        self.marco_principal = customtkinter.CTkFrame(cuerpo_principal, fg_color="red", width=1120, height=800)
+        self.marco_principal.place(relx=0.5, rely=0.5, anchor="center")
+
+        
+        ###############################################################################
+        ############# INICIALIZACION DE LA IMAGEN DE FONDO AUTOEXPANDIBLE #############
+        #ruta_imagen = "imagenes/bg.jpg"
+        ## Cargar la imagen
+        #imagen = Image.open(ruta_imagen)
+        #imagen_tk = ImageTk.PhotoImage(imagen)
+        #self.imagen_tk = imagen_tk
+        ## Crear el Label con la imagen de fondo
+        #label_fondo = tk.Label(cuerpo_principal, image=imagen_tk)
+        #label_fondo.place(x=0, y=0, relwidth=1, relheight=1)
+        #self.label_fondo = label_fondo
+        ## Configurar el Label para que se ajuste automáticamente al tamaño del frame
+        #def ajustar_imagen(event):
+        #    # Cambiar el tamaño de la imagen para que coincida con el tamaño del frame
+        #    nueva_imagen = imagen.resize((event.width, event.height))
+        #    nueva_imagen_tk = ImageTk.PhotoImage(nueva_imagen)
+        #    self.imagen_tk = nueva_imagen_tk
+        #    # Actualizar la imagen en el Label de fondo
+        #    label_fondo.config(image=nueva_imagen_tk)
+        #
+        #cuerpo_principal.bind("<Configure>", ajustar_imagen)
+
+        
+        ###############################################################################
+
         ###################################################     1       #################################################    
-        marco_firstname = customtkinter.CTkFrame(cuerpo_principal, width=225, height=55, bg_color="#e2e2e2")
-        marco_firstname.place(x=50, y=30)
-        #Label del Nombre
+        
+        #Label del Nombre bg_color="#e2e2e2",
+        marco_firstname = customtkinter.CTkFrame(self.marco_principal, width=225, height=55)
+        marco_firstname.place(x=50, y=50)
+
         self.lblclient_firstname = customtkinter.CTkLabel(marco_firstname, text='Nombre:', font=("Roboto", 14), compound='center')
         self.lblclient_firstname.place(x=5, y=1)
         #Entry del Nombre
@@ -54,8 +79,8 @@ class FormularioRegistrosDesign():
         
         ###################################################     2       #################################################  
         #MARCO
-        marco_lastname = customtkinter.CTkFrame(cuerpo_principal, width=225, height=55, bg_color="#e2e2e2")
-        marco_lastname.place(x=365, y=30)
+        marco_lastname = customtkinter.CTkFrame(self.marco_principal, width=225, height=55)
+        marco_lastname.place(x=405, y=50)
         #Label del Apellido
         self.lblclient_lastname = customtkinter.CTkLabel(marco_lastname, text='Apellido:', font=("Roboto", 14))
         self.lblclient_lastname.place(x=5, y=1)
@@ -64,14 +89,10 @@ class FormularioRegistrosDesign():
         self.entryclient_lastname = ttk.Entry(marco_lastname, width=30, style='Modern.TEntry', textvariable=self.svclient_lastname)
         self.entryclient_lastname.place(x=5, y=25)
         self.entryclient_lastname.configure(style='Entry.TEntry')
-
-        #self.entryclient_lastname = customtkinter.CTkEntry(cuerpo_principal, textvariable=self.svclient_lastname, width=200)
-        #self.entryclient_lastname.place(x=365, y=55)
-
         ###################################################     3         #################################################
         # Configurar el estilo para el marco
-        marco_cedula = customtkinter.CTkFrame(cuerpo_principal, width=225, height=55, bg_color="#e2e2e2")
-        marco_cedula.place(x=50, y=120)
+        marco_cedula = customtkinter.CTkFrame(self.marco_principal, width=225, height=55)
+        marco_cedula.place(x=50, y=150)
 
         # Cargar la imagen de fondo
         self.lblclient_ci = customtkinter.CTkLabel(marco_cedula, text='Cedula:', font=("Roboto", 14))
@@ -89,8 +110,8 @@ class FormularioRegistrosDesign():
 
         ###################################################     4       #################################################  
         #MARCO       
-        marco_mail = customtkinter.CTkFrame(cuerpo_principal, width=225, height=55, bg_color="#e2e2e2")
-        marco_mail.place(x=365, y=120)
+        marco_mail = customtkinter.CTkFrame(self.marco_principal, width=225, height=55)
+        marco_mail.place(x=405, y=150)
         #Label del Correo
         self.lblclient_mail = customtkinter.CTkLabel(marco_mail, text='Correo:', font=("Roboto", 14))
         self.lblclient_mail.place(x=5, y=1)
@@ -102,8 +123,8 @@ class FormularioRegistrosDesign():
 
         ###################################################     5       #################################################  
         #MARCO
-        marco_phone = customtkinter.CTkFrame(cuerpo_principal, width=225, height=55, bg_color="#e2e2e2")
-        marco_phone.place(x=50, y=225)
+        marco_phone = customtkinter.CTkFrame(self.marco_principal, width=225, height=55)
+        marco_phone.place(x=50, y=255)
         #Label del Telefono
         self.lblclient_phone = customtkinter.CTkLabel(marco_phone, text='NºTelefono:', font=("Roboto", 14))
         self.lblclient_phone.place(x=5, y=1)
@@ -116,8 +137,8 @@ class FormularioRegistrosDesign():
 
         ###################################################     6       #################################################  
         #MARCO
-        marco_address = customtkinter.CTkFrame(cuerpo_principal, width=225, height=55, bg_color="#e2e2e2")
-        marco_address.place(x=365, y=225)
+        marco_address = customtkinter.CTkFrame(self.marco_principal, width=225, height=55)
+        marco_address.place(x=405, y=255)
         #Label de la Direccion
         self.lblclient_address = customtkinter.CTkLabel(marco_address, text='Direccion:', font=("Roboto", 14))
         self.lblclient_address.place(x=5, y=1)
@@ -129,44 +150,40 @@ class FormularioRegistrosDesign():
         self.entryclient_address.configure(style='Entry.TEntry')
         self.entryclient_address.bind("<Return>", lambda event: self.GuardarCliente())
 
-        #TESTING ZONE
-        #style = ttk.Style()
-        #style.configure('Entry.TEntry', background='white', foreground='black')
-        ## Crear el Entry utilizando ttk.Entry
-        #self.entryTEST = ttk.Entry(cuerpo_principal, width=30, style='Modern.TEntry')
-        #self.entryTEST.place(x=605, y=250)
-        #self.entryTEST.configure(style='Entry.TEntry')
-        
-        
         ######################################### FIN DE ENTRYS Y LABELS ####################################################
-    
+        ###TEST BUTTON ####
+        #buttontest = tk.Button(cuerpo_principal, text="TEST", command=show_notification)
+        #buttontest.place(x=200, y=500)
+        marco_tabla = customtkinter.CTkFrame(self.marco_principal, width=1080, height=300, corner_radius=10)
+        marco_tabla.place(x=22, y=480)
         ################################################ BOTONES DE EDITAR Y ELIMINAR ##################################################
+        
         self.buttonSave_client_img = customtkinter.CTkImage(Image.open("imagenes/user_save-white.png"))
-        self.buttonSave_client = customtkinter.CTkButton(cuerpo_principal, image=self.buttonSave_client_img, text="Guardar", font=("Roboto", 18), 
+        self.buttonSave_client = customtkinter.CTkButton(marco_tabla, image=self.buttonSave_client_img, text="Guardar", font=("Roboto", 16), 
         width=50, height=40, corner_radius=50, text_color=COLOR_TEXTO, fg_color=COLOR_FG, hover_color=COLOR_HOVER, command=self.GuardarCliente)
-        self.buttonSave_client.place(x=70, y=350)
+        self.buttonSave_client.place(x=15, y=10)
 
         self.buttonEdit_client_img = customtkinter.CTkImage(Image.open("imagenes/user_edit-white.png"))
-        self.buttonEdit_client = customtkinter.CTkButton(cuerpo_principal, image=self.buttonEdit_client_img, text="Editar", font=("Roboto", 18), 
+        self.buttonEdit_client = customtkinter.CTkButton(marco_tabla, image=self.buttonEdit_client_img, text="Editar", font=("Roboto", 16), 
         width=50, height=40,  corner_radius=50, text_color=COLOR_TEXTO, fg_color=COLOR_FG, hover_color=COLOR_HOVER, command=self.editarCliente)
-        self.buttonEdit_client.place(x=240, y=400)
+        self.buttonEdit_client.place(x=190, y=10)
     
         self.buttonDelete_client_img = customtkinter.CTkImage(Image.open("imagenes/user_delete-white.png"))
-        self.buttonDelete_client = customtkinter.CTkButton(cuerpo_principal, image=self.buttonDelete_client_img, text="Eliminar", font=("Roboto", 18), 
+        self.buttonDelete_client = customtkinter.CTkButton(marco_tabla, image=self.buttonDelete_client_img, text="Eliminar", font=("Roboto", 16), 
         width=50, height=40,  corner_radius=50, text_color=COLOR_TEXTO, fg_color=COLOR_FG, hover_color=COLOR_HOVER, command=self.eliminarCliente)
-        self.buttonDelete_client.place(x=380, y=400)
+        self.buttonDelete_client.place(x=345, y=10)
         
         self.buttonClean_img = customtkinter.CTkImage(Image.open("imagenes/delete-white.png"))
-        self.buttonClean = customtkinter.CTkButton(cuerpo_principal, image=self.buttonClean_img, text="Limpiar", font=("Roboto", 18),
+        self.buttonClean = customtkinter.CTkButton(marco_tabla, image=self.buttonClean_img, text="Limpiar", font=("Roboto", 16),
         width=50, height=40,  corner_radius=50, text_color=COLOR_TEXTO, fg_color=COLOR_FG, hover_color=COLOR_HOVER,command=self.Depurador)
-        self.buttonClean.place(x=520, y=400)
-        
+        self.buttonClean.place(x=520, y=10)
         ####################################################### ENTRY DE BUSQUEDA #######################################################
-        self.lblsearch_clients = customtkinter.CTkLabel(cuerpo_principal, text='Buscar:', fg_color="#dbdbdb", bg_color="#dbdbdb")
-        self.lblsearch_clients.place(x=915, y=542)
+        self.lblsearch_clients = customtkinter.CTkLabel(marco_tabla, text='Buscar:', fg_color="#dbdbdb", bg_color="#dbdbdb", font=("Roboto", 14))
+        self.lblsearch_clients.place(x=810, y=17)
+
         self.sventrysearch_clients = customtkinter.StringVar()
-        self.entrysearch_clients = customtkinter.CTkEntry(cuerpo_principal, textvariable=self.sventrysearch_clients, bg_color="#dbdbdb", width=150)
-        self.entrysearch_clients.place(x=967, y=542)
+        self.entrysearch_clients = ttk.Entry(marco_tabla, textvariable=self.sventrysearch_clients, style='Modern.TEntry', background="#dbdbdb", width=30)
+        self.entrysearch_clients.place(x=870, y=20)
         self.entrysearch_clients.bind('<KeyRelease>', self.update_client_content)
 
         where = ""
@@ -177,10 +194,10 @@ class FormularioRegistrosDesign():
             self.listaCliente = listarCliente()
             self.listaCliente.reverse()
 
-        self.tablaClientes = ttk.Treeview(cuerpo_principal, column=('client_firstname','client_lastname','client_ci','client_phone','client_address','client_mail'))
-        self.tablaClientes.place(x=70, y=580)
-        self.scroll = ttk.Scrollbar(cuerpo_principal, orient='vertical', command=self.tablaClientes.yview)
-        self.scroll.place(x=1118, y=250, height=225)
+        self.tablaClientes = ttk.Treeview(marco_tabla, column=('client_firstname','client_lastname','client_ci','client_phone','client_address','client_mail'))
+        self.tablaClientes.place(x=10, y=60)
+        self.scroll = ttk.Scrollbar(marco_tabla, orient='vertical', command=self.tablaClientes.yview)
+        self.scroll.place(x=1057, y=60, height=225)
         self.tablaClientes.configure(yscrollcommand=self.scroll.set)
         self.tablaClientes.tag_configure('evenrow')
         self.tablaClientes.heading('#0',text="ID")
@@ -190,6 +207,7 @@ class FormularioRegistrosDesign():
         self.tablaClientes.heading('#4',text="TELEFONO")
         self.tablaClientes.heading('#5',text="DIRECCION")
         self.tablaClientes.heading('#6',text="CORREO")
+
         self.tablaClientes.column("#0", width=45, stretch=False, anchor='w')#HAY QUE CENTRARLO
         self.tablaClientes.column("#1", width=125, stretch=False)
         self.tablaClientes.column("#2", width=125, stretch=False)
@@ -200,6 +218,186 @@ class FormularioRegistrosDesign():
     
         for p in self.listaCliente:
             self.tablaClientes.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6]))
+        
+
+        self.marco_firstname = marco_firstname
+        self.marco_lastname = marco_lastname
+        self.marco_cedula = marco_cedula
+        self.marco_address = marco_address
+        self.marco_mail = marco_mail
+        self.marco_phone = marco_phone
+        self.marco_tabla = marco_tabla
+
+    def verificar_tamano_ventana(width, height):
+        if width >= 1440 and height >= 900:
+            return width, height
+        else:
+            return 1440, 900
+
+
+    def on_resize(self, event):
+        width = event.width
+        height = event.height
+
+        if width >= 1440 and height >= 900:
+        # Ajusta el tamaño del marco principal al 90% del ancho y alto de la ventana
+            new_width = width * 0.9
+            new_height = height * 0.9
+
+            # Calcula las coordenadas x e y para centrar el marco principal en el cuerpo principal (METODO QUE NO FUNCIONO)
+            #x = (width - new_width) // 2
+            #y = (height - new_height) // 2
+            
+            # Coloca e  l marco principal en las coordenadas calculadas para centrarlo
+            self.marco_principal.configure(width=new_width, height=new_height)
+            self.marco_principal.place(relx=0.5, rely=0.5)
+            #Reubicacion de los marcos:
+            #Marco firstname
+            self.marco_firstname.configure(width=235, height=65)
+            self.marco_firstname.place(x=110, y=50)
+            self.lblclient_firstname.configure(font=("Roboto", 15))
+            self.lblclient_firstname.place(x=5, y=7)
+            self.entryclient_firstname.config(width=30)
+            self.entryclient_firstname.place(x=5, y=33)
+
+            #Marco lastname
+            self.marco_lastname.configure(width=235, height=65)
+            self.marco_lastname.place(x=465, y=50)
+            self.lblclient_lastname.configure(font=("Roboto", 15))
+            self.lblclient_lastname.place(x=5, y=7)
+            self.entryclient_lastname.config(width=30)
+            self.entryclient_lastname.place(x=5, y=33)
+
+            #Marco cedula
+            self.marco_cedula.configure(width=235, height=65)
+            self.marco_cedula.place(x=110, y=150)
+            self.lblclient_ci.configure(font=("Roboto", 15))
+            self.lblclient_ci.place(x=5, y=7)
+            self.entryclient_ci.config(width=30)
+            self.entryclient_ci.place(x=5, y=33)
+
+            #Marco mail 
+            self.marco_mail.configure(width=235, height=65)
+            self.marco_mail.place(x=465, y=150)
+            self.lblclient_mail.configure(font=("Roboto", 15))
+            self.lblclient_mail.place(x=5, y=7)
+            self.entryclient_mail.config(width=30)
+            self.entryclient_mail.place(x=5, y=33)
+
+            #Marco address
+            self.marco_address.configure(width=235, height=65)
+            self.marco_address.place(x=465, y=255)
+            self.lblclient_address.configure(font=("Roboto", 15))
+            self.lblclient_address.place(x=5, y=7)
+            self.entryclient_address.config(width=30)
+            self.entryclient_address.place(x=5, y=33)
+
+            #Marco phone
+            self.marco_phone.configure(width=235, height=65)
+            self.marco_phone.place(x=110, y=255)
+            self.lblclient_phone.configure(font=("Roboto", 15))
+            self.lblclient_phone.place(x=5, y=7)
+            self.entryclient_phone.config(width=30)
+            self.entryclient_phone.place(x=5, y=33)
+
+            #Marco tabla
+            self.marco_tabla.configure(width=1280, height=350)
+            self.marco_tabla.place(x=110, y=480)
+            self.buttonSave_client.place(x=30, y=18)
+            self.buttonEdit_client.place(x=200, y=18)
+            self.buttonDelete_client.place(x=350, y=18)
+            self.buttonClean.place(x=520, y=18)
+            self.lblsearch_clients.configure(font=("Roboto", 16))
+            self.lblsearch_clients.place(x=960, y=23)
+            self.entrysearch_clients.place(x=1020, y=26)
+            self.tablaClientes.place_forget()
+            self.tablaClientes.place(x=30, y=80)
+            self.scroll.place(x=1212, y=80)
+            self.tablaClientes.column("#0", width=60)
+            self.tablaClientes.column("#1", width=145)
+            self.tablaClientes.column("#2", width=145)
+            self.tablaClientes.column("#3", width=145)
+            self.tablaClientes.column("#4", width=145)
+            self.tablaClientes.column("#5", width=270)
+            self.tablaClientes.column("#6", width=270)
+            self.tablaClientes.update()
+
+  
+        
+        else:
+        # Restaura el tamaño original y la posición centrada del marco principal
+            self.marco_principal.place(relx=0.5, rely=0.5, anchor='center')
+            self.marco_principal.configure(width=self.original_width, height=self.original_height)
+            #Restaurar marcos
+            self.marco_firstname.configure(width=225, height=55)
+            self.marco_firstname.place(x=50, y=50)
+            self.lblclient_firstname.configure(font=("Roboto", 14))
+            self.lblclient_firstname.place(x=5, y=1)
+            self.entryclient_firstname.config(width=30)
+            self.entryclient_firstname.place(x=5, y=25)
+
+            self.marco_lastname.configure(width=225, height=55)
+            self.marco_lastname.place(x=405, y=50)
+            self.lblclient_lastname.configure(font=("Roboto", 14))
+            self.lblclient_lastname.place(x=5,y=1)
+            self.entryclient_lastname.config(width=30)
+            self.entryclient_lastname.place(x=5, y=25)
+
+            self.marco_cedula.configure(width=225, height=55)
+            self.marco_cedula.place(x=50, y=150)
+            self.lblclient_ci.configure(font=("Roboto", 14))
+            self.lblclient_ci.place(x=5, y=1)
+            self.entryclient_ci.config(width=30)
+            self.entryclient_ci.place(x=5, y=25)
+
+            self.marco_mail.configure(width=225, height=55)
+            self.marco_mail.place(x=405, y=150)
+            self.lblclient_mail.configure(font=("Roboto", 14))
+            self.lblclient_mail.place(x=5, y=1)
+            self.entryclient_mail.config(width=30)
+            self.entryclient_mail.place(x=5, y=25)
+
+            self.marco_address.configure(width=225, height=55)
+            self.marco_address.place(x=405, y=255)
+            self.lblclient_address.configure(font=("Roboto", 14))
+            self.lblclient_address.place(x=5, y=1)
+            self.entryclient_address.config(width=30)
+            self.entryclient_address.place(x=5, y=25)
+
+            self.marco_phone.configure(width=225, height=55)
+            self.marco_phone.place(x=50, y=255)
+            self.lblclient_phone.configure(font=("Roboto", 14))
+            self.lblclient_phone.place(x=5, y=1)
+            self.entryclient_phone.config(width=30)
+            self.entryclient_phone.place(x=5, y=25)
+
+
+            self.marco_tabla.configure(width=1080, height=300)
+            self.marco_tabla.place(x=22, y=480)
+            self.buttonSave_client.place(x=15, y=10)
+            self.buttonEdit_client.place(x=190, y=10)
+            self.buttonDelete_client.place(x=345, y=10)
+            self.buttonClean.place(x=520, y=10)
+            self.lblsearch_clients.configure(font=("Roboto", 14))
+            self.lblsearch_clients.place(x=810, y=17)
+            self.entrysearch_clients.place(x=870, y=20)
+            self.tablaClientes.place_forget()
+            self.tablaClientes.place(x=10, y=60)
+            self.scroll.place(x=1057, y=60)
+            self.tablaClientes.column("#0", width=45)
+            self.tablaClientes.column("#1", width=125)
+            self.tablaClientes.column("#2", width=125)
+            self.tablaClientes.column("#3", width=125)
+            self.tablaClientes.column("#4", width=125)
+            self.tablaClientes.column("#5", width=250)
+            self.tablaClientes.column("#6", width=250)
+            self.tablaClientes.update()
+            #Restaurar lbls
+
+
+    
+
+            
     def check_entry_content(self, event=None):
         # Conectar a la base de datos
         self.connection = sqlite3.connect('database/database.db')
@@ -223,22 +421,24 @@ class FormularioRegistrosDesign():
             correct_photo= ImageTk.PhotoImage(correct_image)
             self.status_label.configure(image=correct_photo)
             self.status_label.image = correct_photo
+
         self.cursor.close()
         self.connection.close()
+
     def ajustar_imagen(self, event):
         # Obtener el tamaño actual del label
-        width = self.label_imagen.winfo_width()
-        height = self.label_imagen.winfo_height()
+        width = self.label_fondo.winfo_width()
+        height = self.label_fondo.winfo_height()
 
         # Redimensionar la imagen de fondo para que se ajuste al tamaño del label
-        imagen_redimensionada = self.fondo_original_image.resize((width, height))
+        imagen_redimensionada = self.label_fondo.resize((width, height), Image.BILINEAR)
 
         # Crear una instancia de PhotoImage para poder establecerla como imagen del label
         imagen_tk = ImageTk.PhotoImage(imagen_redimensionada)
 
         # Actualizar la imagen de fondo del label
-        self.label_imagen.configure(image=imagen_tk)
-        self.label_imagen.image = imagen_tk
+        self.label_fondo.configure(image=imagen_tk)
+        self.label_fondo.image = imagen_tk
     def update_client_content(self, event=None):
     # Conectar a la base de datos
         self.connection = sqlite3.connect('database/database.db')
@@ -275,7 +475,8 @@ class FormularioRegistrosDesign():
             self.tablaClientes.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6]))
         self.cursor.close()
         self.connection.close()
- 
+
+     
 ############################################################# FUNCIONES DE BOTONES ##############################################################
 
     def binding_hover_buttons_event(self, button):
@@ -288,7 +489,9 @@ class FormularioRegistrosDesign():
     def buttons_on_leave(self, event, button):
         button.configure(fg_color='transparent', bg_color='transparent')
 
+
     def GuardarCliente(self):
+
         clients = Clients(
             self.svclient_firstname.get(),
             self.svclient_lastname.get(),
@@ -297,7 +500,6 @@ class FormularioRegistrosDesign():
             self.svclient_address.get(),
             self.svclient_mail.get()
         )
-
         if self.id_client is None:
             SaveClient(clients)
         else:
@@ -361,3 +563,4 @@ class FormularioRegistrosDesign():
         self.svclient_phone.set('')
         self.svclient_address.set('')
         self.svclient_mail.set('')
+        

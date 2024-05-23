@@ -1,5 +1,6 @@
 from .conexion import ConexionDB
 from tkinter import messagebox
+from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 
 def EditClient(clients, id_client):
     conexion = ConexionDB()
@@ -7,15 +8,10 @@ def EditClient(clients, id_client):
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()
-        title = 'Actualizar Cliente'
-        mensaje = 'Los datos del cliente han sido actualizados.'
-        messagebox.showinfo(title, mensaje)
+        edit_advice()
     except Exception as e:
         conexion.cerrarConexion()
-        title = 'Error de Sistema'
-        mensaje = f'Error en Editar el cliente: {str(e)}'
-        messagebox.showerror(title, mensaje)
-    
+        error_advice()
 def SaveClient(clients):
     conexion = ConexionDB()
     sql = f"""INSERT INTO Clients (client_firstname, client_lastname, client_ci, client_phone, client_address, client_mail, activo)
@@ -23,14 +19,11 @@ def SaveClient(clients):
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()
-        title = 'Save Client'
-        mensaje = 'El cliente ha sido registrado con exito.'
-        messagebox.showinfo(title, mensaje)
+        save_advice()
+        
     except Exception as e:
         conexion.cerrarConexion()
-        title = 'Error de Sistema'
-        mensaje = f'Error en SaveClient: {str(e)}'
-        messagebox.showerror(title, mensaje)
+        error_advice()
 
 def listarCliente():
     conexion = ConexionDB()
@@ -43,9 +36,7 @@ def listarCliente():
         conexion.cerrarConexion()
     except Exception as e:
         conexion.cerrarConexion()
-        title = 'Error de Sistema'
-        mensaje = f'Error en listarCliente: {str(e)}'
-        messagebox.showwarning (title, mensaje)
+        error_advice()
     return listaCliente
 
 def clientArchived():
@@ -58,9 +49,7 @@ def clientArchived():
         conexion.cerrarConexion()
     except Exception as e:
         conexion.cerrarConexion()
-        title = 'Error de Sistema'
-        mensaje = f'Error clientArchived: {str(e)}'
-        messagebox.showwarning (title, mensaje)
+        error_advice()
     return listaCliente    
 
 def consulClient(where):
@@ -73,9 +62,7 @@ def consulClient(where):
         conexion.cerrarConexion()
     except Exception as e:
         conexion.cerrarConexion()
-        title = 'Error de Sistema'
-        mensaje = f'Error en consulClient: {str(e)}'
-        messagebox.showwarning (title, mensaje)
+        error_advice()
     return listaCliente
 
 def client_Delete(id_client):
@@ -84,15 +71,12 @@ def client_Delete(id_client):
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()
-        title = 'Eliminar Cliente'
-        mensaje = 'Registro de cliente eliminado exitosamente.'
-        messagebox.showinfo (title, mensaje)
+        delete_advice()
 
     except Exception as e:
         conexion.cerrarConexion()
-        title = 'Error de Sistema'
-        mensaje = f'Error en client_Delete: {str(e)}'
-        messagebox.showerror (title, mensaje)
+        error_advice()
+
 
 
 class Clients:

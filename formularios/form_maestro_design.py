@@ -23,6 +23,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.logo = util_img.leer_imagen("./imagenes/logo.png", (590, 423))
         self.bg = util_img.leer_imagen("./imagenes/bg.jpg", (1440, 900))
         self.perfil = util_img.leer_imagen("./imagenes/Perfil.png", (100, 100))
+        
         self.w, self.h = 1440, 900
         self.title("Martone Workshop - Registro")
         self.config_window()
@@ -36,16 +37,9 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.set_window_icon()
         self.w, self.h = 1440, 900
         self.geometry(f"{self.w}x{self.h}")
-        self.iconbitmap("./imagenes/logo.ico")
-        self.w, self.h = 1440, 900        
+        self.iconbitmap("./imagenes/logo.ico")   
         util_ventana.centrar_ventana(self, self.w, self.h)
-        self.bind("<ButtonPress-1>", self.start_move)
-        self.bind("<B1-Motion>", self.move_window)
-        self.bind("<Map>", self.on_restore)
-
-    def on_restore(self, event):
-        if self.wm_state() == "normal":
-            self.overrideredirect(False)
+    
 
     def paneles(self):        
         # Crear paneles: barra superior, menú lateral y cuerpo principal
@@ -60,27 +54,6 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self, bg=COLOR_FONDO)
         self.cuerpo_principal.pack(side=tk.RIGHT, fill='both', expand=True)
 
-    def close_window(self):
-        self.destroy()
-
-    def start_move(self, event):
-        # Inicia el movimiento de la ventana
-        self.x = event.x
-        self.y = event.y
-
-    def move_window(self, event):
-        # Mueve la ventana según el movimiento del ratón
-        deltax = event.x - self.x
-        deltay = event.y - self.y
-        x = self.winfo_x() + deltax
-        y = self.winfo_y() + deltay
-        self.geometry(f"+{x}+{y}")
-
-    def minimize_window(self):
-        self.overrideredirect(False)
-        self.iconify()
-        win32gui.SetWindowText(win32gui.GetForegroundWindow(), "MartoneWorkshop")
-    
     def set_window_icon(self):
         icon_path = "imagenes/logo.ico"  # Ruta del archivo de icono
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("martoneworkshop")  # Cambia "myappid" por un identificador único para tu aplicación
@@ -107,20 +80,20 @@ class FormularioMaestroDesign(customtkinter.CTk):
                                         command=self.toggle_panel, bg_color='transparent', fg_color='transparent', hover=False, width=WIDTH_LOGO, height=HEIGHT_LOGO)
         self.buttonMenuLateral.pack(side=tk.LEFT, padx=20)
 
-        close_original_image = Image.open("imagenes/close.png")
-        close_resized_image = close_original_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        close_image = ImageTk.PhotoImage(close_resized_image)
-
-        self.btnCloseW = customtkinter.CTkButton(self.barra_superior, image=close_image, text="", fg_color='transparent', bg_color='transparent', height=HEIGHT_LOGO, width=WIDTH_LOGO, command=self.close_window)
-        self.btnCloseW.pack(side=tk.RIGHT, padx=20)
-
-        ################################################# MINIMIZAR
-        original_image = Image.open("imagenes/min.png")
-
-        resized_image = original_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        image = ImageTk.PhotoImage(resized_image)
-        self.btnMinW = customtkinter.CTkButton(self.barra_superior, image=image, text="", fg_color='transparent', bg_color='transparent', height=HEIGHT_LOGO, width=WIDTH_LOGO, command=self.minimize_window)
-        self.btnMinW.pack(side=tk.RIGHT)
+        #close_original_image = Image.open("imagenes/close.png")
+        #close_resized_image = close_original_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        #close_image = ImageTk.PhotoImage(close_resized_image)
+#
+        #self.btnCloseW = customtkinter.CTkButton(self.barra_superior, image=close_image, text="", fg_color='transparent', bg_color='transparent', height=HEIGHT_LOGO, width=WIDTH_LOGO, command=self.close_window)
+        #self.btnCloseW.pack(side=tk.RIGHT, padx=20)
+#
+        ################################################## MINIMIZAR
+        #original_image = Image.open("imagenes/min.png")
+#
+        #resized_image = original_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        #image = ImageTk.PhotoImage(resized_image)
+        #self.btnMinW = customtkinter.CTkButton(self.barra_superior, image=image, text="", fg_color='transparent', bg_color='transparent', height=HEIGHT_LOGO, width=WIDTH_LOGO, command=self.minimize_window)
+        #self.btnMinW.pack(side=tk.RIGHT)
         
     def controles_menu_lateral(self):
         self.id_client = None
@@ -220,7 +193,14 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
     def controles_cuerpo(self):
         self.abrir_home()
-    
+
+    def toggle_panel(self):
+        # Alternar visibilidad del menú lateral
+        if self.menu_lateral.winfo_ismapped():
+            self.menu_lateral.pack_forget()
+        else:
+            self.menu_lateral.pack(side=tk.LEFT, fill='y')
+            
     def abrir_registros_clientes(self):   
         self.limpiar_panel(self.cuerpo_principal)     
         FormularioRegistrosDesign(self.cuerpo_principal)
@@ -254,9 +234,9 @@ class FormularioMaestroDesign(customtkinter.CTk):
     def submenu_on_leave(self, event, button):
         button.config(bg=COLOR_SUBMENU_LATERAL, fg='white', anchor="w", height=MITAD_MENU)
 
-    def toggle_panel(self):
-        # Alternar visibilidad del menú lateral
-        if self.menu_lateral.winfo_ismapped():
-            self.menu_lateral.pack_forget()
+    
+    def verificar_tamano_ventana(width, height):
+        if width >= 1440 and height >= 900:
+            return width, height
         else:
-            self.menu_lateral.pack(side=tk.LEFT, fill='y')
+            return 1440, 900
