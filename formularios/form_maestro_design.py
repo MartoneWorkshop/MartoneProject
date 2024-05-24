@@ -39,7 +39,6 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.geometry(f"{self.w}x{self.h}")
         self.iconbitmap("./imagenes/logo.ico")   
         util_ventana.centrar_ventana(self, self.w, self.h)
-    
 
     def paneles(self):        
         # Crear paneles: barra superior, menú lateral y cuerpo principal
@@ -200,10 +199,21 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.menu_lateral.pack_forget()
         else:
             self.menu_lateral.pack(side=tk.LEFT, fill='y')
-            
-    def abrir_registros_clientes(self):   
-        self.limpiar_panel(self.cuerpo_principal)     
-        FormularioRegistrosDesign(self.cuerpo_principal)
+
+    def check_size(self):
+        width_screen = self.cuerpo_principal.winfo_width()
+        height_screen = self.cuerpo_principal.winfo_height()
+    
+        return width_screen, height_screen    
+    def abrir_registros_clientes(self):
+        self.limpiar_panel(self.cuerpo_principal)
+        width_screen, height_screen = self.check_size()
+
+        if width_screen >= 1440 and height_screen >= 900:
+            if hasattr(FormularioRegistrosDesign, 'on_resize'):
+                FormularioRegistrosDesign(self.cuerpo_principal, width_screen, height_screen).on_resize(event=None)      
+        else:
+            FormularioRegistrosDesign(self.cuerpo_principal)
         
     def abrir_home(self):   
         self.limpiar_panel(self.cuerpo_principal)     
@@ -233,10 +243,3 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
     def submenu_on_leave(self, event, button):
         button.config(bg=COLOR_SUBMENU_LATERAL, fg='white', anchor="w", height=MITAD_MENU)
-
-    
-    def verificar_tamano_ventana(width, height):
-        if width >= 1440 and height >= 900:
-            return width, height
-        else:
-            return 1440, 900

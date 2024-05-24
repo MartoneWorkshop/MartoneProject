@@ -2,7 +2,6 @@ import tkinter as tk
 from config import  COLOR_FONDO
 import customtkinter
 from customtkinter import CTkFont
-import imageio
 from functions.ClientsDao import Clients, SaveClient, listarCliente, client_Delete, consulClient, EditClient    
 from config import COLOR_BOTON_CURSOR_ENCIMA, COLOR_MENU_LATERAL, COLOR_BOTON_CURSOR_FUERA, COLOR_FG, COLOR_TEXTO, COLOR_HOVER
 from tkinter import Image, ttk, messagebox, Canvas
@@ -14,8 +13,9 @@ import sqlite3
 
 class FormularioRegistrosDesign():
     
-    def __init__(self, cuerpo_principal):
-
+    def __init__(self, cuerpo_principal, width_screen, height_screen):
+        self.width_screen = width_screen
+        self.height_screen = height_screen
         self.id_client = None
         self.cuerpo_principal = cuerpo_principal
         self.cuerpo_principal.bind('<Configure>', self.on_resize)
@@ -228,29 +228,22 @@ class FormularioRegistrosDesign():
         self.marco_phone = marco_phone
         self.marco_tabla = marco_tabla
 
-    def verificar_tamano_ventana(width, height):
-        if width >= 1440 and height >= 900:
-            return width, height
-        else:
-            return 1440, 900
-
-
     def on_resize(self, event):
-        width = event.width
-        height = event.height
+        if event is None:
+            return
 
-        if width >= 1440 and height >= 900:
+        widther = event.width
+        heighter = event.height
+
+        if self.width_screen >= 1440 and self.height_screen >= 900:
         # Ajusta el tamaño del marco principal al 90% del ancho y alto de la ventana
-            new_width = width * 0.9
-            new_height = height * 0.9
+            new_width = widther * 0.9
+            new_height = heighter * 0.9
 
-            # Calcula las coordenadas x e y para centrar el marco principal en el cuerpo principal (METODO QUE NO FUNCIONO)
-            #x = (width - new_width) // 2
-            #y = (height - new_height) // 2
-            
-            # Coloca e  l marco principal en las coordenadas calculadas para centrarlo
+            # Coloca e l marco principal en las coordenadas calculadas para centrarlo
             self.marco_principal.configure(width=new_width, height=new_height)
             self.marco_principal.place(relx=0.5, rely=0.5)
+            
             #Reubicacion de los marcos:
             #Marco firstname
             self.marco_firstname.configure(width=235, height=65)
@@ -321,83 +314,71 @@ class FormularioRegistrosDesign():
             self.tablaClientes.column("#5", width=270)
             self.tablaClientes.column("#6", width=270)
             self.tablaClientes.update()
-
-  
         
         else:
+            self.restore_layout()
+    def restore_layout(self):
         # Restaura el tamaño original y la posición centrada del marco principal
-            self.marco_principal.place(relx=0.5, rely=0.5, anchor='center')
-            self.marco_principal.configure(width=self.original_width, height=self.original_height)
-            #Restaurar marcos
-            self.marco_firstname.configure(width=225, height=55)
-            self.marco_firstname.place(x=50, y=50)
-            self.lblclient_firstname.configure(font=("Roboto", 14))
-            self.lblclient_firstname.place(x=5, y=1)
-            self.entryclient_firstname.config(width=30)
-            self.entryclient_firstname.place(x=5, y=25)
-
-            self.marco_lastname.configure(width=225, height=55)
-            self.marco_lastname.place(x=405, y=50)
-            self.lblclient_lastname.configure(font=("Roboto", 14))
-            self.lblclient_lastname.place(x=5,y=1)
-            self.entryclient_lastname.config(width=30)
-            self.entryclient_lastname.place(x=5, y=25)
-
-            self.marco_cedula.configure(width=225, height=55)
-            self.marco_cedula.place(x=50, y=150)
-            self.lblclient_ci.configure(font=("Roboto", 14))
-            self.lblclient_ci.place(x=5, y=1)
-            self.entryclient_ci.config(width=30)
-            self.entryclient_ci.place(x=5, y=25)
-
-            self.marco_mail.configure(width=225, height=55)
-            self.marco_mail.place(x=405, y=150)
-            self.lblclient_mail.configure(font=("Roboto", 14))
-            self.lblclient_mail.place(x=5, y=1)
-            self.entryclient_mail.config(width=30)
-            self.entryclient_mail.place(x=5, y=25)
-
-            self.marco_address.configure(width=225, height=55)
-            self.marco_address.place(x=405, y=255)
-            self.lblclient_address.configure(font=("Roboto", 14))
-            self.lblclient_address.place(x=5, y=1)
-            self.entryclient_address.config(width=30)
-            self.entryclient_address.place(x=5, y=25)
-
-            self.marco_phone.configure(width=225, height=55)
-            self.marco_phone.place(x=50, y=255)
-            self.lblclient_phone.configure(font=("Roboto", 14))
-            self.lblclient_phone.place(x=5, y=1)
-            self.entryclient_phone.config(width=30)
-            self.entryclient_phone.place(x=5, y=25)
-
-
-            self.marco_tabla.configure(width=1080, height=300)
-            self.marco_tabla.place(x=22, y=480)
-            self.buttonSave_client.place(x=15, y=10)
-            self.buttonEdit_client.place(x=190, y=10)
-            self.buttonDelete_client.place(x=345, y=10)
-            self.buttonClean.place(x=520, y=10)
-            self.lblsearch_clients.configure(font=("Roboto", 14))
-            self.lblsearch_clients.place(x=810, y=17)
-            self.entrysearch_clients.place(x=870, y=20)
-            self.tablaClientes.place_forget()
-            self.tablaClientes.place(x=10, y=60)
-            self.scroll.place(x=1057, y=60)
-            self.tablaClientes.column("#0", width=45)
-            self.tablaClientes.column("#1", width=125)
-            self.tablaClientes.column("#2", width=125)
-            self.tablaClientes.column("#3", width=125)
-            self.tablaClientes.column("#4", width=125)
-            self.tablaClientes.column("#5", width=250)
-            self.tablaClientes.column("#6", width=250)
-            self.tablaClientes.update()
-            #Restaurar lbls
-
-
-    
-
-            
+        self.marco_principal.place(relx=0.5, rely=0.5, anchor='center')
+        self.marco_principal.configure(width=self.original_width, height=self.original_height)
+        #Restaurar marcos
+        self.marco_firstname.configure(width=225, height=55)
+        self.marco_firstname.place(x=50, y=50)
+        self.lblclient_firstname.configure(font=("Roboto", 14))
+        self.lblclient_firstname.place(x=5, y=1)
+        self.entryclient_firstname.config(width=30)
+        self.entryclient_firstname.place(x=5, y=25)
+        self.marco_lastname.configure(width=225, height=55)
+        self.marco_lastname.place(x=405, y=50)
+        self.lblclient_lastname.configure(font=("Roboto", 14))
+        self.lblclient_lastname.place(x=5,y=1)
+        self.entryclient_lastname.config(width=30)
+        self.entryclient_lastname.place(x=5, y=25)
+        self.marco_cedula.configure(width=225, height=55)
+        self.marco_cedula.place(x=50, y=150)
+        self.lblclient_ci.configure(font=("Roboto", 14))
+        self.lblclient_ci.place(x=5, y=1)
+        self.entryclient_ci.config(width=30)
+        self.entryclient_ci.place(x=5, y=25)
+        self.marco_mail.configure(width=225, height=55)
+        self.marco_mail.place(x=405, y=150)
+        self.lblclient_mail.configure(font=("Roboto", 14))
+        self.lblclient_mail.place(x=5, y=1)
+        self.entryclient_mail.config(width=30)
+        self.entryclient_mail.place(x=5, y=25)
+        self.marco_address.configure(width=225, height=55)
+        self.marco_address.place(x=405, y=255)
+        self.lblclient_address.configure(font=("Roboto", 14))
+        self.lblclient_address.place(x=5, y=1)
+        self.entryclient_address.config(width=30)
+        self.entryclient_address.place(x=5, y=25)
+        self.marco_phone.configure(width=225, height=55)
+        self.marco_phone.place(x=50, y=255)
+        self.lblclient_phone.configure(font=("Roboto", 14))
+        self.lblclient_phone.place(x=5, y=1)
+        self.entryclient_phone.config(width=30)
+        self.entryclient_phone.place(x=5, y=25)
+        self.marco_tabla.configure(width=1080, height=300)
+        self.marco_tabla.place(x=22, y=480)
+        self.buttonSave_client.place(x=15, y=10)
+        self.buttonEdit_client.place(x=190, y=10)
+        self.buttonDelete_client.place(x=345, y=10)
+        self.buttonClean.place(x=520, y=10)
+        self.lblsearch_clients.configure(font=("Roboto", 14))
+        self.lblsearch_clients.place(x=810, y=17)
+        self.entrysearch_clients.place(x=870, y=20)
+        self.tablaClientes.place_forget()
+        self.tablaClientes.place(x=10, y=60)
+        self.scroll.place(x=1057, y=60)
+        self.tablaClientes.column("#0", width=45)
+        self.tablaClientes.column("#1", width=125)
+        self.tablaClientes.column("#2", width=125)
+        self.tablaClientes.column("#3", width=125)
+        self.tablaClientes.column("#4", width=125)
+        self.tablaClientes.column("#5", width=250)
+        self.tablaClientes.column("#6", width=250)
+        self.tablaClientes.update()
+            #Restaurar lbls      
     def check_entry_content(self, event=None):
         # Conectar a la base de datos
         self.connection = sqlite3.connect('database/database.db')
