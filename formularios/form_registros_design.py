@@ -236,7 +236,7 @@ class FormularioRegistrosDesign():
         heighter = event.height
 
         if self.width_screen >= 1440 and self.height_screen >= 900:
-        # Ajusta el tamaño del marco principal al 90% del ancho y alto de la ventana
+        #· Ajusta el tamaño del marco principal al 90% del ancho y alto de la ventana
             new_width = widther * 0.9
             new_height = heighter * 0.9
 
