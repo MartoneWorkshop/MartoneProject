@@ -201,20 +201,19 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.menu_lateral.pack(side=tk.LEFT, fill='y')
 
     def check_size(self):
-        width_screen = self.cuerpo_principal.winfo_width()
-        height_screen = self.cuerpo_principal.winfo_height()
+        width_screen = self.winfo_width()
+        height_screen = self.winfo_height()
     
-        return width_screen, height_screen    
+        return width_screen, height_screen
     def abrir_registros_clientes(self):
         self.limpiar_panel(self.cuerpo_principal)
         width_screen, height_screen = self.check_size()
+        if width_screen > 1440 and height_screen > 900:
+            FormularioRegistrosDesign(self.cuerpo_principal, width_screen, height_screen).call_resize(width_screen, height_screen)
+        elif width_screen <= 1440 and height_screen <= 900:
+            FormularioRegistrosDesign(self.cuerpo_principal,width_screen, height_screen)
 
-        if width_screen >= 1440 and height_screen >= 900:
-            if hasattr(FormularioRegistrosDesign, 'on_resize'):
-                FormularioRegistrosDesign(self.cuerpo_principal, width_screen, height_screen).on_resize(event=None)      
-        else:
-            FormularioRegistrosDesign(self.cuerpo_principal)
-        
+
     def abrir_home(self):   
         self.limpiar_panel(self.cuerpo_principal)     
         FormularioHomeDesign(self.cuerpo_principal,self.bg) 
