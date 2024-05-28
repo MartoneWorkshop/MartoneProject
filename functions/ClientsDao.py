@@ -12,6 +12,10 @@ def EditClient(clients, id_client):
     except Exception as e:
         conexion.cerrarConexion()
         error_advice()
+        mensaje = f'Error en EditClient, ClientsDao: {str(e)}'
+        with open('error_log.txt', 'a') as file:
+            file.write(mensaje + '\n')
+
 def SaveClient(clients):
     conexion = ConexionDB()
     sql = f"""INSERT INTO Clients (client_firstname, client_lastname, client_ci, client_phone, client_address, client_mail, activo)
@@ -24,6 +28,9 @@ def SaveClient(clients):
     except Exception as e:
         conexion.cerrarConexion()
         error_advice()
+        mensaje = f'Error en SaveClient, ClientsDao: {str(e)}'
+        with open('error_log.txt', 'a') as file:
+            file.write(mensaje + '\n')
 
 def listarCliente():
     conexion = ConexionDB()
@@ -37,6 +44,9 @@ def listarCliente():
     except Exception as e:
         conexion.cerrarConexion()
         error_advice()
+        mensaje = f'Error en listarCliente, ClientsDao: {str(e)}'
+        with open('error_log.txt', 'a') as file:
+            file.write(mensaje + '\n')
     return listaCliente
 
 def clientArchived():
@@ -50,6 +60,9 @@ def clientArchived():
     except Exception as e:
         conexion.cerrarConexion()
         error_advice()
+        mensaje = f'Error en clientArchived, ClientsDao: {str(e)}'
+        with open('error_log.txt', 'a') as file:
+            file.write(mensaje + '\n')
     return listaCliente    
 
 def consulClient(where):
@@ -61,8 +74,10 @@ def consulClient(where):
         listaCliente = conexion.cursor.fetchall()
         conexion.cerrarConexion()
     except Exception as e:
-        conexion.cerrarConexion()
         error_advice()
+        mensaje = f'Error en consulClient, ClientsDao: {str(e)}'
+        with open('error_log.txt', 'a') as file:
+            file.write(mensaje + '\n')
     return listaCliente
 
 def client_Delete(id_client):
@@ -74,8 +89,11 @@ def client_Delete(id_client):
         delete_advice()
 
     except Exception as e:
-        conexion.cerrarConexion()
         error_advice()
+        conexion.cerrarConexion()
+        mensaje = f'Error en client_Delete, ClientsDao: {str(e)}'
+        with open('error_log.txt', 'a') as file:
+            file.write(mensaje + '\n')
 
 
 

@@ -551,21 +551,26 @@ class FormularioRegistrosDesign():
 
 
     def GuardarCliente(self):
-
-        clients = Clients(
-            self.svclient_firstname.get(),
-            self.svclient_lastname.get(),
-            self.svclient_ci.get(),
-            self.svclient_phone.get(),
-            self.svclient_address.get(),
-            self.svclient_mail.get()
-        )
-        if self.id_client is None:
-            SaveClient(clients)
-        else:
-            EditClient(clients, self.id_client)
-        self.Depurador()
-        self.listarClientesEnTabla()
+        try:
+            clients = Clients(
+                self.svclient_firstname.get(),
+                self.svclient_lastname.get(),
+                self.svclient_ci.get(),
+                self.svclient_phone.get(),
+                self.svclient_address.get(),
+                self.svclient_mail.get()
+            )
+            if self.id_client is None:
+                SaveClient(clients)
+            else:
+                EditClient(clients, self.id_client)
+            self.Depurador()
+            self.listarClientesEnTabla()
+        except Exception as e:
+            error_advice()
+            mensaje = f'Error en GuardarCliente, form_registros_design: {str(e)}'
+            with open('error_log.txt', 'a') as file:
+                file.write(mensaje + '\n')
     
     def eliminarCliente(self):
         try:
@@ -576,22 +581,30 @@ class FormularioRegistrosDesign():
             self.id_client = None
 
         except Exception as e:
-            title = 'Error de Sistema'
-            mensaje = f'Error en EliminarCliente: {str(e)}'
-            messagebox.showerror = (title, mensaje) 
+            error_advice()
+            mensaje = f'Error en eliminarCliente, form_registros_design: {str(e)}'
+            with open('error_log.txt', 'a') as file:
+                file.write(mensaje + '\n')
         
     def listarClientesEnTabla(self, where=None):
-    # Limpiar la tabla existente
-        self.tablaClientes.delete(*self.tablaClientes.get_children())
+        try:
+        # Limpiar la tabla existente
+            self.tablaClientes.delete(*self.tablaClientes.get_children())
 
-        if where is not None and len(where) > 0:
-            self.listaCliente = consulClient(where)
-        else:
-            self.listaCliente = listarCliente()
-            self.listaCliente.reverse()
+            if where is not None and len(where) > 0:
+                self.listaCliente = consulClient(where)
+            else:
+                self.listaCliente = listarCliente()
+                self.listaCliente.reverse()
 
-        for p in self.listaCliente:
-            self.tablaClientes.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6]))
+            for p in self.listaCliente:
+                self.tablaClientes.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6]))
+        except Exception as e:
+            error_advice()
+            mensaje = f'Error en listarClientesEnTabla, form_registros_design: {str(e)}'
+            with open('error_log.txt', 'a') as file:
+                file.write(mensaje + '\n')
+
 
     def editarCliente(self):
         try:
@@ -613,6 +626,9 @@ class FormularioRegistrosDesign():
 
         except Exception as e:
             error_advice()
+            mensaje = f'Error en editarCliente, form_registros_design: {str(e)}'
+            with open('error_log.txt', 'a') as file:
+                file.write(mensaje + '\n')
 
     def Depurador(self):
         self.svclient_firstname.set('')
