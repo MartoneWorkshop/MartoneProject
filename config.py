@@ -2,7 +2,7 @@ from PIL import Image, ImageTk
 
 #Colores
 #FRAME PRINCIPAL
-COLOR_FONDO = "white" #f1faff
+COLOR_FONDO = "white" #f1faf
 
 #NO SE DE DONDE ES
 COLOR_BOTON_CURSOR_ENCIMA = "#4d4ce5" #38a2eb
