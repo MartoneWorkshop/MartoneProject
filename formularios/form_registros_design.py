@@ -4,7 +4,7 @@ import customtkinter
 from customtkinter import CTkFont
 from functions.ClientsDao import Clients, SaveClient, listarCliente, client_Delete, consulClient, EditClient
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice    
-from config import COLOR_BOTON_CURSOR_ENCIMA, COLOR_MENU_LATERAL, COLOR_BOTON_CURSOR_FUERA, COLOR_FG, COLOR_TEXTO, COLOR_HOVER
+from config import COLOR_BOTON_CURSOR_ENCIMA, COLOR_MENU_LATERAL, COLOR_BOTON_CURSOR_FUERA, COLOR_FG, COLOR_TEXTO, COLOR_HOVER, COLOR_FONDO
 from tkinter import Image, ttk, messagebox, Canvas
 import PIL
 import util.util_imagenes as util_img 
@@ -32,10 +32,10 @@ class FormularioRegistrosDesign():
         self.barra_superior.pack(side=tk.TOP, fill=tk.X, expand=False)
 
         # Crear paneles: barra inferiorw
-        self.panel_principal = tk.Frame(cuerpo_principal, bg="white")
+        self.panel_principal = tk.Frame(cuerpo_principal, bg=COLOR_FONDO)
         self.panel_principal.pack(side=tk.BOTTOM, fill='both', expand=True)    
         
-        self.marco_principal = customtkinter.CTkFrame(cuerpo_principal, fg_color="red", width=1120, height=800)
+        self.marco_principal = customtkinter.CTkFrame(cuerpo_principal, fg_color="#F1EFED", width=1120, height=800)
         self.marco_principal.place(relx=0.5, rely=0.5, anchor="center")
 
         

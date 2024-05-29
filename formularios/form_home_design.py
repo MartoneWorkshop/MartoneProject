@@ -27,3 +27,4 @@ class FormularioHomeDesign():
         self.label_imagen.config(fg="#fff", font=("Roboto", 10), bg=COLOR_FONDO)
         
         
+        

@@ -15,9 +15,9 @@ from pystray import MenuItem as item, Icon
 
 from formularios.form_registros_design import FormularioRegistrosDesign
 from formularios.form_home_design import FormularioHomeDesign
+from formularios.form_login import FormLogin
 
 class FormularioMaestroDesign(customtkinter.CTk):
-
     def __init__(self):
         super().__init__()
         self.logo = util_img.leer_imagen("./imagenes/logo.png", (590, 423))
@@ -191,7 +191,11 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.binding_hover_submenu_event(self.buttonHistoria)
 
     def controles_cuerpo(self):
-        self.abrir_home()
+        self.abrir_login()
+
+    def abrir_login(self):   
+        self.limpiar_panel(self.cuerpo_principal)     
+        FormLogin(self.cuerpo_principal) 
 
     def toggle_panel(self):
         # Alternar visibilidad del menú lateral
