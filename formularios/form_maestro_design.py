@@ -22,10 +22,10 @@ class FormularioMaestroDesign(customtkinter.CTk):
         super().__init__()
         self.logo = util_img.leer_imagen("./imagenes/logo.png", (590, 423))
         self.bg = util_img.leer_imagen("./imagenes/bg.jpg", (1440, 900))
-        self.perfil = util_img.leer_imagen("./imagenes/Perfil.png", (100, 100))
+        self.perfil = util_img.leer_imagen("./imagenes/Logo_Ico.ico", (100, 100))
         
         self.w, self.h = 1440, 900
-        self.title("Martone Workshop - Registro")
+        self.title("Policlinica de Especialidades - Gestion de Inventario")
         self.config_window()
         self.paneles()
         self.controles_barra_superior()        
@@ -37,7 +37,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.set_window_icon()
         self.w, self.h = 1440, 900
         self.geometry(f"{self.w}x{self.h}")
-        self.iconbitmap("./imagenes/logo.ico")   
+        self.iconbitmap("./imagenes/Logo_Ico.ico")   
         util_ventana.centrar_ventana(self, self.w, self.h)
 
     def paneles(self):        
@@ -128,7 +128,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.informes_icon = ImageTk.PhotoImage(informes_resized)
         self.settings_icon = ImageTk.PhotoImage(settings_resized)
         #BOTONES DEL MENU
-        self.buttonHome = tk.Button(self.menu_lateral, text="Home", font=("Roboto", 16), image=self.home_icon, highlightthickness=20, width=ANCHO_MENU,
+        self.buttonHome = tk.Button(self.menu_lateral, text="Inicio", font=("Roboto", 16), image=self.home_icon, highlightthickness=20, width=ANCHO_MENU,
             height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.abrir_home)
         self.buttonHome.pack()
 
