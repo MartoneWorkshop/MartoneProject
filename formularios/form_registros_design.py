@@ -232,7 +232,6 @@ class FormularioRegistrosDesign():
     def call_resize(self, width_screen, height_screen):
         self.width_screen = width_screen
         self.height_screen = height_screen
-        print(width_screen, height_screen)
         new_width = 1548
         new_height =  873.9
         # Coloca e l marco principal en las coordenadas calculadas para centrarlo
