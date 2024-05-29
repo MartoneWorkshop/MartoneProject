@@ -22,7 +22,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         super().__init__()
         self.logo = util_img.leer_imagen("./imagenes/logo.png", (590, 423))
         self.bg = util_img.leer_imagen("./imagenes/bg.jpg", (1440, 900))
-        self.perfil = util_img.leer_imagen("./imagenes/Logo_Ico.ico", (100, 100))
+        self.perfil = util_img.leer_imagen("./imagenes/logo.png", (100, 100))
         
         self.w, self.h = 1440, 900
         self.title("Policlinica de Especialidades - Gestion de Inventario")
@@ -54,8 +54,8 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.cuerpo_principal.pack(side=tk.RIGHT, fill='both', expand=True)
 
     def set_window_icon(self):
-        icon_path = "imagenes/logo.ico"  # Ruta del archivo de icono
-        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("martoneworkshop")  # Cambia "myappid" por un identificador único para tu aplicación
+        icon_path = "imagenes/logo_ico.ico"  # Ruta del archivo de icono
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("PECA-GesInv")  # Cambia "myappid" por un identificador único para tu aplicación
         self.iconbitmap(icon_path)
 
     def on_exit(icon, item):
@@ -66,7 +66,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         font_awesome = customtkinter.CTkFont(family='Roboto', size=12)
 
         # Etiqueta de título
-        self.labelTitulo = customtkinter.CTkLabel(self.barra_superior, text="Martone Workshop", font=font_awesome,padx=20, text_color="white")
+        self.labelTitulo = customtkinter.CTkLabel(self.barra_superior, text="Gestion de Inventario", font=font_awesome,padx=20, text_color="white")
         self.labelTitulo.configure(fg_color="transparent", font=(
             "Roboto", 15), bg_color='transparent', pady=10, width=16)
         self.labelTitulo.pack(side=tk.LEFT)
