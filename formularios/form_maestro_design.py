@@ -18,8 +18,6 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.logo = util_img.leer_imagen("./imagenes/logo.png", (590, 423))
         self.bg = util_img.leer_imagen("./imagenes/bg.jpg", (1440, 900))
         self.perfil = util_img.leer_imagen("./imagenes/logo.png", (100, 100))
-        
-        self.w, self.h = 1440, 900
         self.title("Policlinica de Especialidades - Gestion de Inventario")
         self.config_window()
         self.paneles()
@@ -30,8 +28,9 @@ class FormularioMaestroDesign(customtkinter.CTk):
     def config_window(self):
         # Configuración inicial de la ventana
         self.set_window_icon()
-        self.w, self.h = 1440, 900
+        self.w, self.h = 800, 600
         self.geometry(f"{self.w}x{self.h}")
+        self.resizable(False, False)
         self.iconbitmap("./imagenes/Logo_Ico.ico")   
         util_ventana.centrar_ventana(self, self.w, self.h)
     def paneles(self):        
@@ -67,7 +66,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                                         command=self.toggle_panel, bg_color='transparent', fg_color='transparent', hover=False, width=WIDTH_LOGO, height=HEIGHT_LOGO)
         self.buttonMenuLateral.pack(side=tk.LEFT, padx=20)
 
-    def controles_menu_lateral(self):
+    def controles_menu_lateral(self, datauser):
         self.id_client = None
         # ESTO AUN NO ESTA DEFINIDO
         self.labelPerfil = tk.Label(self.menu_lateral, image=self.perfil, bg=COLOR_MENU_LATERAL)
@@ -80,7 +79,8 @@ class FormularioMaestroDesign(customtkinter.CTk):
         historia_image = Image.open("imagenes/history.png")
         database_image = Image.open("imagenes/database.png")
         informes_image = Image.open("imagenes/reporte.png")
-        settings_image = Image.open("imagenes/settings.png")    
+        settings_image = Image.open("imagenes/settings.png")   
+
         #IMAGENES RENDERIZADAS
         home_resized = home_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         registros_resized = registros_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
@@ -100,18 +100,25 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.informes_icon = ImageTk.PhotoImage(informes_resized)
         self.settings_icon = ImageTk.PhotoImage(settings_resized)
         #BOTONES DEL MENU
+
+        idrol = obtener_idrol(datauser)
+        
         self.buttonHome = tk.Button(self.menu_lateral, text="Inicio", font=("Roboto", 16), image=self.home_icon, highlightthickness=20, width=ANCHO_MENU,
             height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.abrir_home)
         self.buttonHome.pack()
+
         self.buttonRegistro = tk.Button(self.menu_lateral, text="Registros", font=("Roboto", 16), image=self.registros_icon, highlightthickness=20, width=ANCHO_MENU,
             height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.submenu_registros)
         self.buttonRegistro.pack() 
+
         self.buttonDatabase = tk.Button(self.menu_lateral, text="Database",  font=("Roboto", 16),image=self.database_icon, highlightthickness=20, width=ANCHO_MENU,
             height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10)
         self.buttonDatabase.pack()
+
         self.buttonInformes = tk.Button(self.menu_lateral, text="Informes",  font=("Roboto", 16),image=self.informes_icon, highlightthickness=20, width=ANCHO_MENU,
             height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10)        
         self.buttonInformes.pack() 
+        
         self.buttonSettings = tk.Button(self.menu_lateral, text="Settings",  font=("Roboto", 16),image=self.settings_icon, highlightthickness=20, width=ANCHO_MENU,
             height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10)
         self.buttonSettings.pack()
@@ -144,6 +151,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.buttonHistoria = tk.Button(self.menu_lateral, text="Historia", font=("Roboto", 12), image=self.historia_icon, highlightthickness=20, width=ANCHO_MENU,
         bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
             self.buttonHistoria.pack()
+            
         self.buttonDatabase.pack()
         self.buttonInformes.pack()
         self.buttonSettings.pack()
@@ -157,60 +165,109 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.menu_lateral.pack_forget()
 
     def seccion_login(self):
+        ############# INICIALIZACION DE LA IMAGEN DE FONDO AUTOEXPANDIBLE #############
+        ruta_imagen = "imagenes/bg.jpg"
+        # Cargar la imagen
+        imagen = Image.open(ruta_imagen)
+        imagen_tk = ImageTk.PhotoImage(imagen)
+        self.imagen_tk = imagen_tk
+        # Crear el Label con la imagen de fondo
+        label_fondo = tk.Label(self.cuerpo_principal, image=imagen_tk)
+        label_fondo.place(x=0, y=0, relwidth=1, relheight=1)
+        self.label_fondo = label_fondo
+        # Configurar el Label para que se ajuste automáticamente al tamaño del frame
+        def ajustar_imagen(event):
+            # Cambiar el tamaño de la imagen para que coincida con el tamaño del frame
+            nueva_imagen = imagen.resize((event.width, event.height))
+            nueva_imagen_tk = ImageTk.PhotoImage(nueva_imagen)
+            self.imagen_tk = nueva_imagen_tk
+            # Actualizar la imagen en el Label de fondo
+            label_fondo.config(image=nueva_imagen_tk)
+        
+        self.cuerpo_principal.bind("<Configure>", ajustar_imagen)
 
         def validarDatos():
             conexion = ConexionDB()
             username = sv_datauser.get()
             password = sv_datapass.get()
 
-            sql = f"SELECT pass FROM usuarios WHERE username = '{username}' AND pass = '{password}'"
+            sql = f"SELECT * FROM usuarios WHERE username = '{username}' AND pass = '{password}'"
             conexion.ejecutar_consulta(sql)
             resultado = conexion.obtener_resultado()
             
 
             if resultado:
+
+                usuario = resultado[0]['username']
+                contrasena = resultado[0]['pass']
+                idrol = resultado[0]['idrol']
+                activo = resultado[0]['activo']
+
                 title = 'Log In Success'
                 mensaje = 'Datos validados correctamente.'
                 messagebox.showinfo(title, mensaje)
+
+                datauser = {
+                    'username': usuario,
+                    'pass': contrasena,
+                    'idrol': idrol,
+                    'activo': activo
+                }
 
                 self.barra_superior.pack(side=tk.TOP, fill='both')
                 self.menu_lateral.pack(side=tk.LEFT, fill='both', expand=False)
                 self.cuerpo_principal.destroy()
                 self.cuerpo_principal = tk.Frame(self, bg=COLOR_FONDO)
                 self.cuerpo_principal.pack(side=tk.RIGHT, fill='both', expand=True)
-                self.abrir_home()
-                
-
+                self.w, self.h = 1440, 900
+                self.geometry(f"{self.w}x{self.h}")
+                self.resizable(True, True)
+                util_ventana.centrar_ventana(self, self.w, self.h)
+                self.abrir_home(datauser)
             else:
                 title = 'Log In Fail'
                 mensaje = 'Datos validados incorrectamente.'
                 messagebox.showerror(title, mensaje)
 
-        marco_login = customtkinter.CTkFrame(self.cuerpo_principal, fg_color="#F1EFED", width=1120, height=600)
+        marco_login = customtkinter.CTkFrame(self.cuerpo_principal, fg_color="#F1EFED", width=400, height=300)
         marco_login.place(relx=0.5, rely=0.5, anchor="center")
+
+        #Label de bienvenida
+        lblwelcome = customtkinter.CTkLabel(self.cuerpo_principal, text="Policlinica de Especialidades - Gestion de Inventario", font=("Roboto", 15), bg_color="#e5e5e3")
+        lblwelcome.place(x=412, y=40, anchor="center")
+        
+        #Iconos
+        user_ico = Image.open("imagenes/user.png")
+        user_ico = user_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
+        user_img = ImageTk.PhotoImage(user_ico)
+
+        pass_ico = Image.open("imagenes/pass.png")
+        pass_ico = pass_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
+        pass_img = ImageTk.PhotoImage(pass_ico)
+
         #LOGIN USER
-        lbluser = tk.Label(marco_login, text="Usuario: ")
+        lbluser = customtkinter.CTkLabel(self.cuerpo_principal, text="", image=user_img)
         lbluser.pack(pady=1, padx=6)
-        lbluser.place(x=450, y=154)
+        lbluser.place(x=290, y=215)
 
         sv_datauser = customtkinter.StringVar()
-        entryuser = customtkinter.CTkEntry(marco_login, textvariable=sv_datauser, width=100)
-        entryuser.place(x=525, y=150)
+        entryuser = customtkinter.CTkEntry(self.cuerpo_principal, textvariable=sv_datauser, width=150)
+        entryuser.place(x=340, y=215)
 
         #LOGIN PASSWORD
-        lblpass = tk.Label(marco_login, text="Contraseña: ")
+        lblpass = customtkinter.CTkLabel(self.cuerpo_principal, text="", image=pass_img)
         lblpass.pack(pady=1, padx=6)
-        lblpass.place(x=450, y=194)
+        lblpass.place(x=290, y=285)
 
         sv_datapass = customtkinter.StringVar()
-        entrypass = customtkinter.CTkEntry(marco_login, textvariable=sv_datapass, show="*", width=100)
-        entrypass.place(x=525, y=190)
+        entrypass = customtkinter.CTkEntry(self.cuerpo_principal, textvariable=sv_datapass, show="*", width=150)
+        entrypass.place(x=340, y=285)
         entrypass.bind("<Return>", lambda event: validarDatos())
         
         #LOGIN BOTON
-        btnLogIn = customtkinter.CTkButton(marco_login, text="Ingresar", width=60, command=validarDatos)
+        btnLogIn = customtkinter.CTkButton(self.cuerpo_principal, text="Iniciar Sesion", width=100, command=validarDatos, fg_color="#4d4ce5", hover_color="#3b3bb2", text_color="white")
         btnLogIn.pack(pady=12, padx=5)
-        btnLogIn.place(x=500, y=235)
+        btnLogIn.place(x=360, y=355)
 
 
 
@@ -232,24 +289,31 @@ class FormularioMaestroDesign(customtkinter.CTk):
             FormularioRegistrosDesign(self.cuerpo_principal, width_screen, height_screen).call_resize(width_screen, height_screen)
         elif width_screen <= 1440 and height_screen <= 900:
             FormularioRegistrosDesign(self.cuerpo_principal,width_screen, height_screen)
-    def abrir_home(self):   
-        self.limpiar_panel(self.cuerpo_principal)     
-        FormularioHomeDesign(self.cuerpo_principal,self.bg) 
+    def abrir_home(self, username):   
+        self.limpiar_panel(self.cuerpo_principal)
+        FormularioHomeDesign(self.cuerpo_principal, self.bg, username) 
+        
     def limpiar_panel(self, panel):
     # Función para limpiar el contenido del panel
         for widget in panel.winfo_children():
             widget.destroy()
+
     def binding_hover_event(self, button):
         button.bind("<Enter>", lambda event: self.on_enter(event, button))
         button.bind("<Leave>", lambda event: self.on_leave(event, button))
+
     def on_enter(self, event, button):
         button.config(bg=COLOR_MENU_CURSOR_ENCIMA, fg='white', anchor="w")
+
     def on_leave(self, event, button):
         button.config(bg=COLOR_MENU_LATERAL, fg='white', anchor="w")
+
     def binding_hover_submenu_event(self, button):
         button.bind("<Enter>", lambda event: self.submenu_on_enter(event, button))
         button.bind("<Leave>", lambda event: self.submenu_on_leave(event, button))
+
     def submenu_on_enter(self, event, button):
         button.config(bg=COLOR_SUBMENU_CURSOR_ENCIMA, fg='white', anchor="w", height=ALTO_MENU)
+
     def submenu_on_leave(self, event, button):
         button.config(bg=COLOR_SUBMENU_LATERAL, fg='white', anchor="w", height=MITAD_MENU)

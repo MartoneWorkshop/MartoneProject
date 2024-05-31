@@ -5,7 +5,7 @@ from config import  COLOR_FONDO
 
 class FormularioHomeDesign():
 
-    def __init__(self, cuerpo_principal, bg):
+    def __init__(self, cuerpo_principal, bg, username):
 
         # Crear paneles: barra superior
         self.barra_superior = tk.Frame(cuerpo_principal)
@@ -25,6 +25,9 @@ class FormularioHomeDesign():
         self.label_imagen = tk.Label(self.barra_inferior, image=bg)
         self.label_imagen.place(x=0, y=0, relwidth=1, relheight=1)
         self.label_imagen.config(fg="#fff", font=("Roboto", 10), bg=COLOR_FONDO)
+
+        self.label_username = tk.Label(cuerpo_principal, text=username)
+        self.label_username.place(x=20, y=25)
         
         
         
