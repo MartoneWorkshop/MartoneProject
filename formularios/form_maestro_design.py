@@ -4,6 +4,7 @@ from config import COLOR_BARRA_SUPERIOR, COLOR_MENU_LATERAL, COLOR_FONDO, COLOR_
 from PIL import Image, ImageTk
 import util.util_ventana as util_ventana
 import util.util_imagenes as util_img
+from util.util_alerts import edit_advice, error_advice, save_advice, delete_advice
 from customtkinter import *
 import customtkinter
 import ctypes
@@ -21,8 +22,8 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.title("Policlinica de Especialidades - Gestion de Inventario")
         self.config_window()
         self.paneles()
+        #self.controles_menu_lateral()
         self.controles_barra_superior()
-        self.controles_menu_lateral()
         self.controles_cuerpo()
     
     def config_window(self):
@@ -66,7 +67,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                                         command=self.toggle_panel, bg_color='transparent', fg_color='transparent', hover=False, width=WIDTH_LOGO, height=HEIGHT_LOGO)
         self.buttonMenuLateral.pack(side=tk.LEFT, padx=20)
 
-    def controles_menu_lateral(self, datauser):
+    def controles_menu_lateral(self, permisos):
         self.id_client = None
         # ESTO AUN NO ESTA DEFINIDO
         self.labelPerfil = tk.Label(self.menu_lateral, image=self.perfil, bg=COLOR_MENU_LATERAL)
@@ -101,64 +102,46 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.settings_icon = ImageTk.PhotoImage(settings_resized)
         #BOTONES DEL MENU
 
-        idrol = obtener_idrol(datauser)
-        
-        self.buttonHome = tk.Button(self.menu_lateral, text="Inicio", font=("Roboto", 16), image=self.home_icon, highlightthickness=20, width=ANCHO_MENU,
-            height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.abrir_home)
-        self.buttonHome.pack()
-
-        self.buttonRegistro = tk.Button(self.menu_lateral, text="Registros", font=("Roboto", 16), image=self.registros_icon, highlightthickness=20, width=ANCHO_MENU,
-            height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.submenu_registros)
-        self.buttonRegistro.pack() 
-
-        self.buttonDatabase = tk.Button(self.menu_lateral, text="Database",  font=("Roboto", 16),image=self.database_icon, highlightthickness=20, width=ANCHO_MENU,
-            height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10)
-        self.buttonDatabase.pack()
-
-        self.buttonInformes = tk.Button(self.menu_lateral, text="Informes",  font=("Roboto", 16),image=self.informes_icon, highlightthickness=20, width=ANCHO_MENU,
-            height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10)        
-        self.buttonInformes.pack() 
-        
-        self.buttonSettings = tk.Button(self.menu_lateral, text="Settings",  font=("Roboto", 16),image=self.settings_icon, highlightthickness=20, width=ANCHO_MENU,
-            height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10)
-        self.buttonSettings.pack()
-        #ASIGNACION DE EFECTOS
-        self.binding_hover_event(self.buttonHome)
-        self.binding_hover_event(self.buttonRegistro)
-        self.binding_hover_event(self.buttonDatabase)
-        self.binding_hover_event(self.buttonInformes)
-        self.binding_hover_event(self.buttonSettings)
-    def submenu_registros(self):
-        self.buttonDatabase.pack_forget()
-        self.buttonInformes.pack_forget()
-        self.buttonSettings.pack_forget()
-        if hasattr(self, "buttonClientes"):
-            self.buttonClientes.pack_forget()
-            del self.buttonClientes
-        if hasattr(self, "buttonEquipos"):
-            self.buttonEquipos.pack_forget()
-            del self.buttonEquipos
-        if hasattr(self, "buttonHistoria"):
-            self.buttonHistoria.pack_forget()
-            del self.buttonHistoria
+        if 'HOME100' in permisos:
+            self.buttonHome = tk.Button(self.menu_lateral, text="Inicio", font=("Roboto", 16), image=self.home_icon, highlightthickness=20, width=ANCHO_MENU,
+                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.abrir_home)
+            self.buttonHome.pack()
+            self.binding_hover_event(self.buttonHome)
         else:
-            self.buttonClientes = tk.Button(self.menu_lateral, text="Clientes", font=("Roboto", 12), image=self.clientes_icon, highlightthickness=20, width=ANCHO_MENU,
-        bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.abrir_registros_clientes)
-            self.buttonClientes.pack()
-            self.buttonEquipos = tk.Button(self.menu_lateral, text="Equipos", font=("Roboto", 12), image=self.equipos_icon, highlightthickness=20, width=ANCHO_MENU,
-        bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
-            self.buttonEquipos.pack()
-            self.buttonHistoria = tk.Button(self.menu_lateral, text="Historia", font=("Roboto", 12), image=self.historia_icon, highlightthickness=20, width=ANCHO_MENU,
-        bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
-            self.buttonHistoria.pack()
-            
-        self.buttonDatabase.pack()
-        self.buttonInformes.pack()
-        self.buttonSettings.pack()
-        self.binding_hover_submenu_event(self.buttonClientes)
-        self.binding_hover_submenu_event(self.buttonEquipos)
-        self.binding_hover_submenu_event(self.buttonHistoria)
+            pass
 
+        if 'REG1000' in permisos:
+            self.buttonRegistro = tk.Button(self.menu_lateral, text="Registros", font=("Roboto", 16), image=self.registros_icon, highlightthickness=20, width=ANCHO_MENU,
+                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command= lambda: self.submenu_registros(permisos))
+            self.buttonRegistro.pack()
+            self.binding_hover_event(self.buttonRegistro) 
+        else:
+            pass
+
+        if 'DATA100' in permisos:
+            self.buttonDatabase = tk.Button(self.menu_lateral, text="Database",  font=("Roboto", 16),image=self.database_icon, highlightthickness=20, width=ANCHO_MENU,
+                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10)
+            self.buttonDatabase.pack()
+            self.binding_hover_event(self.buttonDatabase)
+        else:
+            pass
+        if 'REP100' in permisos:
+            self.buttonInformes = tk.Button(self.menu_lateral, text="Informes",  font=("Roboto", 16),image=self.informes_icon, highlightthickness=20, width=ANCHO_MENU,
+                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10)        
+            self.buttonInformes.pack()
+            self.binding_hover_event(self.buttonInformes)
+        else:
+            pass
+        
+        if 'SET100' in permisos:
+            self.buttonSettings = tk.Button(self.menu_lateral, text="Settings",  font=("Roboto", 16),image=self.settings_icon, highlightthickness=20, width=ANCHO_MENU,
+                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10)
+            self.buttonSettings.pack()
+            self.binding_hover_event(self.buttonSettings)
+        else:
+            pass
+
+            
     def controles_cuerpo(self):    
         self.seccion_login()
         self.barra_superior.pack_forget()
@@ -198,10 +181,10 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
             if resultado:
 
-                usuario = resultado[0]['username']
-                contrasena = resultado[0]['pass']
-                idrol = resultado[0]['idrol']
-                activo = resultado[0]['activo']
+                usuario = resultado[2]
+                contrasena = resultado[3]
+                idrol = resultado[4]
+                activo = resultado[7]
 
                 title = 'Log In Success'
                 mensaje = 'Datos validados correctamente.'
@@ -212,8 +195,8 @@ class FormularioMaestroDesign(customtkinter.CTk):
                     'pass': contrasena,
                     'idrol': idrol,
                     'activo': activo
-                }
-
+                } 
+                self.obtener_idrol(idrol)
                 self.barra_superior.pack(side=tk.TOP, fill='both')
                 self.menu_lateral.pack(side=tk.LEFT, fill='both', expand=False)
                 self.cuerpo_principal.destroy()
@@ -223,7 +206,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.geometry(f"{self.w}x{self.h}")
                 self.resizable(True, True)
                 util_ventana.centrar_ventana(self, self.w, self.h)
-                self.abrir_home(datauser)
+                self.abrir_home()
             else:
                 title = 'Log In Fail'
                 mensaje = 'Datos validados incorrectamente.'
@@ -269,7 +252,70 @@ class FormularioMaestroDesign(customtkinter.CTk):
         btnLogIn.pack(pady=12, padx=5)
         btnLogIn.place(x=360, y=355)
 
+    def obtener_idrol(self, idrol):
+        conexion = ConexionDB()
+        sql = f"SELECT codpermiso FROM asigperm WHERE idrol = '{idrol}'"
+        conexion.ejecutar_consulta(sql)
+        resultados = conexion.obtener_resultados()
+        permisos = []
+        for resultado in resultados:
+            permisos.append(resultado[0])
+        if permisos:
+            self.controles_menu_lateral(permisos)
+            print(permisos)
+        else:
+            return None
+    
+    def submenu_registros(self, permisos):
+        #VERIFICAR LOS PERMISOS Y QUE BOTONES ESTAN DISPONIBLES
+        if 'DATA100' in permisos and 'REP100' in permisos and 'SET100' in permisos:    
+            if 'DATA100' in permisos:
+                self.buttonDatabase.pack_forget()
+            if 'REP100' in permisos:
+                self.buttonInformes.pack_forget()
+            if 'SET100' in permisos:
+                self.buttonSettings.pack_forget()
 
+        if 'MED101' in permisos:
+            if hasattr(self, "buttonClientes"):
+                self.buttonClientes.pack_forget()
+                del self.buttonClientes
+            else:
+                self.buttonClientes = tk.Button(self.menu_lateral, text="Clientes", font=("Roboto", 12), image=self.clientes_icon, highlightthickness=20, width=ANCHO_MENU,
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.abrir_registros_clientes)
+                self.buttonClientes.pack()
+                self.binding_hover_submenu_event(self.buttonClientes)
+        if 'MED102' in permisos:
+            if hasattr(self, "buttonEquipos"):
+                self.buttonEquipos.pack_forget()
+                del self.buttonEquipos
+            else:
+                self.buttonEquipos = tk.Button(self.menu_lateral, text="Equipos", font=("Roboto", 12), image=self.equipos_icon, highlightthickness=20, width=ANCHO_MENU,
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
+                self.buttonEquipos.pack()
+                self.binding_hover_submenu_event(self.buttonEquipos)
+        if 'MED103' in permisos:
+            if hasattr(self, "buttonHistoria"):
+                self.buttonHistoria.pack_forget()
+                del self.buttonHistoria
+            else:
+                self.buttonHistoria = tk.Button(self.menu_lateral, text="Historia", font=("Roboto", 12), image=self.historia_icon, highlightthickness=20, width=ANCHO_MENU,
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
+                self.buttonHistoria.pack()
+                self.binding_hover_submenu_event(self.buttonHistoria)
+        
+        if 'DATA100' in permisos:
+            self.buttonDatabase.pack()
+        else:
+            pass
+        if 'REP100' in permisos:
+            self.buttonInformes.pack()
+        else:
+            pass
+        if 'SET100' in permisos:
+            self.buttonSettings.pack()
+        else:
+            pass
 
     def toggle_panel(self):
         # Alternar visibilidad del menú lateral
@@ -289,9 +335,9 @@ class FormularioMaestroDesign(customtkinter.CTk):
             FormularioRegistrosDesign(self.cuerpo_principal, width_screen, height_screen).call_resize(width_screen, height_screen)
         elif width_screen <= 1440 and height_screen <= 900:
             FormularioRegistrosDesign(self.cuerpo_principal,width_screen, height_screen)
-    def abrir_home(self, username):   
+    def abrir_home(self):   
         self.limpiar_panel(self.cuerpo_principal)
-        FormularioHomeDesign(self.cuerpo_principal, self.bg, username) 
+        FormularioHomeDesign(self.cuerpo_principal, self.bg) 
         
     def limpiar_panel(self, panel):
     # Función para limpiar el contenido del panel

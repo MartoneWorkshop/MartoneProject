@@ -21,3 +21,7 @@ class ConexionDB:
     def obtener_resultado(self):
         resultado = self.cursor.fetchone()
         return resultado
+    
+    def obtener_resultados(self):
+        resultados = self.cursor.fetchall()
+        return resultados
