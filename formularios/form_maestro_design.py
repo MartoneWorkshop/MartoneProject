@@ -1,18 +1,20 @@
 import tkinter as tk
-from tkinter import font
+from tkinter import font, ttk
 from config import COLOR_BARRA_SUPERIOR, COLOR_MENU_LATERAL, COLOR_FONDO, COLOR_MENU_CURSOR_ENCIMA, COLOR_SUBMENU_LATERAL, COLOR_SUBMENU_CURSOR_ENCIMA, ANCHO_MENU, MITAD_MENU, ALTO_MENU, WIDTH_LOGO, HEIGHT_LOGO
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageColor
 import util.util_ventana as util_ventana
 import util.util_imagenes as util_img
-from util.util_alerts import edit_advice, error_advice, save_advice, delete_advice
+from util.util_alerts import edit_advice, error_advice, save_advice, delete_advice, login_correct_advice, login_wrong_advice
 from customtkinter import *
 import customtkinter
 import ctypes
+from ctypes import windll
 from functions.conexion import ConexionDB
 from tkinter import messagebox
 from pystray import MenuItem as item, Icon
 from formularios.form_registros_design import FormularioRegistrosDesign
 from formularios.form_home_design import FormularioHomeDesign
+from formularios.form_users import FormUsers
 class FormularioMaestroDesign(customtkinter.CTk):
     def __init__(self):
         super().__init__()
@@ -69,7 +71,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
     def controles_menu_lateral(self, permisos):
         self.id_client = None
-        # ESTO AUN NO ESTA DEFINIDO
+        # ESTO AUN NO ESTA DEFINIDO42
         self.labelPerfil = tk.Label(self.menu_lateral, image=self.perfil, bg=COLOR_MENU_LATERAL)
         self.labelPerfil.pack(side=tk.TOP, pady=10)
         #RUTAS DE LAS IMAGENES
@@ -80,7 +82,9 @@ class FormularioMaestroDesign(customtkinter.CTk):
         historia_image = Image.open("imagenes/history.png")
         database_image = Image.open("imagenes/database.png")
         informes_image = Image.open("imagenes/reporte.png")
-        settings_image = Image.open("imagenes/settings.png")   
+        settings_image = Image.open("imagenes/settings.png")
+        usuarios_image = Image.open("imagenes/usuarios.png")
+        adjustUser_image = Image.open("imagenes/user_adjust.png")   
 
         #IMAGENES RENDERIZADAS
         home_resized = home_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
@@ -91,6 +95,8 @@ class FormularioMaestroDesign(customtkinter.CTk):
         database_resized = database_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         informes_resized = informes_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         settings_resized = settings_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        usuarios_resized = usuarios_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        adjustUser_resized = adjustUser_image.resize((WIDTH_LOGO, HEIGHT_LOGO)) 
         #IMAGENES FINALES
         self.home_icon = ImageTk.PhotoImage(home_resized)
         self.registros_icon = ImageTk.PhotoImage(registros_resized)
@@ -100,6 +106,8 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.database_icon = ImageTk.PhotoImage(database_resized)
         self.informes_icon = ImageTk.PhotoImage(informes_resized)
         self.settings_icon = ImageTk.PhotoImage(settings_resized)
+        self.usuarios_icon = ImageTk.PhotoImage(usuarios_resized)
+        self.adjustUser_icon = ImageTk.PhotoImage(adjustUser_resized)
         #BOTONES DEL MENU
 
         if 'HOME100' in permisos:
@@ -112,7 +120,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
         if 'REG1000' in permisos:
             self.buttonRegistro = tk.Button(self.menu_lateral, text="Registros", font=("Roboto", 16), image=self.registros_icon, highlightthickness=20, width=ANCHO_MENU,
-                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command= lambda: self.submenu_registros(permisos))
+                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_registros(permisos))
             self.buttonRegistro.pack()
             self.binding_hover_event(self.buttonRegistro) 
         else:
@@ -135,11 +143,16 @@ class FormularioMaestroDesign(customtkinter.CTk):
         
         if 'SET100' in permisos:
             self.buttonSettings = tk.Button(self.menu_lateral, text="Settings",  font=("Roboto", 16),image=self.settings_icon, highlightthickness=20, width=ANCHO_MENU,
-                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10)
+                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10)
             self.buttonSettings.pack()
             self.binding_hover_event(self.buttonSettings)
         else:
             pass
+        if 'USER100' in permisos:
+            self.buttonUsers = tk.Button(self.menu_lateral, text="Usuarios", font=("Roboto", 16), image=self.usuarios_icon, highlightthickness=20, width=ANCHO_MENU,
+                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_usuarios(permisos))
+            self.buttonUsers.pack()
+            self.binding_hover_event(self.buttonUsers)
 
             
     def controles_cuerpo(self):    
@@ -186,9 +199,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 idrol = resultado[4]
                 activo = resultado[7]
 
-                title = 'Log In Success'
-                mensaje = 'Datos validados correctamente.'
-                messagebox.showinfo(title, mensaje)
+                login_correct_advice()
 
                 datauser = {
                     'username': usuario,
@@ -208,13 +219,22 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 util_ventana.centrar_ventana(self, self.w, self.h)
                 self.abrir_home()
             else:
-                title = 'Log In Fail'
-                mensaje = 'Datos validados incorrectamente.'
-                messagebox.showerror(title, mensaje)
+                login_wrong_advice()
 
-        marco_login = customtkinter.CTkFrame(self.cuerpo_principal, fg_color="#F1EFED", width=400, height=300)
+        def set_opacity(widget, value: float):
+            widget = widget.winfo_id()
+            value = int(255*value) # value from 0 to 1
+            wnd_exstyle = windll.user32.GetWindowLongA(widget, -20)
+            new_exstyle = wnd_exstyle | 0x00080000  
+            windll.user32.SetWindowLongA(widget, -20, new_exstyle)  
+            windll.user32.SetLayeredWindowAttributes(widget, 0, value, 2)
+
+        marco_login = customtkinter.CTkFrame(self.cuerpo_principal, fg_color="white", width=300, height=250)
         marco_login.place(relx=0.5, rely=0.5, anchor="center")
 
+        set_opacity(marco_login, 0.8)
+        
+        
         #Label de bienvenida
         lblwelcome = customtkinter.CTkLabel(self.cuerpo_principal, text="Policlinica de Especialidades - Gestion de Inventario", font=("Roboto", 15), bg_color="#e5e5e3")
         lblwelcome.place(x=412, y=40, anchor="center")
@@ -229,28 +249,36 @@ class FormularioMaestroDesign(customtkinter.CTk):
         pass_img = ImageTk.PhotoImage(pass_ico)
 
         #LOGIN USER
-        lbluser = customtkinter.CTkLabel(self.cuerpo_principal, text="", image=user_img)
+        lbluser = customtkinter.CTkLabel(self.cuerpo_principal, text="", image=user_img, bg_color="white")
         lbluser.pack(pady=1, padx=6)
         lbluser.place(x=290, y=215)
+        
+        set_opacity(lbluser, 0.8)
 
         sv_datauser = customtkinter.StringVar()
-        entryuser = customtkinter.CTkEntry(self.cuerpo_principal, textvariable=sv_datauser, width=150)
-        entryuser.place(x=340, y=215)
+        #entryuser = customtkinter.CTkEntry(self.cuerpo_principal, textvariable=sv_datauser, width=150)
+        #
+        style = ttk.Style()
+        style.configure("Custom.TEntry", borderwidth=0)
 
+        entryuser = ttk.Entry(self.cuerpo_principal, textvariable=sv_datauser, width=16, font=("Arial", 12), style="Custom.TEntry", justify="center")
+        entryuser.place(x=340, y=215)
         #LOGIN PASSWORD
-        lblpass = customtkinter.CTkLabel(self.cuerpo_principal, text="", image=pass_img)
+        lblpass = customtkinter.CTkLabel(self.cuerpo_principal, text="", image=pass_img, bg_color="white")
         lblpass.pack(pady=1, padx=6)
         lblpass.place(x=290, y=285)
 
+        set_opacity(lblpass, 0.8)
+
         sv_datapass = customtkinter.StringVar()
-        entrypass = customtkinter.CTkEntry(self.cuerpo_principal, textvariable=sv_datapass, show="*", width=150)
+        #entrypass = customtkinter.CTkEntry(self.cuerpo_principal, textvariable=sv_datapass, show="*", width=150)
+        entrypass = ttk.Entry(self.cuerpo_principal, textvariable=sv_datapass, width=16, font=("Arial", 13), style="Custom.TEntry", show="*", justify="center")
         entrypass.place(x=340, y=285)
         entrypass.bind("<Return>", lambda event: validarDatos())
         
         #LOGIN BOTON
-        btnLogIn = customtkinter.CTkButton(self.cuerpo_principal, text="Iniciar Sesion", width=100, command=validarDatos, fg_color="#4d4ce5", hover_color="#3b3bb2", text_color="white")
-        btnLogIn.pack(pady=12, padx=5)
-        btnLogIn.place(x=360, y=355)
+        btnLogIn = customtkinter.CTkButton(self.cuerpo_principal, text="Iniciar Sesion", width=100, height=40, command=validarDatos, fg_color="#4d4ce5", hover_color="#3b3bb2", text_color="white")
+        btnLogIn.place(x=355, y=355)
 
     def obtener_idrol(self, idrol):
         conexion = ConexionDB()
@@ -266,16 +294,22 @@ class FormularioMaestroDesign(customtkinter.CTk):
         else:
             return None
     
+    
     def submenu_registros(self, permisos):
-        #VERIFICAR LOS PERMISOS Y QUE BOTONES ESTAN DISPONIBLES
-        if 'DATA100' in permisos and 'REP100' in permisos and 'SET100' in permisos:    
-            if 'DATA100' in permisos:
-                self.buttonDatabase.pack_forget()
-            if 'REP100' in permisos:
-                self.buttonInformes.pack_forget()
-            if 'SET100' in permisos:
-                self.buttonSettings.pack_forget()
-
+        #VERIFICAR LOS PERMISOS Y QUE BOTONES ESTAN DISPONIBLES  
+        if 'DATA100' in permisos:
+            self.buttonDatabase.pack_forget()
+        if 'REP100' in permisos:
+            self.buttonInformes.pack_forget()
+        if 'SET100' in permisos:
+            self.buttonSettings.pack_forget()
+        if 'USER100' in permisos:
+            self.buttonUsers.pack_forget()
+        if 'USER101' in permisos:
+            if hasattr(self, "buttonAdjustUsers"):
+                self.buttonAdjustUsers.pack_forget()
+                del self.buttonAdjustUsers
+                
         if 'MED101' in permisos:
             if hasattr(self, "buttonClientes"):
                 self.buttonClientes.pack_forget()
@@ -316,6 +350,19 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.buttonSettings.pack()
         else:
             pass
+        if 'USER100' in permisos:
+            self.buttonUsers.pack()
+            
+    def submenu_usuarios(self, permisos):
+        if 'USER101' in permisos:
+            if hasattr(self, "buttonAdjustUsers"):
+                self.buttonAdjustUsers.pack_forget()
+                del self.buttonAdjustUsers
+            else:
+                self.buttonAdjustUsers = tk.Button(self.menu_lateral, text="Ajuste de Usuario", font=("Roboto", 12), image=self.adjustUser_icon, highlightthickness=20, width=ANCHO_MENU,
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_crear_usuarios(permisos))
+                self.buttonAdjustUsers.pack()
+                self.binding_hover_submenu_event(self.buttonAdjustUsers)
 
     def toggle_panel(self):
         # Alternar visibilidad del menú lateral
@@ -328,6 +375,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         height_screen = self.winfo_height()
     
         return width_screen, height_screen
+    
     def abrir_registros_clientes(self):
         self.limpiar_panel(self.cuerpo_principal)
         width_screen, height_screen = self.check_size()
@@ -335,6 +383,11 @@ class FormularioMaestroDesign(customtkinter.CTk):
             FormularioRegistrosDesign(self.cuerpo_principal, width_screen, height_screen).call_resize(width_screen, height_screen)
         elif width_screen <= 1440 and height_screen <= 900:
             FormularioRegistrosDesign(self.cuerpo_principal,width_screen, height_screen)
+
+    def abrir_crear_usuarios(self, permisos):
+        self.limpiar_panel(self.cuerpo_principal)
+        FormUsers(self.cuerpo_principal, self.bg, permisos)
+        
     def abrir_home(self):   
         self.limpiar_panel(self.cuerpo_principal)
         FormularioHomeDesign(self.cuerpo_principal, self.bg) 

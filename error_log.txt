@@ -1,1 +1,7 @@
 Error en editarCliente, form_registros_design: string index out of range
+Error en SaveClient, ClientsDao: UNIQUE constraint failed: Clients.client_ci
+Error en SaveClient, ClientsDao: UNIQUE constraint failed: Clients.client_ci
+Error en client_Delete, ClientsDao: incomplete input
+Error en client_Delete, ClientsDao: incomplete input
+Error en client_Delete, ClientsDao: incomplete input
+Error en client_Delete, ClientsDao: incomplete input
