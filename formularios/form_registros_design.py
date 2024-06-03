@@ -187,8 +187,9 @@ class FormularioRegistrosDesign():
         self.entrysearch_clients.place(x=870, y=20)
         self.entrysearch_clients.bind('<KeyRelease>', self.update_client_content)
 
-        where = ""
+        
         #################################################### INFORMACION DE LA TABLA ####################################################
+        where = ""
         if len(where) > 0:
             self.listaCliente = consulClient(where)
         else:

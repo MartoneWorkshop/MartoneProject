@@ -249,9 +249,9 @@ class FormularioMaestroDesign(customtkinter.CTk):
         pass_img = ImageTk.PhotoImage(pass_ico)
 
         #LOGIN USER
-        lbluser = customtkinter.CTkLabel(self.cuerpo_principal, text="", image=user_img, bg_color="white")
+        lbluser = customtkinter.CTkLabel(marco_login, text="", image=user_img, bg_color="white")
         lbluser.pack(pady=1, padx=6)
-        lbluser.place(x=290, y=215)
+        lbluser.place(x=55, y=55)
         
         set_opacity(lbluser, 0.8)
 
@@ -261,24 +261,27 @@ class FormularioMaestroDesign(customtkinter.CTk):
         style = ttk.Style()
         style.configure("Custom.TEntry", borderwidth=0)
 
-        entryuser = ttk.Entry(self.cuerpo_principal, textvariable=sv_datauser, width=16, font=("Arial", 12), style="Custom.TEntry", justify="center")
-        entryuser.place(x=340, y=215)
+        entryuser = ttk.Entry(marco_login, textvariable=sv_datauser, width=14, font=("Arial", 12), style="Custom.TEntry", justify="center")
+        entryuser.place(x=105, y=56)
         #LOGIN PASSWORD
-        lblpass = customtkinter.CTkLabel(self.cuerpo_principal, text="", image=pass_img, bg_color="white")
+        lblpass = customtkinter.CTkLabel(marco_login, text="", image=pass_img, bg_color="white")
         lblpass.pack(pady=1, padx=6)
-        lblpass.place(x=290, y=285)
+        lblpass.place(x=55, y=125)
 
         set_opacity(lblpass, 0.8)
 
         sv_datapass = customtkinter.StringVar()
         #entrypass = customtkinter.CTkEntry(self.cuerpo_principal, textvariable=sv_datapass, show="*", width=150)
-        entrypass = ttk.Entry(self.cuerpo_principal, textvariable=sv_datapass, width=16, font=("Arial", 13), style="Custom.TEntry", show="*", justify="center")
-        entrypass.place(x=340, y=285)
+        entrypass = ttk.Entry(marco_login, textvariable=sv_datapass, width=14, font=("Arial", 13), style="Custom.TEntry", show="*", justify="center")
+        entrypass.place(x=105, y=126)
         entrypass.bind("<Return>", lambda event: validarDatos())
         
         #LOGIN BOTON
-        btnLogIn = customtkinter.CTkButton(self.cuerpo_principal, text="Iniciar Sesion", width=100, height=40, command=validarDatos, fg_color="#4d4ce5", hover_color="#3b3bb2", text_color="white")
-        btnLogIn.place(x=355, y=355)
+        #btnLogIn = customtkinter.CTkButton(self.cuerpo_principal, text="Iniciar Sesion", width=100, height=40, command=validarDatos, fg_color="#4d4ce5", hover_color="#3b3bb2", text_color="white")
+        stylebutton = ttk.Style()
+        stylebutton.configure("Custom.TButton")
+        btnLogIn = ttk.Button(marco_login, text="Iniciar Sesion", command=validarDatos, width=14, style="Custom.TButton")
+        btnLogIn.place(x=120, y=180)
 
     def obtener_idrol(self, idrol):
         conexion = ConexionDB()
@@ -293,7 +296,6 @@ class FormularioMaestroDesign(customtkinter.CTk):
             print(permisos)
         else:
             return None
-    
     
     def submenu_registros(self, permisos):
         #VERIFICAR LOS PERMISOS Y QUE BOTONES ESTAN DISPONIBLES  
@@ -354,6 +356,24 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.buttonUsers.pack()
             
     def submenu_usuarios(self, permisos):
+        if 'MED101' in permisos:
+            if hasattr(self, "buttonClientes"):
+                self.buttonClientes.pack_forget()
+                del self.buttonClientes
+            else:
+                pass
+        if 'MED102' in permisos:
+            if hasattr(self, "buttonEquipos"):
+                self.buttonEquipos.pack_forget()
+                del self.buttonEquipos
+            else:
+                pass
+        if 'MED103' in permisos:
+            if hasattr(self, "buttonHistoria"):
+                self.buttonHistoria.pack_forget()
+                del self.buttonHistoria
+            else:
+                pass
         if 'USER101' in permisos:
             if hasattr(self, "buttonAdjustUsers"):
                 self.buttonAdjustUsers.pack_forget()
@@ -386,7 +406,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
     def abrir_crear_usuarios(self, permisos):
         self.limpiar_panel(self.cuerpo_principal)
-        FormUsers(self.cuerpo_principal, self.bg, permisos)
+        FormUsers(self.cuerpo_principal, permisos)
         
     def abrir_home(self):   
         self.limpiar_panel(self.cuerpo_principal)
