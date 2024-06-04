@@ -5,3 +5,9 @@ Error en client_Delete, ClientsDao: incomplete input
 Error en client_Delete, ClientsDao: incomplete input
 Error en client_Delete, ClientsDao: incomplete input
 Error en client_Delete, ClientsDao: incomplete input
+Error en SaveClient, usuariosDao: database is locked
+Error en GuardarCliente, form_registros_design: module 'datetime' has no attribute 'now'
+Error en GuardarCliente, form_registros_design: module 'datetime' has no attribute 'now'
+Error en SaveClient, usuariosDao: table usuarios has no column named data_created
+Error en GuardarUsuario, form_users: 'usuarios' object has no attribute 'date_created'
+Error en SaveClient, usuariosDao: table usuarios has no column named date_updated

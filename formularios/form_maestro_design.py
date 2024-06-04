@@ -187,7 +187,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
             username = sv_datauser.get()
             password = sv_datapass.get()
 
-            sql = f"SELECT * FROM usuarios WHERE username = '{username}' AND pass = '{password}'"
+            sql = f"SELECT * FROM usuarios WHERE username = '{username}' AND password = '{password}'"
             conexion.ejecutar_consulta(sql)
             resultado = conexion.obtener_resultado()
             
@@ -203,7 +203,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
                 datauser = {
                     'username': usuario,
-                    'pass': contrasena,
+                    'password': contrasena,
                     'idrol': idrol,
                     'activo': activo
                 } 
