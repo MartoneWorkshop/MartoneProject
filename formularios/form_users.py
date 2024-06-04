@@ -1,5 +1,6 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, OptionMenu, Tk, Menu
+from ttkthemes import ThemedStyle
 from config import  COLOR_FONDO, WIDTH_LOGO, HEIGHT_LOGO, COLOR_MENU_LATERAL, ANCHO_MENU, ALTO_MENU
 import customtkinter
 import PIL
@@ -12,7 +13,7 @@ import sqlite3
 class FormUsers():
 
     def __init__(self, cuerpo_principal, permisos):
-        
+        self.option_menus = {}
         # Crear paneles: barra superior 
         self.barra_superior = tk.Frame(cuerpo_principal)
         self.barra_superior.pack(side=tk.TOP, fill=tk.X, expand=False) 
@@ -81,7 +82,7 @@ class FormUsers():
             self.ListaUsuarios = listarUsuarios()
             self.ListaUsuarios.reverse()
 
-        self.tablaUsuarios = ttk.Treeview(self.marco_create, column=('coduser','username','password','idrol','data_create','data_update','opciones'), height=25)
+        self.tablaUsuarios = ttk.Treeview(self.marco_create, column=('coduser','username','password','idrol','data_create','data_update','activo'), height=25)
         self.tablaUsuarios.place(x=135, y=200)
 
         #self.scroll = ttk.Scrollbar(self.marco_create, orient='vertical', command=self.tablaUsuarios.yview)
@@ -96,7 +97,7 @@ class FormUsers():
         self.tablaUsuarios.heading('#4',text="Perfil")
         self.tablaUsuarios.heading('#5',text="Date-C")
         self.tablaUsuarios.heading('#6',text="Date-U")
-        self.tablaUsuarios.heading('#7',text="Opciones")
+
 
         self.tablaUsuarios.column("#0", width=45, stretch=False, anchor='w')#HAY QUE CENTRARLO
         self.tablaUsuarios.column("#1", width=60, stretch=False)
@@ -105,24 +106,50 @@ class FormUsers():
         self.tablaUsuarios.column("#4", width=70,stretch=False)
         self.tablaUsuarios.column("#5", width=100, stretch=False)
         self.tablaUsuarios.column("#6", width=100, stretch=False)
-        self.tablaUsuarios.column("#7", width=150, stretch=False)
-        
 
+        self.tablaUsuarios.bind("<Button-3>", self.mostrar_menu, add='')
         for p in self.ListaUsuarios:
-            
-            self.optionmenu_frame = tk.Frame(self.tablaUsuarios, width=100, height=25)
-            self.optionmenu_frame.pack_propagate(0)
+            self.tablaUsuarios.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6]))
+            #activeforeground color de texto
+            #activebackground hover color
+            #bg gray fondo del menu
+            #fg white color del texto
+    def mostrar_menu(self, event):
+    # Obtener la fila seleccionada
+        selected_item = self.tablaUsuarios.selection()
 
-            self.optionmenu = tk.OptionMenu(self.optionmenu_frame, "Crear Usuario", "Editar Usuario", "Desactivar Usuario",
-                                            command=lambda value: self.optionmenu_var.set(value))
-            self.optionmenu.pack(fill='both', expand=True)
+        if selected_item:
+        # Crear el menú
+            menu = tk.Menu(self.tablaUsuarios, tearoff=False, border=0, relief=tk.FLAT)
 
-            self.optionmenu_var = tk.StringVar(value="Accion a Ejecutar")
-            self.tablaUsuarios.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6],self.optionmenu_frame), tags='evenrow')
+            menu.configure(bg="white", fg="black", activebackground='#2886cf', activeforeground='white')
+
+            menu.add_command(label="Editar", command=lambda: self.editar_usuario(selected_item))
+            menu.add_command(label="Modificar", command=lambda: self.modificar_usuario(selected_item))
+            menu.add_command(label="Eliminar", command=lambda: self.eliminar_usuario(selected_item))
         
-        
-        
+        # Mostrar el menú en la posición del clic derecho
+            menu.post(event.x_root, event.y_root)
+    def editar_usuario(self, selected_item):
+    # Obtener los valores de la fila seleccionada
+        values = self.tablaUsuarios.item(selected_item)['values']
     
+    # Realizar la acción de editar
+    # ...
+
+    def modificar_usuario(self, selected_item):
+        # Obtener los valores de la fila seleccionada
+        values = self.tablaUsuarios.item(selected_item)['values']
+
+        # Realizar la acción de modificar
+        # ...
+
+    def eliminar_usuario(self,selected_item):
+        # Obtener los valores de la fila seleccionada
+        values = self.tablaUsuarios.item(selected_item)['values']
+
+        # Realizar la acción de eliminar
+        # ...
     def update_client_content(self, event=None):
     # Conectar a la base de datos
         self.connection = sqlite3.connect('database/database.db')
