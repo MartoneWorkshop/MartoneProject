@@ -5,16 +5,17 @@ import customtkinter
 import PIL
 from PIL import Image, ImageTk
 from util.util_alerts import edit_advice, error_advice, save_advice, set_opacity
-from functions.UsersDao import usuarios, consulUsers, listarUsuarios, SaveUser, EditUser
+from functions.conexion import ConexionDB
+from functions.UsersDao import usuarios, consulUsers, listarUsuarios, SaveUser, EditUser, UserDisable
 import sqlite3
 import datetime
+
 
 
 class FormUsers():
 
     def __init__(self, cuerpo_principal, permisos):
         self.id = None
-        
         # Crear paneles: barra superior 
         self.barra_superior = tk.Frame(cuerpo_principal)
         self.barra_superior.pack(side=tk.TOP, fill=tk.X, expand=False) 
@@ -52,10 +53,13 @@ class FormUsers():
         ###################################################### BOTONES DE LA TABLA ##################################################
         self.buttonCreateUser = tk.Button(self.marco_create, text="Crear\n Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.crear_usuario(permisos))
         self.buttonCreateUser.place(x=140, y=50)
-        self.buttonEditUser = tk.Button(self.marco_create, text="Editar\n Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10)
+
+        self.buttonEditUser = tk.Button(self.marco_create, text="Editar\n Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.editar_usuario(permisos))
         self.buttonEditUser.place(x=250, y=50)
-        self.buttonDeleteUser = tk.Button(self.marco_create, text="Desactivar\n Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10)
+
+        self.buttonDeleteUser = tk.Button(self.marco_create, text="Desactivar\n Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.desactivarUsuario(permisos))
         self.buttonDeleteUser.place(x=350, y=50)
+
         self.buttonModPerm = tk.Button(self.marco_create, text="Modificar\n Permisos", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10)
         self.buttonModPerm.place(x=470, y=50)
         ###################################################### BUSCADOR DE LA TABLA #################################################
@@ -107,7 +111,7 @@ class FormUsers():
         for p in self.ListaUsuarios:
             self.tablaUsuarios.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6]))
         
-        self.tablaUsuarios.bind('<Double-1>', lambda event: self.crear_usuario(event, self.tablaUsuarios.item(self.tablaUsuarios.selection())['values']))
+        self.tablaUsuarios.bind('<Double-1>', lambda event: self.editar_usuario(event, self.tablaUsuarios.item(self.tablaUsuarios.selection())['values']))
 
     def update_client_content(self, event=None):
     # Conectar a la base de datos
@@ -146,7 +150,7 @@ class FormUsers():
         self.cursor.close()
         self.connection.close()
 
-    def crear_usuario(self, permisos, values):
+    def crear_usuario(self, permisos):
         #Creacion del top level
         self.topCreate = customtkinter.CTkToplevel()
         self.topCreate.title("Crear Usuarios")
@@ -204,44 +208,103 @@ class FormUsers():
         self.entrypassword.configure(style='Entry.TEntry')
 
         roles = self.ObtenerRoles()
-        print(roles)
         self.svperfil_var = customtkinter.StringVar(value="Selecciona un perfil")
         self.multioption = customtkinter.CTkOptionMenu(marco_crearusuario, values=[rol[1] for rol in roles], variable=self.svperfil_var)
         self.multioption.place(x=325, y=120)
 
         self.buttonCreate = customtkinter.CTkButton(marco_crearusuario, text="Crear Usuario", font=("Roboto", 12), command=self.GuardarUsuario)
         self.buttonCreate.place(x=215, y=250)
+    
+    
+    def editar_usuario(self, permisos, values):
+    # Creación del top level
+        self.id = self.tablaUsuarios.item(self.tablaUsuarios.selection())['text']
+        self.usuario = self.tablaUsuarios.item(self.tablaUsuarios.selection())['values'][1]
+        self.password = self.tablaUsuarios.item(self.tablaUsuarios.selection())['values'][2]
 
-    def ObtenerRoles(self):
-        try:
-            
-            self.connection = sqlite3.connect('database/database.db')
-            self.cursor = self.connection.cursor()
-            # Otener el contenido del Entry
-            self.content = self.entrysearch_usuarios.get()
-            # Realizar la consulta
-            self.cursor.execute("""SELECT id, name FROM roles""")
-            roles = self.cursor.fetchall()
-            return roles
-            
-        except:
-            pass
+        self.topEdit = customtkinter.CTkToplevel()
+        self.topEdit.title("Editar Usuario")
+        self.topEdit.iconbitmap("imagenes/logo_ico.ico")
+        self.topEdit.w = 600
+        self.topEdit.h = 400
+        self.topEdit.geometry(f"{self.topEdit.w}x{self.topEdit.h}")
+        self.topEdit.resizable(False, False)
+
+        # Centrar la ventana en la pantalla
+        screen_width = self.topEdit.winfo_screenwidth()
+        screen_height = self.topEdit.winfo_screenheight()
+        x = (screen_width - self.topEdit.w) // 2
+        y = (screen_height - self.topEdit.h) // 2
+        self.topEdit.geometry(f"+{x}+{y}")
+
+        self.topEdit.lift()
+        self.topEdit.grab_set()
+        self.topEdit.transient()
+
+        # Conversion de ico
+        user_ico = Image.open("imagenes/user.png")
+        user_ico = user_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
+        user_img = ImageTk.PhotoImage(user_ico)
+
+        pass_ico = Image.open("imagenes/pass.png")
+        pass_ico = pass_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
+        pass_img = ImageTk.PhotoImage(pass_ico)
+
+        # Datos para el usuario
+        marco_editarusuario = customtkinter.CTkFrame(self.topEdit, width=550, height=350, bg_color="white", fg_color="white")
+        marco_editarusuario.place(relx=0.5, rely=0.5, anchor="center")
+
+        set_opacity(marco_editarusuario, 0.8)
+
+        self.lblinfo = customtkinter.CTkLabel(marco_editarusuario, text="Edición de usuario", font=("Roboto", 14))
+        self.lblinfo.place(x=205, rely=0.1)
+
+        self.lblusuario = customtkinter.CTkLabel(marco_editarusuario, text='', image=user_img, font=("Roboto", 14))
+        self.lblusuario.place(x=75, y=120)
+
+        self.svusuario = customtkinter.StringVar(value=self.usuario)  # Valor del usuario a editar
+        self.entryusuario = ttk.Entry(marco_editarusuario, style='Modern.TEntry', textvariable=self.svusuario)
+        self.entryusuario.place(x=125, y=120)
+        self.entryusuario.configure(style='Entry.TEntry')
+
+        # Datos de la Contraseña
+        self.lblpassword = customtkinter.CTkLabel(marco_editarusuario, text='', image=pass_img, font=("Roboto", 14))
+        self.lblpassword.place(x=75, y=170)
+
+        self.svpassword = customtkinter.StringVar(value=self.password)  # Valor de la contraseña a editar
+        self.entrypassword = ttk.Entry(marco_editarusuario, style='Modern.TEntry', textvariable=self.svpassword, show='*')
+        self.entrypassword.place(x=125, y=170)
+        self.entrypassword.configure(style='Entry.TEntry')
+
+        perfil_id = values[3]
+        perfil_nombre = ''
+        for rol in self.ObtenerRoles():
+            if rol[0] == perfil_id:
+                perfil_nombre = rol[1]
+                break
+        self.svperfil_var = customtkinter.StringVar(value=perfil_nombre)  # Valor del perfil a editar
+        self.multioption = customtkinter.CTkOptionMenu(marco_editarusuario, values=[rol[1] for rol in self.ObtenerRoles()], variable=self.svperfil_var)
+        self.multioption.place(x=325, y=120)
+
+        self.buttonSave = customtkinter.CTkButton(marco_editarusuario, text="Guardar Cambios", font=("Roboto", 12), command=self.GuardarUsuario)
+        self.buttonSave.place(x=215, y=250)
     def GuardarUsuario(self):
         try:
-            self.connection = sqlite3.connect('database/database.db')
-            self.cursor = self.connection.cursor()
             # Otener el contenido del Entry
-            perfilname = self.svperfil_var.get()
-
+            coduser = self.buscarCorrelativo('usuario')
+            self.actualizarCorrelativo('usuario')
             fecha_actual = datetime.datetime.now()
             date_created = fecha_actual.strftime("%d/%m/%Y")
             date_update = fecha_actual.strftime("%d/%m/%y %H:%M:%S")
+            perfilname = self.svperfil_var.get()
             idperfil = None
             for rol in self.ObtenerRoles():
                 if rol[1] == perfilname:
                     idperfil = rol[0]
                     break
+
             usuario = usuarios(
+                coduser,
                 self.svusuario.get(),
                 self.svpassword.get(),
                 idperfil,
@@ -253,6 +316,7 @@ class FormUsers():
                 self.topCreate.destroy()
             else:
                 EditUser(usuario, self.id)
+                self.topEdit.destroy()
 
             self.listarUsuariosEnTabla()
         except Exception as e:
@@ -260,7 +324,32 @@ class FormUsers():
             mensaje = f'Error en GuardarUsuario, form_users: {str(e)}'
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')
+    
+    def desactivarUsuario(self, permisos):
+        try:
+            self.id = self.tablaUsuarios.item(self.tablaUsuarios.selection())['text']
+            UserDisable(self.id)
+            self.listarUsuariosEnTabla()
+            
+        except Exception as e:
+            error_advice()
+            mensaje = f'Error en desactivarUsuario, form_users: {str(e)}'
+            with open('error_log.txt', 'a') as file:
+                file.write(mensaje + '\n')
 
+    def ObtenerRoles(self):
+        try:
+            self.connection = sqlite3.connect('database/database.db')
+            self.cursor = self.connection.cursor()
+            # Otener el contenido del Entry
+            self.content = self.entrysearch_usuarios.get()
+            # Realizar la consulta
+            self.cursor.execute("""SELECT id, name FROM roles""")
+            roles = self.cursor.fetchall()
+            return roles
+            
+        except:
+            pass
 
     def listarUsuariosEnTabla(self, where=None):
         try:
@@ -277,6 +366,41 @@ class FormUsers():
                 self.tablaUsuarios.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6]))
         except Exception as e:
             error_advice()
-            mensaje = f'Error en listarClientesEnTabla, form_registros_design: {str(e)}'
+            mensaje = f'Error en listarUsuariosEnTabla, form_users: {str(e)}'
+            with open('error_log.txt', 'a') as file:
+                file.write(mensaje + '\n')
+
+    def buscarCorrelativo(self, dato):
+        try:
+            self.connection = sqlite3.connect('database/database.db')
+            self.cursor = self.connection.cursor()
+            sql = f"SELECT valor FROM correlativo WHERE name = '{dato}'"
+
+            self.cursor.execute(sql)
+            self.resultado = self.cursor.fetchone()
+            self.connection.commit()
+            self.connection.close()
+            return self.resultado[0]
+        
+        except Exception as e:
+            error_advice()
+            mensaje = f'Error en buscarCorrelativo, form_users: {str(e)}'
+            with open('error_log.txt', 'a') as file:
+                file.write(mensaje + '\n')
+
+    def actualizarCorrelativo(self, dato):
+        try:
+            correlativoActual = self.buscarCorrelativo(dato)
+            correlativoNuevo = correlativoActual + 1
+            print(correlativoNuevo)
+            self.connection = sqlite3.connect('database/database.db')
+            self.cursor = self.connection.cursor()
+            sql = f"UPDATE correlativo SET valor = '{correlativoNuevo}' WHERE name = '{dato}'"
+            self.cursor.execute(sql)
+            self.connection.commit()
+            self.connection.close()
+        except Exception as e:
+            error_advice()
+            mensaje = f'Error en actualizarCorrelativo, form_users: {str(e)}'
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')

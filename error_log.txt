@@ -20,3 +20,25 @@ Error en GuardarUsuario, form_users: Incorrect number of bindings supplied. The 
 Error en GuardarUsuario, form_users: 'function' object has no attribute 'destroy'
 Error en GuardarUsuario, form_users: 'function' object has no attribute 'destroy'
 Error en GuardarUsuario, form_users: 'function' object has no attribute 'destroy'
+Error en GuardarUsuario, form_users: 'FormUsers' object has no attribute 'topCreate'
+Error en GuardarUsuario, form_users: 'FormUsers' object has no attribute 'topCreate'
+Error en GuardarUsuario, form_users: 'FormUsers' object has no attribute 'topCreate'
+Error en GuardarUsuario, form_users: 'FormUsers' object has no attribute 'id'
+Error en GuardarUsuario, form_users: 'FormUsers' object has no attribute 'id'
+Error en GuardarUsuario, form_users: 'FormUsers' object has no attribute 'id'
+Error en GuardarUsuario, form_users: 'FormUsers' object has no attribute 'id'
+Error en GuardarUsuario, form_users: 'usuarios' object has no attribute 'data_update'
+Error en GuardarUsuario, form_users: 'usuarios' object has no attribute 'data_update'
+Error en EditClient, UsersDao: near "activo": syntax error
+Error en eliminarUsuario, form_users: 'FormUsers' object has no attribute 'tablaUsuarios'
+Error en eliminarUsuario, form_users: 'FormUsers' object has no attribute 'tablaUsuarios'
+Error en eliminarUsuario, form_users: 'FormUsers' object has no attribute 'tablaUsuarios'
+Error en eliminarUsuario, form_users: 'NoneType' object has no attribute 'item'
+Error en eliminarUsuario, form_users: 'NoneType' object has no attribute 'item'
+Error en buscarCorrelativo, form_users: 'FormUsers' object has no attribute 'cursor'
+Error en buscarCorrelativo, form_users: no such column: usuario
+Error en GuardarUsuario, form_users: usuarios.__init__() takes 6 positional arguments but 7 were given
+Error en actualizarCorrelativo, form_users: unrecognized token: "'2 WHERE name = usuario"
+Error en SaveClient, usuariosDao: database is locked
+Error en SaveClient, usuariosDao: database is locked
+Error en SaveClient, usuariosDao: database is locked

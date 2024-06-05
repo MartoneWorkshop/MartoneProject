@@ -4,7 +4,8 @@ from util.util_alerts import save_advice, edit_advice, error_advice, delete_advi
 
 def EditUser(usuarios, id):
     conexion = ConexionDB()
-    sql = f"""UPDATE usuarios SET username = '{usuarios.username}', password = '{usuarios.password}', idrol = '{usuarios.idrol}', activo = 1 WHERE id = {id}"""
+    sql = f"""UPDATE usuarios SET username = '{usuarios.username}', password = '{usuarios.password}', 
+    idrol = '{usuarios.idrol}', date_update = '{usuarios.date_update}', activo = 1 WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()
@@ -12,14 +13,14 @@ def EditUser(usuarios, id):
     except Exception as e:
         conexion.cerrarConexion()
         error_advice()
-        mensaje = f'Error en EditClient, usuariosDao: {str(e)}'
+        mensaje = f'Error en EditClient, UsersDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
 def SaveUser(usuarios):
     conexion = ConexionDB()
-    sql = f"""INSERT INTO usuarios (username, password, idrol, date_created, date_update, activo)
-    VALUES('{usuarios.username}','{usuarios.password}','{usuarios.idrol}','{usuarios.date_created}','{usuarios.date_update}',1)"""
+    sql = f"""INSERT INTO usuarios (coduser, username, password, idrol, date_created, date_update, activo)
+    VALUES('{usuarios.coduser}','{usuarios.username}','{usuarios.password}','{usuarios.idrol}','{usuarios.date_created}','{usuarios.date_update}',1)"""
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()
@@ -80,9 +81,9 @@ def consulUsers(where):
             file.write(mensaje + '\n')
     return listarUsuario
 
-def client_Delete(id_client):
+def UserDisable(id):
     conexion = ConexionDB()
-    sql = f'UPDATE usuarios SET activo = 0 WHERE id_client = {id_client}'
+    sql = f'UPDATE usuarios SET activo = 0 WHERE id = {id}'
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()
@@ -91,15 +92,16 @@ def client_Delete(id_client):
     except Exception as e:
         error_advice()
         conexion.cerrarConexion()
-        mensaje = f'Error en client_Delete, usuariosDao: {str(e)}'
+        mensaje = f'Error en UserDelete, en UsersDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
 
 
 class usuarios:
-    def __init__(self, username, password, idrol, date_created, date_update):
+    def __init__(self, coduser, username, password, idrol, date_created, date_update):
         self.id = None
+        self.coduser = coduser
         self.username = username
         self.password = password
         self.idrol = idrol
