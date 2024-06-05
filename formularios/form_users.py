@@ -48,13 +48,7 @@ class FormUsers():
         self.marco_create.place(relx=0.5, rely=0.5, anchor="center")
 
         set_opacity(self.marco_create, 0.8)
-
-        #self.label_accion = customtkinter.CTkLabel(self.self.marco_create, text="Selector de Acciones para Usuarios", font=("Roboto", 15))
-        #self.label_accion.place(x=50, y=50)
-        #self.optionmenu_var = customtkinter.StringVar(value="Accion a Ejecutar")
-        #self.optionmenu = customtkinter.CTkOptionMenu(self.self.marco_create,values=["Crear Usuario", "Editar Usuario", "Desactivar Usuario"],
-        #                                variable=self.optionmenu_var, width=220,height=45, font=("Roboto", 15))
-        #self.optionmenu.place(x=60, y=100)
+        
         ###################################################### BOTONES DE LA TABLA ##################################################
         self.buttonCreateUser = tk.Button(self.marco_create, text="Crear\n Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.crear_usuario(permisos))
         self.buttonCreateUser.place(x=140, y=50)
@@ -154,38 +148,46 @@ class FormUsers():
 
     def crear_usuario(self, permisos, values):
         #Creacion del top level
-        topCreate = customtkinter.CTkToplevel()
-        topCreate.title("Crear Usuarios")
-        topCreate.iconbitmap("imagenes/logo_ico.ico") 
-        topCreate.w = 600
-        topCreate.h = 400
-        topCreate.geometry(f"{topCreate.w}x{topCreate.h}")
-        topCreate.resizable(False, False)
+        self.topCreate = customtkinter.CTkToplevel()
+        self.topCreate.title("Crear Usuarios")
+        self.topCreate.iconbitmap("imagenes/logo_ico.ico") 
+        self.topCreate.w = 600
+        self.topCreate.h = 400
+        self.topCreate.geometry(f"{self.topCreate.w}x{self.topCreate.h}")
+        self.topCreate.resizable(False, False)
         
         #Centrar la ventana en la pantalla
-        screen_width = topCreate.winfo_screenwidth()
-        screen_height = topCreate.winfo_screenheight()
-        x = (screen_width - topCreate.w) // 2
-        y = (screen_height - topCreate.h) // 2
-        topCreate.geometry(f"+{x}+{y}")
+        screen_width = self.topCreate.winfo_screenwidth()
+        screen_height = self.topCreate.winfo_screenheight()
+        x = (screen_width - self.topCreate.w) // 2
+        y = (screen_height - self.topCreate.h) // 2
+        self.topCreate.geometry(f"+{x}+{y}")
 
-        
-        topCreate.lift()
-        topCreate.grab_set()
-        topCreate.transient()
+        self.topCreate.lift()
+        self.topCreate.grab_set()
+        self.topCreate.transient()
+        #Conversion de ico
+        user_ico = Image.open("imagenes/user.png")
+        user_ico = user_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
+        user_img = ImageTk.PhotoImage(user_ico)
+
+        pass_ico = Image.open("imagenes/pass.png")
+        pass_ico = pass_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
+        pass_img = ImageTk.PhotoImage(pass_ico)
 
         selected_item = self.tablaUsuarios.focus()
         values = self.tablaUsuarios.item(selected_item)['values']
         #Datos para el usuario
-
-        marco_crearusuario = customtkinter.CTkFrame(topCreate, width=550,height=350, bg_color="white", fg_color="white")
+        marco_crearusuario = customtkinter.CTkFrame(self.topCreate, width=550,height=350, bg_color="white", fg_color="white")
         marco_crearusuario.place(relx=0.5, rely=0.5, anchor="center")
+        
+        set_opacity(marco_crearusuario, 0.8)
 
         self.lblinfo = customtkinter.CTkLabel(marco_crearusuario, text="Creacion de nuevo usuario", font=("Roboto",14))
         self.lblinfo.place(x=205, rely=0.1)
 
-        self.lblusuario = customtkinter.CTkLabel(marco_crearusuario, text='Username:', font=("Roboto", 14))
-        self.lblusuario.place(x=50, y=120)
+        self.lblusuario = customtkinter.CTkLabel(marco_crearusuario, text='', image=user_img, font=("Roboto", 14))
+        self.lblusuario.place(x=75, y=120)
 
         self.svusuario = customtkinter.StringVar()
         self.entryusuario = ttk.Entry(marco_crearusuario, style='Modern.TEntry', textvariable=self.svusuario)
@@ -193,8 +195,8 @@ class FormUsers():
         self.entryusuario.configure(style='Entry.TEntry')
 
         #Datos de la Contraseña
-        self.lblpassword = customtkinter.CTkLabel(marco_crearusuario, text='Password:', font=("Roboto", 14))
-        self.lblpassword.place(x=50, y=170)
+        self.lblpassword = customtkinter.CTkLabel(marco_crearusuario, text='', image=pass_img, font=("Roboto", 14))
+        self.lblpassword.place(x=75, y=170)
         
         self.svpassword = customtkinter.StringVar()
         self.entrypassword = ttk.Entry(marco_crearusuario, style='Modern.TEntry', textvariable=self.svpassword, show='*')
@@ -202,8 +204,9 @@ class FormUsers():
         self.entrypassword.configure(style='Entry.TEntry')
 
         roles = self.ObtenerRoles()
+        print(roles)
         self.svperfil_var = customtkinter.StringVar(value="Selecciona un perfil")
-        self.multioption = customtkinter.CTkOptionMenu(marco_crearusuario, values=roles, variable=self.svperfil_var)
+        self.multioption = customtkinter.CTkOptionMenu(marco_crearusuario, values=[rol[1] for rol in roles], variable=self.svperfil_var)
         self.multioption.place(x=325, y=120)
 
         self.buttonCreate = customtkinter.CTkButton(marco_crearusuario, text="Crear Usuario", font=("Roboto", 12), command=self.GuardarUsuario)
@@ -214,42 +217,66 @@ class FormUsers():
             
             self.connection = sqlite3.connect('database/database.db')
             self.cursor = self.connection.cursor()
-    # Ob    tener el contenido del Entry
+            # Otener el contenido del Entry
             self.content = self.entrysearch_usuarios.get()
-    # Re    alizar la consulta
+            # Realizar la consulta
             self.cursor.execute("""SELECT id, name FROM roles""")
-            self.resultado = self.cursor.fetchall()
-            roles = []
-            for resultado in self.resultado:
-                roles.append(resultado[0])
-
-            ids = [resultado[0] for resultado in self.resultado]
-            nombres = [resultado[1] for resultado in self.resultado]
-
-            return nombres
+            roles = self.cursor.fetchall()
+            return roles
+            
         except:
             pass
     def GuardarUsuario(self):
         try:
+            self.connection = sqlite3.connect('database/database.db')
+            self.cursor = self.connection.cursor()
+            # Otener el contenido del Entry
+            perfilname = self.svperfil_var.get()
+
             fecha_actual = datetime.datetime.now()
             date_created = fecha_actual.strftime("%d/%m/%Y")
             date_update = fecha_actual.strftime("%d/%m/%y %H:%M:%S")
-            
+            idperfil = None
+            for rol in self.ObtenerRoles():
+                if rol[1] == perfilname:
+                    idperfil = rol[0]
+                    break
             usuario = usuarios(
                 self.svusuario.get(),
                 self.svpassword.get(),
-                self.svperfil_var.get(),
+                idperfil,
                 date_created,
                 date_update
             )
             if self.id is None:
                 SaveUser(usuario)
+                self.topCreate.destroy()
             else:
                 EditUser(usuario, self.id)
-            
-            listarUsuarios()
+
+            self.listarUsuariosEnTabla()
         except Exception as e:
             error_advice()
             mensaje = f'Error en GuardarUsuario, form_users: {str(e)}'
+            with open('error_log.txt', 'a') as file:
+                file.write(mensaje + '\n')
+
+
+    def listarUsuariosEnTabla(self, where=None):
+        try:
+        # Limpiar la tabla existente
+            self.tablaUsuarios.delete(*self.tablaUsuarios.get_children())
+
+            if where is not None and len(where) > 0:
+                self.listaCliente = consulUsers(where)
+            else:
+                self.listaCliente = listarUsuarios()
+                self.listaCliente.reverse()
+
+            for p in self.listaCliente:
+                self.tablaUsuarios.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6]))
+        except Exception as e:
+            error_advice()
+            mensaje = f'Error en listarClientesEnTabla, form_registros_design: {str(e)}'
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')

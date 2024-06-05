@@ -11,3 +11,12 @@ Error en GuardarCliente, form_registros_design: module 'datetime' has no attribu
 Error en SaveClient, usuariosDao: table usuarios has no column named data_created
 Error en GuardarUsuario, form_users: 'usuarios' object has no attribute 'date_created'
 Error en SaveClient, usuariosDao: table usuarios has no column named date_updated
+Error en GuardarUsuario, form_users: unrecognized token: "{"
+Error en GuardarUsuario, form_users: no such column: perfilname
+Error en GuardarUsuario, form_users: Incorrect number of bindings supplied. The current statement uses 1, and there are 13 supplied.
+Error en GuardarUsuario, form_users: Incorrect number of bindings supplied. The current statement uses 1, and there are 20 supplied.
+Error en GuardarUsuario, form_users: Incorrect number of bindings supplied. The current statement uses 1, and there are 13 supplied.
+Error en GuardarUsuario, form_users: Incorrect number of bindings supplied. The current statement uses 1, and there are 13 supplied.
+Error en GuardarUsuario, form_users: 'function' object has no attribute 'destroy'
+Error en GuardarUsuario, form_users: 'function' object has no attribute 'destroy'
+Error en GuardarUsuario, form_users: 'function' object has no attribute 'destroy'
