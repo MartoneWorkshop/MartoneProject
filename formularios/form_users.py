@@ -25,7 +25,7 @@ class FormUsers():
         self.barra_inferior.pack(side=tk.BOTTOM, fill='both', expand=True)  
 
         # Segundo Label con la imagen
-        ruta_imagen = "imagenes/bg.jpg"
+        ruta_imagen = "imagenes/bg.png"
         # Cargar la imagen
         imagen = Image.open(ruta_imagen)
         imagen_tk = ImageTk.PhotoImage(imagen)
