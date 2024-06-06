@@ -9,6 +9,7 @@ from functions.conexion import ConexionDB
 from functions.UsersDao import usuarios, consulUsers, listarUsuarios, SaveUser, EditUser, UserDisable
 import sqlite3
 import datetime
+import ctypes
 
 
 
@@ -19,11 +20,9 @@ class FormUsers():
         # Crear paneles: barra superior 
         self.barra_superior = tk.Frame(cuerpo_principal)
         self.barra_superior.pack(side=tk.TOP, fill=tk.X, expand=False) 
-
         # Crear paneles: barra inferior
         self.barra_inferior = tk.Frame(cuerpo_principal)
         self.barra_inferior.pack(side=tk.BOTTOM, fill='both', expand=True)  
-
         # Segundo Label con la imagen
         ruta_imagen = "imagenes/bg.png"
         # Cargar la imagen
@@ -45,16 +44,19 @@ class FormUsers():
             
         cuerpo_principal.bind("<Configure>", ajustar_imagen)
         
+        bg = imagen_tk
+
         self.marco_create = customtkinter.CTkFrame(cuerpo_principal, width=1120, height=800, bg_color="white", fg_color="white")
         self.marco_create.place(relx=0.5, rely=0.5, anchor="center")
 
         set_opacity(self.marco_create, 0.8)
-        
-        ###################################################### BOTONES DE LA TABLA ##################################################
-        self.buttonCreateUser = tk.Button(self.marco_create, text="Crear\n Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.crear_usuario(permisos))
+        ##################################################### BOTONES DE LA TABLA ##################################################
+        self.buttonCreateUser = tk.Button(self.marco_create, text="Crear\n Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                        command=lambda: self.crear_usuario(permisos, bg))
         self.buttonCreateUser.place(x=140, y=50)
 
-        self.buttonEditUser = tk.Button(self.marco_create, text="Editar\n Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.editar_usuario(permisos))
+        self.buttonEditUser = tk.Button(self.marco_create, text="Editar\n Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                        command=lambda: self.editar_usuario(permisos, self.tablaUsuarios.item(self.tablaUsuarios.selection())['values']))
         self.buttonEditUser.place(x=250, y=50)
 
         self.buttonDeleteUser = tk.Button(self.marco_create, text="Desactivar\n Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.desactivarUsuario(permisos))
@@ -113,6 +115,9 @@ class FormUsers():
         
         self.tablaUsuarios.bind('<Double-1>', lambda event: self.editar_usuario(event, self.tablaUsuarios.item(self.tablaUsuarios.selection())['values']))
 
+        
+        
+
     def update_client_content(self, event=None):
     # Conectar a la base de datos
         self.connection = sqlite3.connect('database/database.db')
@@ -150,16 +155,18 @@ class FormUsers():
         self.cursor.close()
         self.connection.close()
 
-    def crear_usuario(self, permisos):
+    def crear_usuario(self, permisos, bg):
         #Creacion del top level
         self.topCreate = customtkinter.CTkToplevel()
         self.topCreate.title("Crear Usuarios")
-        self.topCreate.iconbitmap("imagenes/logo_ico.ico") 
         self.topCreate.w = 600
         self.topCreate.h = 400
         self.topCreate.geometry(f"{self.topCreate.w}x{self.topCreate.h}")
         self.topCreate.resizable(False, False)
-        
+        self.fondo_image = tk.Label(self.topCreate, image=bg)
+        self.fondo_image.place(x=0, y=0, relwidth=1, relheight=1)
+
+
         #Centrar la ventana en la pantalla
         screen_width = self.topCreate.winfo_screenwidth()
         screen_height = self.topCreate.winfo_screenheight()
@@ -221,6 +228,11 @@ class FormUsers():
         self.id = self.tablaUsuarios.item(self.tablaUsuarios.selection())['text']
         self.usuario = self.tablaUsuarios.item(self.tablaUsuarios.selection())['values'][1]
         self.password = self.tablaUsuarios.item(self.tablaUsuarios.selection())['values'][2]
+        ruta_imagen = "imagenes/bg.png"
+        # Cargar la imagen
+        imagen = Image.open(ruta_imagen)
+        imagen_tk = ImageTk.PhotoImage(imagen)
+        self.imagen_tk = imagen_tk
 
         self.topEdit = customtkinter.CTkToplevel()
         self.topEdit.title("Editar Usuario")
@@ -229,6 +241,10 @@ class FormUsers():
         self.topEdit.h = 400
         self.topEdit.geometry(f"{self.topEdit.w}x{self.topEdit.h}")
         self.topEdit.resizable(False, False)
+
+        self.fondo_image = tk.Label(self.topEdit, image=imagen_tk)
+        self.fondo_image.place(x=0, y=0, relwidth=1, relheight=1)
+        
 
         # Centrar la ventana en la pantalla
         screen_width = self.topEdit.winfo_screenwidth()
@@ -249,7 +265,6 @@ class FormUsers():
         pass_ico = Image.open("imagenes/pass.png")
         pass_ico = pass_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
         pass_img = ImageTk.PhotoImage(pass_ico)
-
         # Datos para el usuario
         marco_editarusuario = customtkinter.CTkFrame(self.topEdit, width=550, height=350, bg_color="white", fg_color="white")
         marco_editarusuario.place(relx=0.5, rely=0.5, anchor="center")
@@ -288,6 +303,7 @@ class FormUsers():
 
         self.buttonSave = customtkinter.CTkButton(marco_editarusuario, text="Guardar Cambios", font=("Roboto", 12), command=self.GuardarUsuario)
         self.buttonSave.place(x=215, y=250)
+
     def GuardarUsuario(self):
         try:
             # Otener el contenido del Entry
@@ -404,3 +420,5 @@ class FormUsers():
             mensaje = f'Error en actualizarCorrelativo, form_users: {str(e)}'
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')
+
+    

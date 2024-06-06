@@ -70,9 +70,43 @@ class FormularioMaestroDesign(customtkinter.CTk):
                                         command=self.toggle_panel, bg_color='transparent', fg_color='transparent', hover=False, width=WIDTH_LOGO, height=HEIGHT_LOGO)
         self.buttonMenuLateral.pack(side=tk.LEFT, padx=20)
 
+    #def prueba_menu_lateral(self, permisos):
+    #    style = ttk.Style()
+    #    style.configure("Custom.Treeview", font=("Arial", 12), rowheight=50, background=COLOR_MENU_LATERAL, foreground="white")
+    #    style.layout("Custom.Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])
+#
+    #    home_image = Image.open("imagenes/home.png")
+    #    home_resized = home_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+    #    self.home_icon = ImageTk.PhotoImage(home_resized)
+#
+    #    menu = ttk.Treeview(self.menu_lateral, style="Custom.Treeview")
+    #    seccion_home = menu.insert("",END,text="    Home", image=self.home_icon)
+    #    seccion_usuarios = menu.insert("",END, text="Usuarios")
+    #    usuarios_ajuste = menu.insert(seccion_usuarios,END,text="Ajustar Usuarios")
+    #    menu.bind("<Button-1>", lambda event: self.abrir_menus(event, permisos, usuarios_ajuste, menu, seccion_home))
+    #    menu.pack()
+#
+    
+
+    def abrir_menus(self, event, permisos, usuarios_ajuste, menu, seccion_home):
+        item_id = event.widget.focus()  # Obtener el ID del elemento del Treeview seleccionado
+        #item_text = event.widget.item(item_id)["text"]  # Obtener el texto del elemento seleccionado
+        if item_id == usuarios_ajuste:
+            self.abrir_crear_usuarios(permisos)
+            menu.selection_remove(item_id)
+
+        elif item_id == seccion_home:
+            self.abrir_home()
+            menu.selection_remove(item_id)
+
+        #self.buttonUsers = tk.Button(self.menu_lateral, text="Usuarios", font=("Roboto", 16), image=self.usuarios_icon, highlightthickness=20, width=ANCHO_MENU,
+        #        height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_usuarios(permisos))
+        #    self.buttonUsers.pack()
+        #    self.binding_hover_event(self.buttonUsers)
+
     def controles_menu_lateral(self, permisos):
         self.id_client = None
-        # ESTO AUN NO ESTA DEFINIDO42
+        ## ESTO AUN NO ESTA DEFINIDO42
         self.labelPerfil = tk.Label(self.menu_lateral, image=self.perfil, bg=COLOR_MENU_LATERAL)
         self.labelPerfil.pack(side=tk.TOP, pady=10)
         #RUTAS DE LAS IMAGENES
@@ -154,8 +188,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_usuarios(permisos))
             self.buttonUsers.pack()
             self.binding_hover_event(self.buttonUsers)
-
-            
+        
     def controles_cuerpo(self):    
         self.seccion_login()
         self.barra_superior.pack_forget()
@@ -233,14 +266,16 @@ class FormularioMaestroDesign(customtkinter.CTk):
         marco_login = customtkinter.CTkFrame(self.cuerpo_principal, fg_color="white", width=300, height=250)
         marco_login.place(relx=0.5, rely=0.5, anchor="center")
 
-        set_opacity(marco_login, 0.8)
-        logo_image = Image.open("imagenes/logoss.png")
-        logo_resized = logo_image.resize((400, 350))
+        set_opacity(marco_login, 0.9)
+        logo_image = Image.open("imagenes/logo_completo.png")
+        logo_resized = logo_image.resize((205, 55))
         self.logo_final = ImageTk.PhotoImage(logo_resized)
 
-        #Label de bienvenida
-        lblwelcome = tk.Label(self.cuerpo_principal, text="", image=self.logo_final, font=("Roboto", 15))
-        lblwelcome.place(x=412, y=350, anchor="center")
+        #self.marco_logo = tk.Frame(self.cuerpo_principal, width=205, height=55, bg="#e9eef2")
+        #self.marco_logo.place(x=299, y=480)
+        ##Label de bienvenida
+        #lblwelcome = tk.Label(self.marco_logo, text="", image=self.logo_final, bg="#e9eef2")
+        #lblwelcome.place(x=0, y=0, relwidth=1, relheight=1)
         
         #Iconos
         user_ico = Image.open("imagenes/user.png")
@@ -295,6 +330,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         for resultado in resultados:
             permisos.append(resultado[0])
         if permisos:
+            #self.prueba_menu_lateral(permisos)
             self.controles_menu_lateral(permisos)
             print(permisos)
         else:
