@@ -19,7 +19,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
     def __init__(self):
         super().__init__()
         self.logo = util_img.leer_imagen("./imagenes/logo.png", (590, 423))
-        self.bg = util_img.leer_imagen("./imagenes/bg.jpg", (1440, 900))
+        self.bg = util_img.leer_imagen("./imagenes/bg.png", (1440, 900))
         self.perfil = util_img.leer_imagen("./imagenes/logo.png", (100, 100))
         self.title("Policlinica de Especialidades - Gestion de Inventario")
         self.config_window()
@@ -45,8 +45,9 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.menu_lateral = tk.Frame(self, bg=COLOR_MENU_LATERAL, width=150)
         self.menu_lateral.pack(side=tk.LEFT, fill='both', expand=False) 
 
-        self.cuerpo_principal = tk.Frame(self, bg=COLOR_FONDO)
+        self.cuerpo_principal = tk.Frame(self)
         self.cuerpo_principal.pack(side=tk.RIGHT, fill='both', expand=True)
+        
 
     def set_window_icon(self):
         icon_path = "imagenes/logo_ico.ico"  # Ruta del archivo de icono
@@ -162,7 +163,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
     def seccion_login(self):
         ############# INICIALIZACION DE LA IMAGEN DE FONDO AUTOEXPANDIBLE #############
-        ruta_imagen = "imagenes/bg.jpg"
+        ruta_imagen = "imagenes/bg.png"
         # Cargar la imagen
         imagen = Image.open(ruta_imagen)
         imagen_tk = ImageTk.PhotoImage(imagen)
@@ -211,7 +212,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.barra_superior.pack(side=tk.TOP, fill='both')
                 self.menu_lateral.pack(side=tk.LEFT, fill='both', expand=False)
                 self.cuerpo_principal.destroy()
-                self.cuerpo_principal = tk.Frame(self, bg=COLOR_FONDO)
+                self.cuerpo_principal = tk.Frame(self)
                 self.cuerpo_principal.pack(side=tk.RIGHT, fill='both', expand=True)
                 self.w, self.h = 1440, 900
                 self.geometry(f"{self.w}x{self.h}")
@@ -233,11 +234,13 @@ class FormularioMaestroDesign(customtkinter.CTk):
         marco_login.place(relx=0.5, rely=0.5, anchor="center")
 
         set_opacity(marco_login, 0.8)
-        
-        
+        logo_image = Image.open("imagenes/logoss.png")
+        logo_resized = logo_image.resize((400, 350))
+        self.logo_final = ImageTk.PhotoImage(logo_resized)
+
         #Label de bienvenida
-        lblwelcome = customtkinter.CTkLabel(self.cuerpo_principal, text="Policlinica de Especialidades - Gestion de Inventario", font=("Roboto", 15), bg_color="#e5e5e3")
-        lblwelcome.place(x=412, y=40, anchor="center")
+        lblwelcome = tk.Label(self.cuerpo_principal, text="", image=self.logo_final, font=("Roboto", 15))
+        lblwelcome.place(x=412, y=350, anchor="center")
         
         #Iconos
         user_ico = Image.open("imagenes/user.png")
