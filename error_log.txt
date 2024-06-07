@@ -42,3 +42,12 @@ Error en actualizarCorrelativo, form_users: unrecognized token: "'2 WHERE name =
 Error en SaveClient, usuariosDao: database is locked
 Error en SaveClient, usuariosDao: database is locked
 Error en SaveClient, usuariosDao: database is locked
+Error en buscarCorrelativo, util_funtions: ConexionDB.ejecutar_consulta() missing 1 required positional argument: 'consulta'
+Error en buscarCorrelativo, util_funtions: ConexionDB.ejecutar_consulta() missing 1 required positional argument: 'consulta'
+Error en actualizarCorrelativo, util_funtions: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en buscarCorrelativo, util_funtions: 'method' object is not subscriptable
+Error en buscarCorrelativo, util_funtions: 'method' object is not subscriptable
+Error en actualizarCorrelativo, util_funtions: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en buscarCorrelativo, util_funtions: 'method' object is not subscriptable
+Error en buscarCorrelativo, util_funtions: 'method' object is not subscriptable
+Error en actualizarCorrelativo, util_funtions: unsupported operand type(s) for +: 'NoneType' and 'int'

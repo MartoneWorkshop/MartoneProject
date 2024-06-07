@@ -1,35 +1,36 @@
 import tkinter as tk
+import util.util_ventana as util_ventana
+import util.util_imagenes as util_img
+import customtkinter
+import ctypes
 from tkinter import font, ttk
 from config import COLOR_BARRA_SUPERIOR, COLOR_MENU_LATERAL, COLOR_FONDO, COLOR_MENU_CURSOR_ENCIMA, COLOR_SUBMENU_LATERAL, COLOR_SUBMENU_CURSOR_ENCIMA, ANCHO_MENU, MITAD_MENU, ALTO_MENU, WIDTH_LOGO, HEIGHT_LOGO
 from PIL import Image, ImageTk, ImageColor
-import util.util_ventana as util_ventana
-import util.util_imagenes as util_img
 from util.util_alerts import edit_advice, error_advice, save_advice, delete_advice, login_correct_advice, login_wrong_advice
 from customtkinter import *
-import customtkinter
-import ctypes
 from ctypes import windll
 from functions.conexion import ConexionDB
 from tkinter import messagebox
-from pystray import MenuItem as item, Icon
 from formularios.form_registros_design import FormularioRegistrosDesign
 from formularios.form_home_design import FormularioHomeDesign
 from formularios.form_users import FormUsers
+from formularios.form_modulos import FormModulos
 class FormularioMaestroDesign(customtkinter.CTk):
     def __init__(self):
         super().__init__()
-        self.logo = util_img.leer_imagen("./imagenes/logo.png", (590, 423))
-        self.bg = util_img.leer_imagen("./imagenes/bg.png", (1440, 900))
-        self.perfil = util_img.leer_imagen("./imagenes/logo.png", (100, 100))
-        self.title("Policlinica de Especialidades - Gestion de Inventario")
         self.config_window()
         self.paneles()
-        #self.controles_menu_lateral()
         self.controles_barra_superior()
         self.controles_cuerpo()
-    
+
+    def controles_cuerpo(self):    
+        self.seccion_login()
+        self.barra_superior.pack_forget()
+        self.menu_lateral.pack_forget()
     def config_window(self):
         # Configuración inicial de la ventana
+        self.bg = util_img.leer_imagen("./imagenes/bg.png", (1440, 900))
+        self.title("Policlinica de Especialidades")
         self.set_window_icon()
         self.w, self.h = 800, 600
         self.geometry(f"{self.w}x{self.h}")
@@ -47,20 +48,16 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
         self.cuerpo_principal = tk.Frame(self)
         self.cuerpo_principal.pack(side=tk.RIGHT, fill='both', expand=True)
-        
-
     def set_window_icon(self):
         icon_path = "imagenes/logo_ico.ico"  # Ruta del archivo de icono
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("PECA-GesInv")  # Cambia "myappid" por un identificador único para tu aplicación
         self.iconbitmap(icon_path)
-
     def controles_barra_superior(self):
         # Configuración de la barra superior
         font_awesome = customtkinter.CTkFont(family='Roboto', size=12)
         # Etiqueta de título
         self.labelTitulo = customtkinter.CTkLabel(self.barra_superior, text="Gestion de Inventario", font=font_awesome,padx=20, text_color="white")
-        self.labelTitulo.configure(fg_color="transparent", font=(
-            "Roboto", 15), bg_color='transparent', pady=10, width=16)
+        self.labelTitulo.configure(fg_color="transparent", font=("Roboto", 15), bg_color='transparent', pady=10, width=16)
         self.labelTitulo.pack(side=tk.LEFT)
         self.menu_original_image = Image.open("imagenes/menu.png")
         self.menu_resized_image = self.menu_original_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
@@ -69,43 +66,8 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.buttonMenuLateral = customtkinter.CTkButton(self.barra_superior, text="", image=self.menu_image,
                                         command=self.toggle_panel, bg_color='transparent', fg_color='transparent', hover=False, width=WIDTH_LOGO, height=HEIGHT_LOGO)
         self.buttonMenuLateral.pack(side=tk.LEFT, padx=20)
-
-    #def prueba_menu_lateral(self, permisos):
-    #    style = ttk.Style()
-    #    style.configure("Custom.Treeview", font=("Arial", 12), rowheight=50, background=COLOR_MENU_LATERAL, foreground="white")
-    #    style.layout("Custom.Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])
-#
-    #    home_image = Image.open("imagenes/home.png")
-    #    home_resized = home_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-    #    self.home_icon = ImageTk.PhotoImage(home_resized)
-#
-    #    menu = ttk.Treeview(self.menu_lateral, style="Custom.Treeview")
-    #    seccion_home = menu.insert("",END,text="    Home", image=self.home_icon)
-    #    seccion_usuarios = menu.insert("",END, text="Usuarios")
-    #    usuarios_ajuste = menu.insert(seccion_usuarios,END,text="Ajustar Usuarios")
-    #    menu.bind("<Button-1>", lambda event: self.abrir_menus(event, permisos, usuarios_ajuste, menu, seccion_home))
-    #    menu.pack()
-#
-    
-
-    def abrir_menus(self, event, permisos, usuarios_ajuste, menu, seccion_home):
-        item_id = event.widget.focus()  # Obtener el ID del elemento del Treeview seleccionado
-        #item_text = event.widget.item(item_id)["text"]  # Obtener el texto del elemento seleccionado
-        if item_id == usuarios_ajuste:
-            self.abrir_crear_usuarios(permisos)
-            menu.selection_remove(item_id)
-
-        elif item_id == seccion_home:
-            self.abrir_home()
-            menu.selection_remove(item_id)
-
-        #self.buttonUsers = tk.Button(self.menu_lateral, text="Usuarios", font=("Roboto", 16), image=self.usuarios_icon, highlightthickness=20, width=ANCHO_MENU,
-        #        height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_usuarios(permisos))
-        #    self.buttonUsers.pack()
-        #    self.binding_hover_event(self.buttonUsers)
-
     def controles_menu_lateral(self, permisos):
-        self.id_client = None
+        self.perfil = util_img.leer_imagen("./imagenes/logo.png", (100, 100))
         ## ESTO AUN NO ESTA DEFINIDO42
         self.labelPerfil = tk.Label(self.menu_lateral, image=self.perfil, bg=COLOR_MENU_LATERAL)
         self.labelPerfil.pack(side=tk.TOP, pady=10)
@@ -145,7 +107,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.adjustUser_icon = ImageTk.PhotoImage(adjustUser_resized)
         #BOTONES DEL MENU
 
-        if 'HOME100' in permisos:
+        if 'HOME1000' in permisos:
             self.buttonHome = tk.Button(self.menu_lateral, text="Inicio", font=("Roboto", 16), image=self.home_icon, highlightthickness=20, width=ANCHO_MENU,
                 height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.abrir_home)
             self.buttonHome.pack()
@@ -168,7 +130,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.binding_hover_event(self.buttonDatabase)
         else:
             pass
-        if 'REP100' in permisos:
+        if 'REP1000' in permisos:
             self.buttonInformes = tk.Button(self.menu_lateral, text="Informes",  font=("Roboto", 16),image=self.informes_icon, highlightthickness=20, width=ANCHO_MENU,
                 height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10)        
             self.buttonInformes.pack()
@@ -176,23 +138,13 @@ class FormularioMaestroDesign(customtkinter.CTk):
         else:
             pass
         
-        if 'SET100' in permisos:
+        if 'CON1000' in permisos:
             self.buttonSettings = tk.Button(self.menu_lateral, text="Settings",  font=("Roboto", 16),image=self.settings_icon, highlightthickness=20, width=ANCHO_MENU,
-                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10)
+                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_config(permisos))
             self.buttonSettings.pack()
             self.binding_hover_event(self.buttonSettings)
         else:
             pass
-        if 'USER100' in permisos:
-            self.buttonUsers = tk.Button(self.menu_lateral, text="Usuarios", font=("Roboto", 16), image=self.usuarios_icon, highlightthickness=20, width=ANCHO_MENU,
-                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_usuarios(permisos))
-            self.buttonUsers.pack()
-            self.binding_hover_event(self.buttonUsers)
-        
-    def controles_cuerpo(self):    
-        self.seccion_login()
-        self.barra_superior.pack_forget()
-        self.menu_lateral.pack_forget()
 
     def seccion_login(self):
         ############# INICIALIZACION DE LA IMAGEN DE FONDO AUTOEXPANDIBLE #############
@@ -241,6 +193,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                     'idrol': idrol,
                     'activo': activo
                 } 
+
                 self.obtener_idrol(idrol)
                 self.barra_superior.pack(side=tk.TOP, fill='both')
                 self.menu_lateral.pack(side=tk.LEFT, fill='both', expand=False)
@@ -271,12 +224,6 @@ class FormularioMaestroDesign(customtkinter.CTk):
         logo_resized = logo_image.resize((205, 55))
         self.logo_final = ImageTk.PhotoImage(logo_resized)
 
-        #self.marco_logo = tk.Frame(self.cuerpo_principal, width=205, height=55, bg="#e9eef2")
-        #self.marco_logo.place(x=299, y=480)
-        ##Label de bienvenida
-        #lblwelcome = tk.Label(self.marco_logo, text="", image=self.logo_final, bg="#e9eef2")
-        #lblwelcome.place(x=0, y=0, relwidth=1, relheight=1)
-        
         #Iconos
         user_ico = Image.open("imagenes/user.png")
         user_ico = user_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
@@ -294,8 +241,6 @@ class FormularioMaestroDesign(customtkinter.CTk):
         set_opacity(lbluser, 0.8)
 
         sv_datauser = customtkinter.StringVar()
-        #entryuser = customtkinter.CTkEntry(self.cuerpo_principal, textvariable=sv_datauser, width=150)
-        #
         style = ttk.Style()
         style.configure("Custom.TEntry", borderwidth=0)
 
@@ -315,7 +260,6 @@ class FormularioMaestroDesign(customtkinter.CTk):
         entrypass.bind("<Return>", lambda event: validarDatos())
         
         #LOGIN BOTON
-        #btnLogIn = customtkinter.CTkButton(self.cuerpo_principal, text="Iniciar Sesion", width=100, height=40, command=validarDatos, fg_color="#4d4ce5", hover_color="#3b3bb2", text_color="white")
         stylebutton = ttk.Style()
         stylebutton.configure("Custom.TButton")
         btnLogIn = ttk.Button(marco_login, text="Iniciar Sesion", command=validarDatos, width=14, style="Custom.TButton")
@@ -340,13 +284,11 @@ class FormularioMaestroDesign(customtkinter.CTk):
         #VERIFICAR LOS PERMISOS Y QUE BOTONES ESTAN DISPONIBLES  
         if 'DATA100' in permisos:
             self.buttonDatabase.pack_forget()
-        if 'REP100' in permisos:
+        if 'REP1000' in permisos:
             self.buttonInformes.pack_forget()
-        if 'SET100' in permisos:
+        if 'CON1000' in permisos:
             self.buttonSettings.pack_forget()
-        if 'USER100' in permisos:
-            self.buttonUsers.pack_forget()
-        if 'USER101' in permisos:
+        if 'USER1000' in permisos:
             if hasattr(self, "buttonAdjustUsers"):
                 self.buttonAdjustUsers.pack_forget()
                 del self.buttonAdjustUsers
@@ -383,18 +325,19 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.buttonDatabase.pack()
         else:
             pass
-        if 'REP100' in permisos:
+        if 'REP1000' in permisos:
             self.buttonInformes.pack()
         else:
             pass
-        if 'SET100' in permisos:
+        if 'CON1000' in permisos:
             self.buttonSettings.pack()
         else:
             pass
-        if 'USER100' in permisos:
-            self.buttonUsers.pack()
-            
-    def submenu_usuarios(self, permisos):
+        if 'USER1000' in permisos:
+            self.buttonAdjustUsers.pack()
+        else:
+            pass
+    def submenu_config(self, permisos):
         if 'MED101' in permisos:
             if hasattr(self, "buttonClientes"):
                 self.buttonClientes.pack_forget()
@@ -413,7 +356,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 del self.buttonHistoria
             else:
                 pass
-        if 'USER101' in permisos:
+        if 'USER1000' in permisos:
             if hasattr(self, "buttonAdjustUsers"):
                 self.buttonAdjustUsers.pack_forget()
                 del self.buttonAdjustUsers
@@ -422,6 +365,16 @@ class FormularioMaestroDesign(customtkinter.CTk):
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_crear_usuarios(permisos))
                 self.buttonAdjustUsers.pack()
                 self.binding_hover_submenu_event(self.buttonAdjustUsers)
+
+        if 'CON1001' in permisos:
+            if hasattr(self, "buttonModulos"):
+                self.buttonModulos.pack_forget()
+                del self.buttonModulos
+            else:
+                self.buttonModulos = tk.Button(self.menu_lateral, text="Modulos Menu", font=("Roboto", 12), image=self.adjustUser_icon, highlightthickness=20, width=ANCHO_MENU,
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
+                self.buttonModulos.pack()
+                self.binding_hover_submenu_event(self.buttonModulos)
 
     def toggle_panel(self):
         # Alternar visibilidad del menú lateral
@@ -446,7 +399,9 @@ class FormularioMaestroDesign(customtkinter.CTk):
     def abrir_crear_usuarios(self, permisos):
         self.limpiar_panel(self.cuerpo_principal)
         FormUsers(self.cuerpo_principal, permisos)
-        
+    def abir_modulos(self, permisos):
+        self.limpiar_panel(self.cuerpo_principal)
+        FormModulos(self.cuerpo_principal, permisos)
     def abrir_home(self):   
         self.limpiar_panel(self.cuerpo_principal)
         FormularioHomeDesign(self.cuerpo_principal, self.bg) 
