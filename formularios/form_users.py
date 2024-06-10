@@ -34,7 +34,7 @@ class FormUsers():
         label_fondo = tk.Label(cuerpo_principal, image=imagen_tk)
         label_fondo.place(x=0, y=0, relwidth=1, relheight=1)
         self.label_fondo = label_fondo
-
+        
         def ajustar_imagen(event):
             # Cambiar el tamaño de la imagen para que coincida con el tamaño del frame
             nueva_imagen = imagen.resize((event.width, event.height))
@@ -161,8 +161,8 @@ class FormUsers():
         self.topCreate.h = 400
         self.topCreate.geometry(f"{self.topCreate.w}x{self.topCreate.h}")
         self.topCreate.resizable(False, False)
-        self.fondo_image = tk.Label(self.topCreate, image=bg)
-        self.fondo_image.place(x=0, y=0, relwidth=1, relheight=1)
+        self.topCreate.configure(bg_color='#6a717e')
+        self.topCreate.configure(fg_color='#6a717e')
 
 
         #Centrar la ventana en la pantalla
@@ -225,11 +225,6 @@ class FormUsers():
         self.id = self.tablaUsuarios.item(self.tablaUsuarios.selection())['text']
         self.usuario = self.tablaUsuarios.item(self.tablaUsuarios.selection())['values'][1]
         self.password = self.tablaUsuarios.item(self.tablaUsuarios.selection())['values'][2]
-        ruta_imagen = "imagenes/bg.png"
-        # Cargar la imagen
-        fondo = Image.open(ruta_imagen)
-        fondo_tk = ImageTk.PhotoImage(fondo)
-        self.fondo_tk = fondo_tk
 
         self.topEdit = customtkinter.CTkToplevel()
         self.topEdit.title("Editar Usuario")
@@ -238,10 +233,9 @@ class FormUsers():
         self.topEdit.h = 400
         self.topEdit.geometry(f"{self.topEdit.w}x{self.topEdit.h}")
         self.topEdit.resizable(False, False)
+        self.topEdit.configure(bg_color='#6a717e')
+        self.topEdit.configure(fg_color='#6a717e')
 
-        self.fondo_image = tk.Label(self.topEdit, image=fondo_tk)
-        self.fondo_image.place(x=0, y=0, relwidth=1, relheight=1)
-        
 
         # Centrar la ventana en la pantalla
         screen_width = self.topEdit.winfo_screenwidth()
@@ -310,10 +304,9 @@ class FormUsers():
         self.topModperm.h = 600
         self.topModperm.geometry(f"{self.topModperm.w}x{self.topModperm.h}")
         self.topModperm.resizable(False, False)
-        #Imagen de fondo
-        self.f_image = tk.Label(self.topModperm, image=bg)
-        self.f_image.place(x=0, y=0, relwidth=1, relheight=1)
-        
+        self.topModperm.configure(bg_color='#6a717e')
+        self.topModperm.configure(fg_color='#6a717e')
+  
         #Centrar la ventana en la pantalla
         screen_width = self.topModperm.winfo_screenwidth()
         screen_height = self.topModperm.winfo_screenheight()

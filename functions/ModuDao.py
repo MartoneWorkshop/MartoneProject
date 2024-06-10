@@ -2,9 +2,9 @@ from .conexion import ConexionDB
 from tkinter import messagebox
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 
-def EditUser(modulos, id):
+def EditModulo(modulos, id):
     conexion = ConexionDB()
-    sql = f"""UPDATE modulos SET alias = '{modulos.alias}', codmod = '{modulos.codmod}', 
+    sql = f"""UPDATE modulos SET nombre = '{modulos.nombre}', alias = '{modulos.alias}', codmod = '{modulos.codmod}', 
     idrol = '{modulos.idrol}', date_update = '{modulos.date_update}', activo = 1 WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
@@ -19,8 +19,8 @@ def EditUser(modulos, id):
 
 def SaveModulo(modulos):
     conexion = ConexionDB()
-    sql = f"""INSERT INTO modulos (name, alias, codmod, date_created, date_update)
-    VALUES('{modulos.name}','{modulos.alias}','{modulos.codmod}','{modulos.date_created}','{modulos.date_update}')"""
+    sql = f"""INSERT INTO modulos (name, alias, codmod, date_created, date_update, activo)
+    VALUES('{modulos.name}','{modulos.alias}','{modulos.codmod}','{modulos.date_created}','{modulos.date_update}', 1)"""
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()

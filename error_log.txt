@@ -51,3 +51,4 @@ Error en actualizarCorrelativo, util_funtions: unsupported operand type(s) for +
 Error en buscarCorrelativo, util_funtions: 'method' object is not subscriptable
 Error en buscarCorrelativo, util_funtions: 'method' object is not subscriptable
 Error en actualizarCorrelativo, util_funtions: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en SaveModulo, modulosDao: 6 values for 5 columns
