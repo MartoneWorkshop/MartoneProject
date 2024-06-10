@@ -372,7 +372,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 del self.buttonModulos
             else:
                 self.buttonModulos = tk.Button(self.menu_lateral, text="Modulos Menu", font=("Roboto", 12), image=self.adjustUser_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_modulos(permisos))
                 self.buttonModulos.pack()
                 self.binding_hover_submenu_event(self.buttonModulos)
 
@@ -399,9 +399,11 @@ class FormularioMaestroDesign(customtkinter.CTk):
     def abrir_crear_usuarios(self, permisos):
         self.limpiar_panel(self.cuerpo_principal)
         FormUsers(self.cuerpo_principal, permisos)
-    def abir_modulos(self, permisos):
+        
+    def abrir_modulos(self, permisos):
         self.limpiar_panel(self.cuerpo_principal)
         FormModulos(self.cuerpo_principal, permisos)
+
     def abrir_home(self):   
         self.limpiar_panel(self.cuerpo_principal)
         FormularioHomeDesign(self.cuerpo_principal, self.bg) 
