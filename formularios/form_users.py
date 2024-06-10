@@ -77,7 +77,7 @@ class FormUsers():
         self.sventrysearch_usuarios = customtkinter.StringVar()
         self.entrysearch_usuarios = ttk.Entry(self.marco_create, textvariable=self.sventrysearch_usuarios, style='Modern.TEntry', width=30)
         self.entrysearch_usuarios.place(x=175, y=157)
-        self.entrysearch_usuarios.bind('<KeyRelease>', self.update_client_content)
+        self.entrysearch_usuarios.bind('<KeyRelease>', self.update_users_content)
         #################################################### INFORMACION DE LA TABLA ####################################################
         where = ""
         if len(where) > 0:
@@ -118,29 +118,28 @@ class FormUsers():
         
         self.tablaUsuarios.bind('<Double-1>', lambda event: self.editar_usuario(event, self.tablaUsuarios.item(self.tablaUsuarios.selection())['values']))
 
-    def update_client_content(self, event=None):
-    # Conectar a la base de datos
-        self.connection = sqlite3.connect('database/database.db')
-        self.cursor = self.connection.cursor()
+    def update_users_content(self, event=None):
+        conexion = ConexionDB()
     # Obtener el contenido del Entry
         self.content = self.entrysearch_usuarios.get()
     # Realizar la consulta
-        self.cursor.execute("""SELECT * FROM usuarios WHERE
-                        id LIKE ? OR 
-                        coduser LIKE ? OR 
-                        username LIKE ? OR 
-                        pass LIKE ? OR 
-                        idrol LIKE ? OR 
-                        date_created LIKE ? OR
-                        date_update LIKE ?""", 
-                        ('%' + self.content + '%',
-                        '%' + self.content + '%',  
-                        '%' + self.content + '%',
-                        '%' + self.content.strip() + '%',
-                        '%' + self.content.strip() + '%',
-                        '%' + self.content.strip() + '%', 
-                        '%' + self.content.strip() + '%'))
-        self.result = self.cursor.fetchall()
+        sql = """SELECT * FROM usuarios WHERE
+                id LIKE ? OR 
+                coduser LIKE ? OR 
+                username LIKE ? OR 
+                password LIKE ? OR 
+                idrol LIKE ? OR 
+                date_created LIKE ? OR
+                date_update LIKE ?"""
+        parametros = ('%' + self.content + '%',
+                '%' + self.content + '%',  
+                '%' + self.content + '%',
+                '%' + self.content.strip() + '%',
+                '%' + self.content.strip() + '%',
+                '%' + self.content.strip() + '%', 
+                '%' + self.content.strip() + '%')
+        conexion.ejecutar_consulta_parametros(sql, parametros)
+        resultados = conexion.obtener_resultados()  
     # Filtrar los registros según el contenido ingresado
         filtered_results = []
         for p in self.ListaUsuarios:
@@ -152,8 +151,7 @@ class FormUsers():
     # Insertar los nuevos resultados en la tablaEquipos
         for p in filtered_results:
             self.tablaUsuarios.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6]))
-        self.cursor.close()
-        self.connection.close()
+        conexion.cerrarConexion()
 
     def crear_usuario(self, permisos, bg):
         #Creacion del top level

@@ -17,6 +17,12 @@ class ConexionDB:
             self.conexion.commit()
         except sqlite3.Error as error:
             messagebox.showerror("Error", f"Error en la consulta: {str(error)}")
+    def ejecutar_consulta_parametros(self, consulta, parametros):
+        try:
+            self.cursor.execute(consulta, parametros)
+            self.conexion.commit()
+        except sqlite3.Error as error:
+            messagebox.showerror("Error", f"Error en la consulta: {str(error)}")
 
     def obtener_resultado(self):
         resultado = self.cursor.fetchone()
