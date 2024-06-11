@@ -7,7 +7,7 @@ import datetime
 import sqlite3
 from tkinter import ttk
 from PIL import Image, ImageTk
-from functions.ModuDao import Modulos, listarModulos, consulModulos, SaveModulo, EditModulo
+from functions.ModuDao import Modulos, listarModulos, consulModulos, SaveModulo, EditModulo, ModuloDisable
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 
 
@@ -53,13 +53,13 @@ class FormModulos():
                                         command=lambda: self.crear_Modulo(permisos))
         self.buttonCreateMod.place(x=140, y=50)
 
-        #self.buttonEditPerm = tk.Button(self.marco_modulos, text="Editar\n Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-        #                                command=lambda: self.editar_usuario(permisos, self.tablaModulos.item(self.tablaModulos.selection())['values']))
-        #self.buttonEditPerm.place(x=250, y=50)
-#
-        #self.buttonDeletePerm = tk.Button(self.marco_modulos, text="Desactivar\n Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-        #                                command=lambda: self.desactivarUsuario(permisos))
-        #self.buttonDeletePerm.place(x=350, y=50)
+        self.buttonEditPerm = tk.Button(self.marco_modulos, text="Editar\n Modulo", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                        command=lambda: self.editar_Modulo(permisos, self.tablaModulos.item(self.tablaModulos.selection())['values'])) 
+        self.buttonEditPerm.place(x=250, y=50)
+        
+        self.buttonDeletePerm = tk.Button(self.marco_modulos, text="Desactivar\n Modulo", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                        command=lambda: self.desactivarModulo(permisos))
+        self.buttonDeletePerm.place(x=350, y=50)
 
         ###################################### Tabla de modulos activos ######################
         where = ""
@@ -97,7 +97,7 @@ class FormModulos():
         for p in self.ListaModulos:
             self.tablaModulos.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4],p[5]))
         
-        #self.tablaModulos.bind('<Double-1>', lambda event: self.editar_usuario(event, self.tablaModulos.item(self.tablaModulos.selection())['values']))
+        self.tablaModulos.bind('<Double-1>', lambda event: self.editar_Modulo(event, self.tablaModulos.item(self.tablaModulos.selection())['values']))
 
     def update_client_content(self, event=None):
     # Conectar a la base de datos
@@ -214,13 +214,86 @@ class FormModulos():
 
         self.svnombre_mod.trace("w", actualizar_alias)
 
+    def editar_Modulo(self, permisos, values):
+        self.id = self.tablaModulos.item(self.tablaModulos.selection())['text']
+        self.nombredit = self.tablaModulos.item(self.tablaModulos.selection())['values'][0]
+        self.aliasedit = self.tablaModulos.item(self.tablaModulos.selection())['values'][1]
+        self.codmodedit = self.tablaModulos.item(self.tablaModulos.selection())['values'][2]
+        #Creacion del top level
+        self.topEditMod = customtkinter.CTkToplevel()
+        self.topEditMod.title("Editar Modulo")
+        self.topEditMod.w = 600
+        self.topEditMod.h = 400
+        self.topEditMod.geometry(f"{self.topEditMod.w}x{self.topEditMod.h}")
+        self.topEditMod.resizable(False, False)
+        self.topEditMod.configure(bg_color='#6a717e')
+        self.topEditMod.configure(fg_color='#6a717e')
+        
+        #Centrar la ventana en la pantalla
+        screen_width = self.topEditMod.winfo_screenwidth()
+        screen_height = self.topEditMod.winfo_screenheight()
+        x = (screen_width - self.topEditMod.w) // 2
+        y = (screen_height - self.topEditMod.h) // 2
+        self.topEditMod.geometry(f"+{x}+{y}")
+
+        self.topEditMod.lift()
+        self.topEditMod.grab_set()
+        self.topEditMod.transient()
+
+        marco_editarpermisos = customtkinter.CTkFrame(self.topEditMod, width=550,height=350, bg_color="white", fg_color="white")
+        marco_editarpermisos.place(relx=0.5, rely=0.5, anchor="center")
+        
+        set_opacity(marco_editarpermisos, 0.8)
+
+        self.lblinfo = customtkinter.CTkLabel(self.topEditMod, text="Editar Modulo", font=("Roboto",14), bg_color='#e1e3e5', fg_color='#e1e3e5')
+        self.lblinfo.place(x=220, rely=0.1)
+
+        ############# NOMBRE DEL MODULO
+        self.lbleditnombre = customtkinter.CTkLabel(self.topEditMod, text='Nombre del Modulo', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
+        self.lbleditnombre.place(x=102, y=120)
+
+        self.svnombre_mod = customtkinter.StringVar(value=self.nombredit)
+        self.entryeditnombre_mod = ttk.Entry(self.topEditMod, style='Modern.TEntry', textvariable=self.svnombre_mod)
+        self.entryeditnombre_mod.place(x=95, y=170)
+        self.entryeditnombre_mod.configure(style='Entry.TEntry')
+
+        ############ NOMBRE DEL ALIAS
+        self.lblalias = customtkinter.CTkLabel(self.topEditMod, text='Alias del Modulo', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
+        self.lblalias.place(x=255, y=120)
+
+        self.svalias = customtkinter.StringVar(value=self.aliasedit)
+        self.entryeditalias = ttk.Entry(self.topEditMod, style='Modern.TEntry', textvariable=self.svalias)
+        self.entryeditalias.place(x=240, y=170)
+        self.entryeditalias.configure(style='Entry.TEntry')
+
+        ############ CODIGO DEL MODULO
+        self.lbleditcodmod = customtkinter.CTkLabel(self.topEditMod, text='Codigo del Modulo', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
+        self.lbleditcodmod.place(x=392, y=120)
+
+        self.svcodmod = customtkinter.StringVar(value=self.codmodedit)
+        self.entryeditcodmod = ttk.Entry(self.topEditMod, style='Modern.TEntry', textvariable=self.svcodmod)
+        self.entryeditcodmod.place(x=385, y=170)
+        self.entryeditcodmod.configure(style='Entry.TEntry')
+
+        self.entryeditnombre_mod.bind("<Return>", lambda event: self.GuardarModulo())
+        ######## BOTONE
+        self.buttonEditMod = tk.Button(self.topEditMod, text="Actualizar", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.GuardarModulo)
+        self.buttonEditMod.place(x=240, y=290)
+
+        def actualizar_alias(*args):
+            nombre = self.svnombre_mod.get()
+            nombre = nombre.capitalize()  # Capitalizar la primera letra del nombre
+            self.svnombre_mod.set(nombre)
+            alias = nombre[:4].upper()
+            self.svalias.set(alias)
+        self.svnombre_mod.trace("w", actualizar_alias)
+
     def toggle_alias_entry(self):
         if self.alias_checkbox_var.get() == 1:
             self.entryalias.config(state='normal')
         else:
             self.entryalias.config(state='disabled')
 
-    
     def GuardarModulo(self):
         try:
             # Otener el contenido del Entry
@@ -240,7 +313,7 @@ class FormModulos():
                 self.topCreateMod.destroy()
             else:
                 EditModulo(modulos, self.id)
-                self.topCreateMod.destroy()
+                self.topEditMod.destroy()
 
             self.listarModuloEnTabla()
         except Exception as e:
@@ -249,7 +322,18 @@ class FormModulos():
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')
 
-    
+    def desactivarModulo(self, permisos):
+        try:
+            self.id = self.tablaModulos.item(self.tablaModulos.selection())['text']
+            ModuloDisable(self.id)
+            self.listarModuloEnTabla()
+            
+        except Exception as e:
+            error_advice()
+            mensaje = f'Error en desactivarUsuario, form_users: {str(e)}'
+            with open('error_log.txt', 'a') as file:
+                file.write(mensaje + '\n')
+
     def listarModuloEnTabla(self, where=None):
         try:
         # Limpiar la tabla existente

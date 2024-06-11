@@ -4,8 +4,8 @@ from util.util_alerts import save_advice, edit_advice, error_advice, delete_advi
 
 def EditModulo(modulos, id):
     conexion = ConexionDB()
-    sql = f"""UPDATE modulos SET nombre = '{modulos.nombre}', alias = '{modulos.alias}', codmod = '{modulos.codmod}', 
-    idrol = '{modulos.idrol}', date_update = '{modulos.date_update}', activo = 1 WHERE id = {id}"""
+    sql = f"""UPDATE modulos SET name = '{modulos.name}', alias = '{modulos.alias}', codmod = '{modulos.codmod}',
+     date_update = '{modulos.date_update}', activo = 1 WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()
@@ -60,7 +60,7 @@ def clientArchived():
     except Exception as e:
         conexion.cerrarConexion()
         error_advice()
-        mensaje = f'Error en clientArchived, modulosDao: {str(e)}'
+        mensaje = f'Error en clientArchived, ModuDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
     return listaCliente    
@@ -80,7 +80,7 @@ def consulModulos(where):
             file.write(mensaje + '\n')
     return listarModulos
 
-def UserDisable(id):
+def ModuloDisable(id):
     conexion = ConexionDB()
     sql = f'UPDATE modulos SET activo = 0 WHERE id = {id}'
     try:
@@ -91,7 +91,7 @@ def UserDisable(id):
     except Exception as e:
         error_advice()
         conexion.cerrarConexion()
-        mensaje = f'Error en UserDelete, en UsersDao: {str(e)}'
+        mensaje = f'Error en ModuloDisable, en ModuDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 

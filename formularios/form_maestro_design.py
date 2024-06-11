@@ -292,6 +292,11 @@ class FormularioMaestroDesign(customtkinter.CTk):
             if hasattr(self, "buttonAdjustUsers"):
                 self.buttonAdjustUsers.pack_forget()
                 del self.buttonAdjustUsers
+        if 'CON1001' in permisos:
+            if hasattr(self, "buttonModulos"):
+                self.buttonModulos.pack_forget()
+                del self.buttonModulos
+        
                 
         if 'MED101' in permisos:
             if hasattr(self, "buttonClientes"):
@@ -302,6 +307,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.abrir_registros_clientes)
                 self.buttonClientes.pack()
                 self.binding_hover_submenu_event(self.buttonClientes)
+
         if 'MED102' in permisos:
             if hasattr(self, "buttonEquipos"):
                 self.buttonEquipos.pack_forget()
@@ -311,6 +317,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
                 self.buttonEquipos.pack()
                 self.binding_hover_submenu_event(self.buttonEquipos)
+
         if 'MED103' in permisos:
             if hasattr(self, "buttonHistoria"):
                 self.buttonHistoria.pack_forget()
@@ -337,6 +344,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.buttonAdjustUsers.pack()
         else:
             pass
+                                
     def submenu_config(self, permisos):
         if 'MED101' in permisos:
             if hasattr(self, "buttonClientes"):
