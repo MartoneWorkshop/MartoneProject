@@ -25,7 +25,7 @@ class FormUsers():
         self.barra_inferior = tk.Frame(cuerpo_principal)
         self.barra_inferior.pack(side=tk.BOTTOM, fill='both', expand=True)  
         # Segundo Label con la imagen
-        ruta_imagen = "imagenes/bg.png"
+        ruta_imagen = "imagenes/background.png"
         # Cargar la imagen
         imagen = Image.open(ruta_imagen)
         imagen_tk = ImageTk.PhotoImage(imagen)
@@ -306,7 +306,7 @@ class FormUsers():
         self.topModperm.resizable(False, False)
         self.topModperm.configure(bg_color='#6a717e')
         self.topModperm.configure(fg_color='#6a717e')
-  
+
         #Centrar la ventana en la pantalla
         screen_width = self.topModperm.winfo_screenwidth()
         screen_height = self.topModperm.winfo_screenheight()

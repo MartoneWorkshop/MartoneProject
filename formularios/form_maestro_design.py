@@ -15,6 +15,7 @@ from formularios.form_registros_design import FormularioRegistrosDesign
 from formularios.form_home_design import FormularioHomeDesign
 from formularios.form_users import FormUsers
 from formularios.form_modulos import FormModulos
+from screeninfo import get_monitors
 class FormularioMaestroDesign(customtkinter.CTk):
     def __init__(self):
         super().__init__()
@@ -27,16 +28,24 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.seccion_login()
         self.barra_superior.pack_forget()
         self.menu_lateral.pack_forget()
+
     def config_window(self):
         # Configuración inicial de la ventana
-        self.bg = util_img.leer_imagen("./imagenes/bg.png", (1440, 900))
+        self.bg = util_img.leer_imagen("./imagenes/background.png", (1440, 900))
         self.title("Policlinica de Especialidades")
         self.set_window_icon()
-        self.w, self.h = 800, 600
+        self.w, self.h = 1120, 800
         self.geometry(f"{self.w}x{self.h}")
         self.resizable(False, False)
-        self.iconbitmap("./imagenes/Logo_Ico.ico")   
+        self.iconbitmap("./imagenes/Logo_Ico.ico")
         util_ventana.centrar_ventana(self, self.w, self.h)
+
+    def get_screen_resolution(self):
+        # Obtener la resolución del monitor principal
+        monitor = get_monitors()[0]
+        self.w = monitor.width
+        self.h = monitor.height
+
     def paneles(self):        
         # Crear paneles: barra superior, menú lateral y cuerpo principal
         self.barra_superior = tk.Frame(
@@ -48,10 +57,12 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
         self.cuerpo_principal = tk.Frame(self)
         self.cuerpo_principal.pack(side=tk.RIGHT, fill='both', expand=True)
+
     def set_window_icon(self):
         icon_path = "imagenes/logo_ico.ico"  # Ruta del archivo de icono
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("PECA-GesInv")  # Cambia "myappid" por un identificador único para tu aplicación
         self.iconbitmap(icon_path)
+
     def controles_barra_superior(self):
         # Configuración de la barra superior
         font_awesome = customtkinter.CTkFont(family='Roboto', size=12)
@@ -66,6 +77,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.buttonMenuLateral = customtkinter.CTkButton(self.barra_superior, text="", image=self.menu_image,
                                         command=self.toggle_panel, bg_color='transparent', fg_color='transparent', hover=False, width=WIDTH_LOGO, height=HEIGHT_LOGO)
         self.buttonMenuLateral.pack(side=tk.LEFT, padx=20)
+        
     def controles_menu_lateral(self, permisos):
         self.perfil = util_img.leer_imagen("./imagenes/logo.png", (100, 100))
         ## ESTO AUN NO ESTA DEFINIDO42
@@ -147,6 +159,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
             pass
 
     def seccion_login(self):
+        self.w, self.h = 800, 600
         ############# INICIALIZACION DE LA IMAGEN DE FONDO AUTOEXPANDIBLE #############
         ruta_imagen = "imagenes/bg.png"
         # Cargar la imagen
@@ -200,7 +213,6 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.cuerpo_principal.destroy()
                 self.cuerpo_principal = tk.Frame(self)
                 self.cuerpo_principal.pack(side=tk.RIGHT, fill='both', expand=True)
-                self.w, self.h = 1440, 900
                 self.geometry(f"{self.w}x{self.h}")
                 self.resizable(True, True)
                 util_ventana.centrar_ventana(self, self.w, self.h)
@@ -390,6 +402,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.menu_lateral.pack_forget()
         else:
             self.menu_lateral.pack(side=tk.LEFT, fill='y')
+            
     def check_size(self):
         width_screen = self.winfo_width()
         height_screen = self.winfo_height()

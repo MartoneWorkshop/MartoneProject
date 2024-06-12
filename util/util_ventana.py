@@ -8,5 +8,7 @@ def centrar_ventana(ventana,aplicacion_ancho,aplicacion_largo):
 
 
 
+
+
     
         
