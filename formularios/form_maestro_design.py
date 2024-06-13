@@ -16,6 +16,7 @@ from formularios.form_home_design import FormularioHomeDesign
 from formularios.form_users import FormUsers
 from formularios.form_modulos import FormModulos
 from screeninfo import get_monitors
+
 class FormularioMaestroDesign(customtkinter.CTk):
     def __init__(self):
         super().__init__()
@@ -31,7 +32,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
     def config_window(self):
         # Configuración inicial de la ventana
-        self.bg = util_img.leer_imagen("./imagenes/background.png", (1440, 900))
+        self.bg = util_img.leer_imagen("./imagenes/background.png", (1120, 800))
         self.title("Policlinica de Especialidades")
         self.set_window_icon()
         self.w, self.h = 1120, 800
@@ -159,7 +160,6 @@ class FormularioMaestroDesign(customtkinter.CTk):
             pass
 
     def seccion_login(self):
-        self.w, self.h = 800, 600
         ############# INICIALIZACION DE LA IMAGEN DE FONDO AUTOEXPANDIBLE #############
         ruta_imagen = "imagenes/bg.png"
         # Cargar la imagen
@@ -183,6 +183,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
         def validarDatos():
             conexion = ConexionDB()
+            
             username = sv_datauser.get()
             password = sv_datapass.get()
 
