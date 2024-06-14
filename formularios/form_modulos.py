@@ -53,13 +53,13 @@ class FormModulos():
                                         command=lambda: self.crear_Modulo(permisos))
         self.buttonCreateMod.place(x=140, y=50)
 
-        self.buttonEditPerm = tk.Button(self.marco_modulos, text="Editar\n Modulo", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+        self.buttonEditMod = tk.Button(self.marco_modulos, text="Editar\n Modulo", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.editar_Modulo(permisos, self.tablaModulos.item(self.tablaModulos.selection())['values'])) 
-        self.buttonEditPerm.place(x=250, y=50)
+        self.buttonEditMod.place(x=250, y=50)
         
-        self.buttonDeletePerm = tk.Button(self.marco_modulos, text="Desactivar\n Modulo", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+        self.buttonDeleteMod = tk.Button(self.marco_modulos, text="Desactivar\n Modulo", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.desactivarModulo(permisos))
-        self.buttonDeletePerm.place(x=350, y=50)
+        self.buttonDeleteMod.place(x=350, y=50)
 
         ###################################### Tabla de modulos activos ######################
         where = ""

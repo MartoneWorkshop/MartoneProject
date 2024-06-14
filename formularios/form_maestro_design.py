@@ -15,6 +15,7 @@ from formularios.form_registros_design import FormularioRegistrosDesign
 from formularios.form_home_design import FormularioHomeDesign
 from formularios.form_users import FormUsers
 from formularios.form_modulos import FormModulos
+from formularios.form_permisos import FormPermisos
 from screeninfo import get_monitors
 
 class FormularioMaestroDesign(customtkinter.CTk):
@@ -24,6 +25,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.paneles()
         self.controles_barra_superior()
         self.controles_cuerpo()
+        
 
     def controles_cuerpo(self):    
         self.seccion_login()
@@ -32,14 +34,14 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
     def config_window(self):
         # Configuración inicial de la ventana
-        self.bg = util_img.leer_imagen("./imagenes/background.png", (1120, 800))
+        self.bg = util_img.leer_imagen("./imagenes/background.png", (1440, 900))
         self.title("Policlinica de Especialidades")
         self.set_window_icon()
-        self.w, self.h = 1120, 800
-        self.geometry(f"{self.w}x{self.h}")
+
+        #self.geometry(f"{self.w}x{self.h}")
         self.resizable(False, False)
         self.iconbitmap("./imagenes/Logo_Ico.ico")
-        util_ventana.centrar_ventana(self, self.w, self.h)
+        #util_ventana.centrar_ventana(self, self.w, self.h)
 
     def get_screen_resolution(self):
         # Obtener la resolución del monitor principal
@@ -158,8 +160,12 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.binding_hover_event(self.buttonSettings)
         else:
             pass
+            
 
     def seccion_login(self):
+        self.w, self.h = 800, 600
+        self.geometry(f"{self.w}x{self.h}")
+        util_ventana.centrar_ventana(self, self.w, self.h)
         ############# INICIALIZACION DE LA IMAGEN DE FONDO AUTOEXPANDIBLE #############
         ruta_imagen = "imagenes/bg.png"
         # Cargar la imagen
@@ -214,6 +220,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.cuerpo_principal.destroy()
                 self.cuerpo_principal = tk.Frame(self)
                 self.cuerpo_principal.pack(side=tk.RIGHT, fill='both', expand=True)
+                self.w, self.h = 1440, 900
                 self.geometry(f"{self.w}x{self.h}")
                 self.resizable(True, True)
                 util_ventana.centrar_ventana(self, self.w, self.h)
@@ -395,7 +402,13 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonModulos = tk.Button(self.menu_lateral, text="Modulos Menu", font=("Roboto", 12), image=self.adjustUser_icon, highlightthickness=20, width=ANCHO_MENU,
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_modulos(permisos))
                 self.buttonModulos.pack()
+                self.buttonPermisos = tk.Button(self.menu_lateral, text="Permisos", font=("Roboto", 12), image=self.adjustUser_icon, highlightthickness=20, width=ANCHO_MENU,
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_permisos(permisos))
+                self.buttonPermisos.pack()
                 self.binding_hover_submenu_event(self.buttonModulos)
+                self.binding_hover_submenu_event(self.buttonPermisos)
+            
+
 
     def toggle_panel(self):
         # Alternar visibilidad del menú lateral
@@ -426,9 +439,13 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.limpiar_panel(self.cuerpo_principal)
         FormModulos(self.cuerpo_principal, permisos)
 
+    def abrir_permisos(self, permisos):
+        self.limpiar_panel(self.cuerpo_principal)
+        FormPermisos(self.cuerpo_principal, permisos)
+
     def abrir_home(self):   
         self.limpiar_panel(self.cuerpo_principal)
-        FormularioHomeDesign(self.cuerpo_principal, self.bg) 
+        FormularioHomeDesign(self.cuerpo_principal) 
         
     def limpiar_panel(self, panel):
     # Función para limpiar el contenido del panel
