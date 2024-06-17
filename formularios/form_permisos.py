@@ -7,6 +7,7 @@ import datetime
 import sqlite3
 from tkinter import ttk
 from PIL import Image, ImageTk
+from util.util_functions import ObtenerModulos, buscarCodigoModulo, actualizarCodigoModulo
 from functions.PermDao import Permisos, listarPermisos, consulPermisos, SavePermiso, EditPermiso, PermisoDisable
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 
@@ -15,6 +16,8 @@ class FormPermisos():
 
     def __init__(self, cuerpo_principal, permisos):
         self.id = None
+        self.idEdit = None
+
         # Crear paneles: barra superior
         self.barra_superior = tk.Frame(cuerpo_principal)
         self.barra_superior.pack(side=tk.TOP, fill=tk.X, expand=False) 
@@ -78,8 +81,8 @@ class FormPermisos():
         self.tablapermisos.tag_configure('evenrow')
 
         self.tablapermisos.heading('#0',text="ID")
-        self.tablapermisos.heading('#1',text="Nombre")
-        self.tablapermisos.heading('#2',text="Alias")
+        self.tablapermisos.heading('#1',text="IdMod")
+        self.tablapermisos.heading('#2',text="Descripcion")
         self.tablapermisos.heading('#3',text="Codperm")
         self.tablapermisos.heading('#4',text="Date-C")
         self.tablapermisos.heading('#5',text="Date-U")
@@ -168,57 +171,50 @@ class FormPermisos():
 
         self.lblinfo = customtkinter.CTkLabel(self.topCreatePerm, text="Creacion de nuevo permiso", font=("Roboto",14), bg_color='#e1e3e5', fg_color='#e1e3e5')
         self.lblinfo.place(x=220, rely=0.1)
+        def habilitar_entry(_):
+            opcion_seleccionada = self.svmodulo_var.get()
+            if opcion_seleccionada != "Selecciona un modulo":
+                self.entrynombre_perm.configure(state='normal')
+                codpermiso = buscarCodigoModulo(self.svmodulo_var.get())
+                
+                codigo_permiso = f"{self.svmodulo_var.get().upper()[:4]}{codpermiso}"
+                self.svcodpermiso.set(codigo_permiso)
+
+            else:
+                self.entrynombre_perm.configure(state='disabled')
+                self.svcodpermiso.set("")
+
+        modulos = ObtenerModulos()
+        self.svmodulo_var = customtkinter.StringVar(value="Selecciona un modulo")
+        self.multioption = customtkinter.CTkOptionMenu(marco_crearpermisos, values=[modulo[1] for modulo in modulos], variable=self.svmodulo_var, command=lambda v: habilitar_entry(v))
+        self.multioption.place(x=40, y=120)
 
         ############# NOMBRE DEL permiso
-        self.lblnombre = customtkinter.CTkLabel(self.topCreatePerm, text='Nombre del permiso', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
-        self.lblnombre.place(x=102, y=120)
-
-        self.svnombre_perm = customtkinter.StringVar()
-        self.entrynombre_perm = ttk.Entry(self.topCreatePerm, style='permern.TEntry', textvariable=self.svnombre_perm)
-        self.entrynombre_perm.place(x=95, y=170)
+        self.lblnombrePerm = customtkinter.CTkLabel(self.topCreatePerm, text='Descripcion', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
+        self.lblnombrePerm.place(x=285, y=120) 
+        
+        self.svnombre_perm = customtkinter.StringVar()        
+        self.entrynombre_perm = ttk.Entry(self.topCreatePerm, style='permern.TEntry', textvariable=self.svnombre_perm, state='disabled')        
+        self.entrynombre_perm.place(x=255, y=150)       
         self.entrynombre_perm.configure(style='Entry.TEntry')
+#actualizarCodigoModulo(self.svmodulo_var.get())
+        
+        ############# NOMBRE DEL ALIAS
+        self.lblcodpermiso = customtkinter.CTkLabel(self.topCreatePerm, text='Alias del permiso', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
+        self.lblcodpermiso.place(x=420, y=120)
+#
+        self.svcodpermiso = customtkinter.StringVar()
+        self.entrycodpermiso = ttk.Entry(self.topCreatePerm, style='permern.TEntry', textvariable=self.svcodpermiso, state='disabled')
+        self.entrycodpermiso.place(x=405, y=150)
+        self.entrycodpermiso.configure(style='Entry.TEntry')
 
-        ############ NOMBRE DEL ALIAS
-        self.lblalias = customtkinter.CTkLabel(self.topCreatePerm, text='Alias del permiso', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
-        self.lblalias.place(x=255, y=120)
-
-        self.svalias = customtkinter.StringVar()
-        self.entryalias = ttk.Entry(self.topCreatePerm, style='permern.TEntry', textvariable=self.svalias, state='disabled')
-        self.entryalias.place(x=240, y=170)
-        self.entryalias.configure(style='Entry.TEntry')
-        self.alias_checkbox_var = tk.IntVar()
-        self.alias_checkbox = customtkinter.CTkCheckBox(self.topCreatePerm, text="permificar", bg_color='#e1e3e5', variable=self.alias_checkbox_var, command=self.toggle_alias_entry)
-        self.alias_checkbox.place(x=255, y=200)
-
-        ############ CODIGO DEL permiso
-        self.lblcodperm = customtkinter.CTkLabel(self.topCreatePerm, text='Codigo del permiso', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
-        self.lblcodperm.place(x=392, y=120)
-
-        self.svcodperm = customtkinter.StringVar()
-        self.entrycodperm = ttk.Entry(self.topCreatePerm, style='permern.TEntry', textvariable=self.svcodperm, state='disabled')
-        self.entrycodperm.place(x=385, y=170)
-        self.entrycodperm.configure(style='Entry.TEntry')
-
-        self.svcodperm.set("1000")
-        self.entrynombre_perm.bind("<Return>", lambda event: self.Guardarpermiso())
-        ######## BOTONE
+        ######### BOTONE
         self.buttonSaveperm = tk.Button(self.topCreatePerm, text="Crear permiso", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.Guardarpermiso)
         self.buttonSaveperm.place(x=240, y=290)
 
-        def actualizar_alias(*args):
-            nombre = self.svnombre_perm.get()
-            nombre = nombre.capitalize()  # Capitalizar la primera letra del nombre
-            self.svnombre_perm.set(nombre)
-            alias = nombre[:4].upper()
-            self.svalias.set(alias)
-
-        self.svnombre_perm.trace("w", actualizar_alias)
-
     def editar_permiso(self, permisos, values):
         self.id = self.tablapermisos.item(self.tablapermisos.selection())['text']
-        self.nombredit = self.tablapermisos.item(self.tablapermisos.selection())['values'][0]
-        self.aliasedit = self.tablapermisos.item(self.tablapermisos.selection())['values'][1]
-        self.codpermedit = self.tablapermisos.item(self.tablapermisos.selection())['values'][2]
+        self.namedit = self.tablapermisos.item(self.tablapermisos.selection())['values'][1]
         #Creacion del top level
         self.topEditperm = customtkinter.CTkToplevel()
         self.topEditperm.title("Editar permiso")
@@ -248,51 +244,19 @@ class FormPermisos():
         self.lblinfo = customtkinter.CTkLabel(self.topEditperm, text="Editar permiso", font=("Roboto",14), bg_color='#e1e3e5', fg_color='#e1e3e5')
         self.lblinfo.place(x=220, rely=0.1)
 
-        ############# NOMBRE DEL permiso
-        self.lbleditnombre = customtkinter.CTkLabel(self.topEditperm, text='Nombre del permiso', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
-        self.lbleditnombre.place(x=102, y=120)
-
-        self.svnombre_perm = customtkinter.StringVar(value=self.nombredit)
-        self.entryeditnombre_perm = ttk.Entry(self.topEditperm, style='permern.TEntry', textvariable=self.svnombre_perm)
-        self.entryeditnombre_perm.place(x=95, y=170)
-        self.entryeditnombre_perm.configure(style='Entry.TEntry')
-
         ############ NOMBRE DEL ALIAS
-        self.lblalias = customtkinter.CTkLabel(self.topEditperm, text='Alias del permiso', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
+        self.lblalias = customtkinter.CTkLabel(self.topEditperm, text='Descripcion del permiso', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
         self.lblalias.place(x=255, y=120)
 
-        self.svalias = customtkinter.StringVar(value=self.aliasedit)
-        self.entryeditalias = ttk.Entry(self.topEditperm, style='permern.TEntry', textvariable=self.svalias)
-        self.entryeditalias.place(x=240, y=170)
-        self.entryeditalias.configure(style='Entry.TEntry')
+        self.svnameEdit = customtkinter.StringVar(value=self.namedit)
+        self.entryeditname = ttk.Entry(self.topEditperm, style='permern.TEntry', textvariable=self.svnameEdit)
+        self.entryeditname.place(x=240, y=170)
+        self.entryeditname.configure(style='Entry.TEntry')
 
-        ############ CODIGO DEL permiso
-        self.lbleditcodperm = customtkinter.CTkLabel(self.topEditperm, text='Codigo del permiso', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
-        self.lbleditcodperm.place(x=392, y=120)
-
-        self.svcodperm = customtkinter.StringVar(value=self.codpermedit)
-        self.entryeditcodperm = ttk.Entry(self.topEditperm, style='permern.TEntry', textvariable=self.svcodperm)
-        self.entryeditcodperm.place(x=385, y=170)
-        self.entryeditcodperm.configure(style='Entry.TEntry')
-
-        self.entryeditnombre_perm.bind("<Return>", lambda event: self.Guardarpermiso())
+        self.entryeditname.bind("<Return>", lambda event: self.Guardarpermiso())
         ######## BOTONE
         self.buttonEditperm = tk.Button(self.topEditperm, text="Actualizar", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.Guardarpermiso)
         self.buttonEditperm.place(x=240, y=290)
-
-        def actualizar_alias(*args):
-            nombre = self.svnombre_perm.get()
-            nombre = nombre.capitalize()  # Capitalizar la primera letra del nombre
-            self.svnombre_perm.set(nombre)
-            alias = nombre[:4].upper()
-            self.svalias.set(alias)
-        self.svnombre_perm.trace("w", actualizar_alias)
-
-    def toggle_alias_entry(self):
-        if self.alias_checkbox_var.get() == 1:
-            self.entryalias.config(state='normal')
-        else:
-            self.entryalias.config(state='disabled')
 
     def Guardarpermiso(self):
         try:
@@ -300,14 +264,27 @@ class FormPermisos():
             fecha_actual = datetime.datetime.now()
             date_created = fecha_actual.strftime("%d/%m/%Y")
             date_update = fecha_actual.strftime("%d/%m/%y %H:%M:%S")
-    
-            permisos = permisos(
+            idmod = None
+            
+            modulo_select = self.svmodulo_var.get()
+            for permisos in ObtenerModulos():
+                if permisos[1] == modulo_select:
+                    idmod = permisos[0]
+                    break
+            opcion_seleccionada = self.svmodulo_var.get()
+            codpermiso = buscarCodigoModulo(opcion_seleccionada)
+            actualizarCodigoModulo(opcion_seleccionada)
+
+            codigo_actualizado = f"{self.svmodulo_var.get().upper()[:4]}{codpermiso + 1}"
+
+            permisos = Permisos(
+                idmod,
                 self.svnombre_perm.get(),
-                self.svalias.get(),
-                self.svcodperm.get(),
+                codigo_actualizado,
                 date_created,
                 date_update
             )
+            print(permisos)
             if self.id is None:
                 SavePermiso(permisos)
                 self.topCreatePerm.destroy()
@@ -318,7 +295,7 @@ class FormPermisos():
             self.listarpermisoEnTabla()
         except Exception as e:
             error_advice()
-            mensaje = f'Error en GuardarUsuario, form_users: {str(e)}'
+            mensaje = f'Error en GuardarPermiso, FormPermisos: {str(e)}'
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')
 

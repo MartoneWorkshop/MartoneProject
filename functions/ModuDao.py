@@ -5,7 +5,7 @@ from util.util_alerts import save_advice, edit_advice, error_advice, delete_advi
 def EditModulo(modulos, id):
     conexion = ConexionDB()
     sql = f"""UPDATE modulos SET name = '{modulos.name}', alias = '{modulos.alias}', codmod = '{modulos.codmod}',
-     date_update = '{modulos.date_update}', activo = 1 WHERE id = {id}"""
+    date_update = '{modulos.date_update}', activo = 1 WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()

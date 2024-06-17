@@ -55,3 +55,39 @@ Error en SaveModulo, modulosDao: 6 values for 5 columns
 Error en GuardarUsuario, form_users: 'FormModulos' object has no attribute 'svnombre_mod'
 Error en GuardarUsuario, form_users: 'Modulos' object has no attribute 'nombre'
 Error en GuardarUsuario, form_users: 'FormModulos' object has no attribute 'topCreateMod'
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en actualizarCodigoModulo, util_funtions: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en actualizarCodigoModulo, util_funtions: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en GuardarUsuario, form_users: 'tuple' object is not callable
+Error en GuardarUsuario, form_users: Permisos.__init__() missing 1 required positional argument: 'date_update'
+Error en SavePermiso, modulosDao: table permisos has no column named activo
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en actualizarCodigoModulo, util_funtions: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en actualizarCodigoModulo, util_funtions: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en actualizarCodigoModulo, util_funtions: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en actualizarCodigoModulo, util_funtions: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en GuardarUsuario, form_users: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'NoneType' object has no attribute 'get'
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en actualizarCodigoModulo, util_funtions: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en GuardarPermiso, FormPermisos: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'

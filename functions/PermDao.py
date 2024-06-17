@@ -2,10 +2,9 @@ from .conexion import ConexionDB
 from tkinter import messagebox
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 
-def EditPermiso(modulos, id):
+def EditPermiso(permisos, id):
     conexion = ConexionDB()
-    sql = f"""UPDATE modulos SET name = '{modulos.name}', alias = '{modulos.alias}', codmod = '{modulos.codmod}',
-     date_update = '{modulos.date_update}', activo = 1 WHERE id = {id}"""
+    sql = f"""UPDATE permisos SET name = '{permisos.name}', date_update = '{permisos.date_update}', WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()
@@ -13,14 +12,14 @@ def EditPermiso(modulos, id):
     except Exception as e:
         conexion.cerrarConexion()
         error_advice()
-        mensaje = f'Error en EditClient, UsersDao: {str(e)}'
+        mensaje = f'Error en EditPermiso, EditPermiso: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
-def SavePermiso(modulos):
+def SavePermiso(permisos):
     conexion = ConexionDB()
-    sql = f"""INSERT INTO modulos (name, alias, codmod, date_created, date_update, activo)
-    VALUES('{modulos.name}','{modulos.alias}','{modulos.codmod}','{modulos.date_created}','{modulos.date_update}', 1)"""
+    sql = f"""INSERT INTO permisos (idmod, name, codperm, date_created, date_update)
+    VALUES('{permisos.idmod}','{permisos.name}','{permisos.codperm}','{permisos.date_created}','{permisos.date_update}')"""
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()
@@ -29,7 +28,7 @@ def SavePermiso(modulos):
     except Exception as e:
         conexion.cerrarConexion()
         error_advice()
-        mensaje = f'Error en SavePermiso, modulosDao: {str(e)}'
+        mensaje = f'Error en SavePermiso, permisosDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
@@ -52,7 +51,7 @@ def listarPermisos():
 def clientArchived():
     conexion = ConexionDB()
     listaCliente = []
-    sql = f'SELECT * FROM modulos WHERE activo = 0'
+    sql = f'SELECT * FROM permisos WHERE activo = 0'
     try:
         conexion.cursor.execute(sql)
         listaCliente = conexion.cursor.fetchall()
@@ -68,7 +67,7 @@ def clientArchived():
 def consulPermisos(where):
     conexion = ConexionDB()
     listarPermisos = []
-    sql = f'SELECT * FROM modulos {where}'
+    sql = f'SELECT * FROM permisos {where}'
     try:
         conexion.cursor.execute(sql)
         listarPermisos = conexion.cursor.fetchall()
@@ -82,7 +81,7 @@ def consulPermisos(where):
 
 def PermisoDisable(id):
     conexion = ConexionDB()
-    sql = f'UPDATE modulos SET activo = 0 WHERE id = {id}'
+    sql = f'UPDATE permisos SET activo = 0 WHERE id = {id}'
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()
