@@ -5,6 +5,7 @@ from util.util_alerts import set_opacity
 from functions.conexion import ConexionDB
 import datetime
 import sqlite3
+import traceback
 from tkinter import ttk
 from PIL import Image, ImageTk
 from util.util_functions import ObtenerModulos, buscarCodigoModulo, actualizarCodigoModulo
@@ -13,15 +14,12 @@ from util.util_alerts import save_advice, edit_advice, error_advice, delete_advi
 
 
 class FormPermisos():
-
     def __init__(self, cuerpo_principal, permisos):
         self.id = None
-        self.idEdit = None
-
+        idmod = None
         # Crear paneles: barra superior
         self.barra_superior = tk.Frame(cuerpo_principal)
         self.barra_superior.pack(side=tk.TOP, fill=tk.X, expand=False) 
-
         # Crear paneles: barra inferior
         self.barra_inferior = tk.Frame(cuerpo_principal)
         self.barra_inferior.pack(side=tk.BOTTOM, fill='both', expand=True)  
@@ -56,7 +54,8 @@ class FormPermisos():
                                         command=lambda: self.crear_permiso(permisos))
         self.buttonCreatePerm.place(x=140, y=50)
 
-        self.buttonEditPerm = tk.Button(self.marco_permisos, text="Editar\n Permiso", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+        self.buttonEditPerm = tk.Button(self.marco_permisos, text="Editar\n Permiso", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, 
+                                        fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.editar_permiso(permisos, self.tablapermisos.item(self.tablapermisos.selection())['values'])) 
         self.buttonEditPerm.place(x=250, y=50)
         
@@ -72,7 +71,7 @@ class FormPermisos():
             self.Listapermisos = listarPermisos()
             self.Listapermisos.reverse()
 
-        self.tablapermisos = ttk.Treeview(self.marco_permisos, column=('nombre','alias','codperm','data_create','data_update'), height=25)
+        self.tablapermisos = ttk.Treeview(self.marco_permisos, column=('idmod','name','codperm','data_created','data_update'), height=25)
         self.tablapermisos.place(x=145, y=200)
 
         self.scroll = ttk.Scrollbar(self.marco_permisos, orient='vertical', command=self.tablapermisos.yview)
@@ -80,65 +79,62 @@ class FormPermisos():
         self.tablapermisos.configure(yscrollcommand=self.scroll.set)
         self.tablapermisos.tag_configure('evenrow')
 
-        self.tablapermisos.heading('#0',text="ID")
-        self.tablapermisos.heading('#1',text="IdMod")
-        self.tablapermisos.heading('#2',text="Descripcion")
-        self.tablapermisos.heading('#3',text="Codperm")
+        self.tablapermisos.heading('#0',text="id")
+        self.tablapermisos.heading('#1',text="idmod")
+        self.tablapermisos.heading('#2',text="name")
+        self.tablapermisos.heading('#3',text="codperm")
         self.tablapermisos.heading('#4',text="Date-C")
         self.tablapermisos.heading('#5',text="Date-U")
-
 
         self.tablapermisos.column("#0", width=60, stretch=False, anchor='w')#HAY QUE CENTRARLO
         self.tablapermisos.column("#1", width=60, stretch=False)
         self.tablapermisos.column("#2", width=125, stretch=False)
         self.tablapermisos.column("#3", width=125, stretch=False)
-        self.tablapermisos.column("#4", width=125,stretch=False)
+        self.tablapermisos.column("#4", width=125, stretch=False)
         self.tablapermisos.column("#5", width=125, stretch=False)
 
-        
-        #self.tablapermisos.bind('<Double-1>', self.crear_usuario)
         for p in self.Listapermisos:
             self.tablapermisos.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4],p[5]))
         
         self.tablapermisos.bind('<Double-1>', lambda event: self.editar_permiso(event, self.tablapermisos.item(self.tablapermisos.selection())['values']))
 
-    def update_client_content(self, event=None):
-    # Conectar a la base de datos
-        self.connection = sqlite3.connect('database/database.db')
-        self.cursor = self.connection.cursor()
-    # Obtener el contenido del Entry
-        self.content = self.entrysearch_permisos.get()
-    # Realizar la consulta
-        self.cursor.execute("""SELECT * FROM permisos WHERE
-                        id LIKE ? OR 
-                        coduser LIKE ? OR 
-                        username LIKE ? OR 
-                        pass LIKE ? OR 
-                        idrol LIKE ? OR 
-                        date_created LIKE ? OR
-                        date_update LIKE ?""", 
-                        ('%' + self.content + '%',
-                        '%' + self.content + '%',  
-                        '%' + self.content + '%',
-                        '%' + self.content.strip() + '%',
-                        '%' + self.content.strip() + '%',
-                        '%' + self.content.strip() + '%', 
-                        '%' + self.content.strip() + '%'))
-        self.result = self.cursor.fetchall()
-    # Filtrar los registros según el contenido ingresado
-        filtered_results = []
-        for p in self.Listapermisos:
-            if self.content.lower() in str(p[0]).lower() or self.content.lower() in str(p[1]).lower() or self.content.lower() in str(p[2]).lower() or self.content.lower() in str(p[3]).lower() or self.content.lower() in str(p[4]).lower() or self.content.lower() in str(p[5]).lower() or self.content.lower() in str(p[6]).lower():              
-                filtered_results.append(p)
-
-    # Borrar los elementos existentes en la tablaEquipos
-        self.tablapermisos.delete(*self.tablapermisos.get_children())
-
-    # Insertar los nuevos resultados en la tablaEquipos
-        for p in filtered_results:
-            self.tablapermisos.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6]))
-        self.cursor.close()
-        self.connection.close()
+   # def update_client_content(self, event=None):
+   # # Conectar a la base de datos
+   #     self.connection = sqlite3.connect('database/database.db')
+   #     self.cursor = self.connection.cursor()
+   # # Obtener el contenido del Entry
+   #     self.content = self.entrysearch_permisos.get()
+   # # Realizar la consulta
+   #     self.cursor.execute("""SELECT * FROM permisos WHERE
+   #                     id LIKE ? OR 
+   #                     coduser LIKE ? OR 
+   #                     username LIKE ? OR 
+   #                     pass LIKE ? OR 
+   #                     idrol LIKE ? OR 
+   #                     date_created LIKE ? OR
+   #                     date_update LIKE ?""", 
+   #                     ('%' + self.content + '%',
+   #                     '%' + self.content + '%',  
+   #                     '%' + self.content + '%',
+   #                     '%' + self.content.strip() + '%',
+   #                     '%' + self.content.strip() + '%',
+   #                     '%' + self.content.strip() + '%', 
+   #                     '%' + self.content.strip() + '%'))
+   #     self.result = self.cursor.fetchall()
+   # # Filtrar los registros según el contenido ingresado
+   #     filtered_results = []
+   #     for p in self.Listapermisos:
+   #         if self.content.lower() in str(p[0]).lower() or self.content.lower() in str(p[1]).lower() or self.content.lower() in str(p[2]).lower() or self.content.lower() in str(p[3]).lower() or self.content.lower() in str(p[4]).lower() or self.content.lower() in str(p[5]).lower() or self.content.lower() in str(p[6]).lower():              
+   #             filtered_results.append(p)
+#
+   # # Borrar los elementos existentes en la tablaEquipos
+   #     self.tablapermisos.delete(*self.tablapermisos.get_children())
+#
+   # # Insertar los nuevos resultados en la tablaEquipos
+   #     for p in filtered_results:
+   #         self.tablapermisos.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5]))
+   #     self.cursor.close()
+   #     self.connection.close()
 
 
     def crear_permiso(self, permisos):
@@ -152,8 +148,7 @@ class FormPermisos():
         self.topCreatePerm.configure(bg_color='#6a717e')
         self.topCreatePerm.configure(fg_color='#6a717e')
         
-
-        #Centrar la ventana en la pantalla
+        #Centrar l ventana en la pantalla
         screen_width = self.topCreatePerm.winfo_screenwidth()
         screen_height = self.topCreatePerm.winfo_screenheight()
         x = (screen_width - self.topCreatePerm.w) // 2
@@ -171,23 +166,13 @@ class FormPermisos():
 
         self.lblinfo = customtkinter.CTkLabel(self.topCreatePerm, text="Creacion de nuevo permiso", font=("Roboto",14), bg_color='#e1e3e5', fg_color='#e1e3e5')
         self.lblinfo.place(x=220, rely=0.1)
-        def habilitar_entry(_):
-            opcion_seleccionada = self.svmodulo_var.get()
-            if opcion_seleccionada != "Selecciona un modulo":
-                self.entrynombre_perm.configure(state='normal')
-                codpermiso = buscarCodigoModulo(self.svmodulo_var.get())
-                
-                codigo_permiso = f"{self.svmodulo_var.get().upper()[:4]}{codpermiso}"
-                self.svcodpermiso.set(codigo_permiso)
-
-            else:
-                self.entrynombre_perm.configure(state='disabled')
-                self.svcodpermiso.set("")
 
         modulos = ObtenerModulos()
         self.svmodulo_var = customtkinter.StringVar(value="Selecciona un modulo")
-        self.multioption = customtkinter.CTkOptionMenu(marco_crearpermisos, values=[modulo[1] for modulo in modulos], variable=self.svmodulo_var, command=lambda v: habilitar_entry(v))
+        self.multioption = customtkinter.CTkOptionMenu(marco_crearpermisos, values=[modulo[1] for modulo in modulos], variable=self.svmodulo_var, command=lambda v: self.habilitar_entry(v))
         self.multioption.place(x=40, y=120)
+        
+        
 
         ############# NOMBRE DEL permiso
         self.lblnombrePerm = customtkinter.CTkLabel(self.topCreatePerm, text='Descripcion', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
@@ -197,7 +182,6 @@ class FormPermisos():
         self.entrynombre_perm = ttk.Entry(self.topCreatePerm, style='permern.TEntry', textvariable=self.svnombre_perm, state='disabled')        
         self.entrynombre_perm.place(x=255, y=150)       
         self.entrynombre_perm.configure(style='Entry.TEntry')
-#actualizarCodigoModulo(self.svmodulo_var.get())
         
         ############# NOMBRE DEL ALIAS
         self.lblcodpermiso = customtkinter.CTkLabel(self.topCreatePerm, text='Alias del permiso', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
@@ -208,13 +192,23 @@ class FormPermisos():
         self.entrycodpermiso.place(x=405, y=150)
         self.entrycodpermiso.configure(style='Entry.TEntry')
 
+
         ######### BOTONE
-        self.buttonSaveperm = tk.Button(self.topCreatePerm, text="Crear permiso", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.Guardarpermiso)
+        self.buttonSaveperm = tk.Button(self.topCreatePerm, text="Crear permiso", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.GuardarPermiso)
         self.buttonSaveperm.place(x=240, y=290)
 
+    def habilitar_entry(self, _):
+        self.opcion_seleccionada = self.svmodulo_var.get()
+        if self.opcion_seleccionada != "Selecciona un modulo":
+            self.entrynombre_perm.configure(state='normal')
+            codpermiso = buscarCodigoModulo(self.opcion_seleccionada)
+            codigo_permiso = f"{self.opcion_seleccionada.upper()[:4]}{codpermiso + 1}"
+            self.svcodpermiso.set(codigo_permiso)
+        else:
+            self.entrynombre_perm.configure(state='disabled')
+            self.svcodpermiso.set("")
+
     def editar_permiso(self, permisos, values):
-        self.id = self.tablapermisos.item(self.tablapermisos.selection())['text']
-        self.namedit = self.tablapermisos.item(self.tablapermisos.selection())['values'][1]
         #Creacion del top level
         self.topEditperm = customtkinter.CTkToplevel()
         self.topEditperm.title("Editar permiso")
@@ -224,7 +218,12 @@ class FormPermisos():
         self.topEditperm.resizable(False, False)
         self.topEditperm.configure(bg_color='#6a717e')
         self.topEditperm.configure(fg_color='#6a717e')
-        
+
+        self.idEdit = self.tablapermisos.item(self.tablapermisos.selection())['text']
+        self.idmod = self.tablapermisos.item(self.tablapermisos.selection())['values'][0]
+        self.nombre_permedit = self.tablapermisos.item(self.tablapermisos.selection())['values'][1]
+        self.codperm = self.tablapermisos.item(self.tablapermisos.selection())['values'][2]
+
         #Centrar la ventana en la pantalla
         screen_width = self.topEditperm.winfo_screenwidth()
         screen_height = self.topEditperm.winfo_screenheight()
@@ -235,69 +234,31 @@ class FormPermisos():
         self.topEditperm.lift()
         self.topEditperm.grab_set()
         self.topEditperm.transient()
-
         marco_editarpermisos = customtkinter.CTkFrame(self.topEditperm, width=550,height=350, bg_color="white", fg_color="white")
         marco_editarpermisos.place(relx=0.5, rely=0.5, anchor="center")
         
         set_opacity(marco_editarpermisos, 0.8)
 
-        self.lblinfo = customtkinter.CTkLabel(self.topEditperm, text="Editar permiso", font=("Roboto",14), bg_color='#e1e3e5', fg_color='#e1e3e5')
+        self.lblinfo = customtkinter.CTkLabel(marco_editarpermisos, text="Editar permiso", font=("Roboto",14), bg_color='#e1e3e5', fg_color='#e1e3e5')
         self.lblinfo.place(x=220, rely=0.1)
 
         ############ NOMBRE DEL ALIAS
-        self.lblalias = customtkinter.CTkLabel(self.topEditperm, text='Descripcion del permiso', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
-        self.lblalias.place(x=255, y=120)
+        self.lblnombrePerm = customtkinter.CTkLabel(marco_editarpermisos, text='Descripcion del permiso', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
+        self.lblnombrePerm.place(x=255, y=120)
 
-        self.svnameEdit = customtkinter.StringVar(value=self.namedit)
-        self.entryeditname = ttk.Entry(self.topEditperm, style='permern.TEntry', textvariable=self.svnameEdit)
-        self.entryeditname.place(x=240, y=170)
-        self.entryeditname.configure(style='Entry.TEntry')
+        self.svnombre_perm = customtkinter.StringVar(value=self.nombre_permedit)
+        self.entrynombre_perm = ttk.Entry(marco_editarpermisos, style='permern.TEntry', textvariable=self.svnombre_perm)
+        self.entrynombre_perm.place(x=240, y=170)
+        self.entrynombre_perm.configure(style='Entry.TEntry')
 
-        self.entryeditname.bind("<Return>", lambda event: self.Guardarpermiso())
+        self.entrynombre_perm.bind("<Return>", lambda event: self.GuardarPermiso())
         ######## BOTONE
-        self.buttonEditperm = tk.Button(self.topEditperm, text="Actualizar", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.Guardarpermiso)
+        self.buttonEditperm = tk.Button(marco_editarpermisos, text="Actualizar", font=("Roboto", 12),
+                                        bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", 
+                                        compound=tk.LEFT, padx=10, command=lambda: self.GuardarPermiso())
         self.buttonEditperm.place(x=240, y=290)
 
-    def Guardarpermiso(self):
-        try:
-            # Otener el contenido del Entry
-            fecha_actual = datetime.datetime.now()
-            date_created = fecha_actual.strftime("%d/%m/%Y")
-            date_update = fecha_actual.strftime("%d/%m/%y %H:%M:%S")
-            idmod = None
-            
-            modulo_select = self.svmodulo_var.get()
-            for permisos in ObtenerModulos():
-                if permisos[1] == modulo_select:
-                    idmod = permisos[0]
-                    break
-            opcion_seleccionada = self.svmodulo_var.get()
-            codpermiso = buscarCodigoModulo(opcion_seleccionada)
-            actualizarCodigoModulo(opcion_seleccionada)
-
-            codigo_actualizado = f"{self.svmodulo_var.get().upper()[:4]}{codpermiso + 1}"
-
-            permisos = Permisos(
-                idmod,
-                self.svnombre_perm.get(),
-                codigo_actualizado,
-                date_created,
-                date_update
-            )
-            print(permisos)
-            if self.id is None:
-                SavePermiso(permisos)
-                self.topCreatePerm.destroy()
-            else:
-                EditPermiso(permisos, self.id)
-                self.topEditperm.destroy()
-
-            self.listarpermisoEnTabla()
-        except Exception as e:
-            error_advice()
-            mensaje = f'Error en GuardarPermiso, FormPermisos: {str(e)}'
-            with open('error_log.txt', 'a') as file:
-                file.write(mensaje + '\n')
+    
 
     def desactivarpermiso(self, permisos):
         try:
@@ -327,6 +288,44 @@ class FormPermisos():
         except Exception as e:
             error_advice()
             mensaje = f'Error en listarUsuariosEnTabla, form_users: {str(e)}'
+            with open('error_log.txt', 'a') as file:
+                file.write(mensaje + '\n')
+
+    
+    def GuardarPermiso(self):
+        try:
+            # Otener el contenido del Entry
+            
+            fecha_actual = datetime.datetime.now()
+            date_created = fecha_actual.strftime("%d/%m/%Y")
+            date_update = fecha_actual.strftime("%d/%m/%y %H:%M:%S")
+            idmodulo = None
+            for modul in ObtenerModulos():
+                if modul[1] == self.svmodulo_var.get():
+                    idmodulo = modul[0]
+                    break
+            permisos = Permisos(
+                idmodulo,
+                self.svnombre_perm.get(),
+                self.svcodpermiso.get(),
+                date_created,
+                date_update
+            )
+            if self.id is None:
+                actualizarCodigoModulo(self.svmodulo_var.get())
+                SavePermiso(permisos)
+                self.topCreatePerm.destroy()
+            else:
+                EditPermiso(permisos, self.id)
+                self.topEditperm.destroy()
+
+            self.listarpermisoEnTabla()
+        except Exception as e:
+            error_advice()
+            fecha_hora_actual = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            mensaje = f'Error en GuardarPermiso, FormPermisos: {str(e)}'
+            mensaje += f'Fecha y hora: {fecha_hora_actual}\n'
+            mensaje += f'Detalles del error: {traceback.format_exc()}'
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')
             

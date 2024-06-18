@@ -91,3 +91,335 @@ Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 's
 Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
 Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
 Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en actualizarCodigoModulo, util_funtions: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en GuardarPermiso, FormPermisos: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en actualizarCodigoModulo, util_funtions: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en GuardarPermiso, FormPermisos: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en actualizarCodigoModulo, util_funtions: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en GuardarPermiso, FormPermisos: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svcodpermiso'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svcodpermiso'Fecha y hora: 18/06/2024 12:58:34
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 262, in Guardarpermiso
+    actualizarCodigoModulo(self.svcodpermiso)
+                           ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svcodpermiso'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svcodpermiso'Fecha y hora: 18/06/2024 13:00:52
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 264, in Guardarpermiso
+    if modulos[1] == self.svcodpermiso:
+                     ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svcodpermiso'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 13:05:33
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 258, in Guardarpermiso
+    svmodulo_var = self.svmodulo_var
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 13:08:25
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 258, in Guardarpermiso
+    svmodulo_var = self.svmodulo_var
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: cannot access local variable 'idmod' where it is not associated with a valueFecha y hora: 18/06/2024 13:15:02
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 270, in Guardarpermiso
+    idmod,
+    ^^^^^
+UnboundLocalError: cannot access local variable 'idmod' where it is not associated with a value
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 13:15:44
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 264, in Guardarpermiso
+    if modulos[1] == self.svmodulo_var:
+                     ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 13:16:34
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 262, in Guardarpermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 13:20:43
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 262, in Guardarpermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 14:27:20
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 262, in Guardarpermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 14:44:20
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 262, in Guardarpermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 14:45:58
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 262, in Guardarpermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:01:27
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 262, in GuardarPermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:04:24
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 262, in GuardarPermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'NoneType' object has no attribute 'get'Fecha y hora: 18/06/2024 15:05:47
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 263, in GuardarPermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en actualizarCodigoModulo, util_funtions: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svcodpermiso'Fecha y hora: 18/06/2024 15:06:21
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 274, in GuardarPermiso
+    self.svcodpermiso.get(),
+    ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svcodpermiso'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:12:01
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 296, in GuardarPermiso
+    seleccionado = self.svmodulo_var
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:15:37
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 296, in GuardarPermiso
+    seleccionado = self.svmodulo_var
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'NoneType' object has no attribute 'get'Fecha y hora: 18/06/2024 15:20:43
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 297, in GuardarPermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:30:39
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 295, in GuardarPermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:31:19
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 295, in GuardarPermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:31:50
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 295, in GuardarPermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:32:34
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 295, in GuardarPermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:36:27
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 296, in GuardarPermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:36:46
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 296, in GuardarPermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:38:09
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 296, in GuardarPermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:38:39
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 298, in GuardarPermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:38:43
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 298, in GuardarPermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:38:47
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 298, in GuardarPermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:41:26
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 295, in GuardarPermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:43:07
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 298, in GuardarPermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en actualizarCodigoModulo, util_funtions: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svcodpermiso'Fecha y hora: 18/06/2024 15:43:51
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 309, in GuardarPermiso
+    self.svcodpermiso.get(),
+    ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svcodpermiso'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:44:46
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 297, in GuardarPermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:46:10
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 298, in GuardarPermiso
+    seleccionado = self.svmodulo_var.get()
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:48:01
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 295, in GuardarPermiso
+    actualizarCodigoModulo(self.svmodulo_var)
+                           ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en buscarCodigoModulo, util_funtions: 'NoneType' object is not subscriptable
+Error en actualizarCodigoModulo, util_funtions: unsupported operand type(s) for +: 'NoneType' and 'int'
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 15:48:30
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 302, in GuardarPermiso
+    if modul[1] == self.svmodulo_var:
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'dato_seleccionado'Fecha y hora: 18/06/2024 15:49:57
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 296, in GuardarPermiso
+    actualizarCodigoModulo(self.dato_seleccionado)
+                           ^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'dato_seleccionado'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svcodpermiso'Fecha y hora: 18/06/2024 15:54:47
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 311, in GuardarPermiso
+    self.svcodpermiso.get(),
+    ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svcodpermiso'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svcodpermiso'Fecha y hora: 18/06/2024 15:55:46
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 312, in GuardarPermiso
+    self.svcodpermiso.get(),
+    ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svcodpermiso'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'idmod'Fecha y hora: 18/06/2024 15:56:23
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 312, in GuardarPermiso
+    self.idmod,
+    ^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'idmod'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'idmod'Fecha y hora: 18/06/2024 15:57:55
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 310, in GuardarPermiso
+    idmodulo = self.idmod
+               ^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'idmod'
+
+Error en GuardarPermiso, FormPermisos: 'FormPermisos' object has no attribute 'svmodulo_var'Fecha y hora: 18/06/2024 16:04:31
+Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_permisos.py", line 304, in GuardarPermiso
+    if modul[1] == self.svmodulo_var.get():
+                   ^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
+

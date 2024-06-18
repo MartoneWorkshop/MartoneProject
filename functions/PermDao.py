@@ -4,7 +4,7 @@ from util.util_alerts import save_advice, edit_advice, error_advice, delete_advi
 
 def EditPermiso(permisos, id):
     conexion = ConexionDB()
-    sql = f"""UPDATE permisos SET name = '{permisos.name}', date_update = '{permisos.date_update}', WHERE id = {id}"""
+    sql = f"""UPDATE permisos SET name = '{permisos.name}', date_update = '{permisos.date_update}' WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()
@@ -106,4 +106,4 @@ class Permisos:
         self.date_update = date_update
 
     def __str__(self):
-        return f'Permisos[{self.idmod}, {self.name},  {self.codperm}, {self.date_created}, {self.date_update}]'
+        return f'Permisos[{self.idmod}, {self.name}, {self.codperm}, {self.date_created}, {self.date_update}]'
