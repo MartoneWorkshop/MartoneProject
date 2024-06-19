@@ -9,6 +9,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 from functions.ModuDao import Modulos, listarModulos, consulModulos, SaveModulo, EditModulo, ModuloDisable
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
+from config import WIDTH_LOGO, HEIGHT_LOGO
 
 
 class FormModulos():
@@ -48,18 +49,30 @@ class FormModulos():
         self.marco_modulos.place(relx=0.5, rely=0.5, anchor="center")
 
         set_opacity(self.marco_modulos, 0.8)
+        ###################################################### BUSCADOR DE LA TABLA #################################################
+        search_image = Image.open("imagenes/search.png")
+        search_resized = search_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        self.search_icon = ImageTk.PhotoImage(search_resized)
+        self.lblsearch_modulos = customtkinter.CTkLabel(self.marco_modulos, text='', image=self.search_icon, font=("Roboto", 14))
+        self.lblsearch_modulos.place(x=220, y=155)
+
+        self.sventrysearch_modulos = customtkinter.StringVar()
+        self.entrysearch_modulos = ttk.Entry(self.marco_modulos, textvariable=self.sventrysearch_modulos, style='Modern.TEntry', width=30)
+        self.entrysearch_modulos.place(x=270, y=157)
+        self.entrysearch_modulos.bind('<KeyRelease>', self.update_modulos_content)
+
         ##################################################### BOTONES DE LA TABLA ##################################################
         self.buttonCreateMod = tk.Button(self.marco_modulos, text="Crear\n Modulo", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.crear_Modulo(permisos))
-        self.buttonCreateMod.place(x=140, y=50)
+        self.buttonCreateMod.place(x=225, y=60)
 
         self.buttonEditMod = tk.Button(self.marco_modulos, text="Editar\n Modulo", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.editar_Modulo(permisos, self.tablaModulos.item(self.tablaModulos.selection())['values'])) 
-        self.buttonEditMod.place(x=250, y=50)
+        self.buttonEditMod.place(x=350, y=60)
         
         self.buttonDeleteMod = tk.Button(self.marco_modulos, text="Desactivar\n Modulo", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.desactivarModulo(permisos))
-        self.buttonDeleteMod.place(x=350, y=50)
+        self.buttonDeleteMod.place(x=475, y=60)
 
         ###################################### Tabla de modulos activos ######################
         where = ""
@@ -70,10 +83,10 @@ class FormModulos():
             self.ListaModulos.reverse()
 
         self.tablaModulos = ttk.Treeview(self.marco_modulos, column=('nombre','alias','codmod','data_create','data_update'), height=25)
-        self.tablaModulos.place(x=145, y=200)
+        self.tablaModulos.place(x=210, y=200)
 
         self.scroll = ttk.Scrollbar(self.marco_modulos, orient='vertical', command=self.tablaModulos.yview)
-        self.scroll.place(x=893, y=200, height=526)
+        self.scroll.place(x=832, y=200, height=526)
         self.tablaModulos.configure(yscrollcommand=self.scroll.set)
         self.tablaModulos.tag_configure('evenrow')
 
@@ -86,9 +99,9 @@ class FormModulos():
 
 
         self.tablaModulos.column("#0", width=60, stretch=False, anchor='w')#HAY QUE CENTRARLO
-        self.tablaModulos.column("#1", width=60, stretch=False)
-        self.tablaModulos.column("#2", width=125, stretch=False)
-        self.tablaModulos.column("#3", width=125, stretch=False)
+        self.tablaModulos.column("#1", width=150, stretch=False)
+        self.tablaModulos.column("#2", width=60, stretch=False)
+        self.tablaModulos.column("#3", width=100, stretch=False)
         self.tablaModulos.column("#4", width=125,stretch=False)
         self.tablaModulos.column("#5", width=125, stretch=False)
 
@@ -99,19 +112,18 @@ class FormModulos():
         
         self.tablaModulos.bind('<Double-1>', lambda event: self.editar_Modulo(event, self.tablaModulos.item(self.tablaModulos.selection())['values']))
 
-    def update_client_content(self, event=None):
+    def update_modulos_content(self, event=None):
     # Conectar a la base de datos
         self.connection = sqlite3.connect('database/database.db')
         self.cursor = self.connection.cursor()
     # Obtener el contenido del Entry
-        self.content = self.entrysearch_Modulos.get()
+        self.content = self.entrysearch_modulos.get()
     # Realizar la consulta
-        self.cursor.execute("""SELECT * FROM Modulos WHERE
+        self.cursor.execute("""SELECT * FROM modulos WHERE
                         id LIKE ? OR 
-                        coduser LIKE ? OR 
-                        username LIKE ? OR 
-                        pass LIKE ? OR 
-                        idrol LIKE ? OR 
+                        name LIKE ? OR 
+                        alias LIKE ? OR 
+                        codmod LIKE ? OR 
                         date_created LIKE ? OR
                         date_update LIKE ?""", 
                         ('%' + self.content + '%',
@@ -119,13 +131,12 @@ class FormModulos():
                         '%' + self.content + '%',
                         '%' + self.content.strip() + '%',
                         '%' + self.content.strip() + '%',
-                        '%' + self.content.strip() + '%', 
                         '%' + self.content.strip() + '%'))
         self.result = self.cursor.fetchall()
     # Filtrar los registros según el contenido ingresado
         filtered_results = []
         for p in self.ListaModulos:
-            if self.content.lower() in str(p[0]).lower() or self.content.lower() in str(p[1]).lower() or self.content.lower() in str(p[2]).lower() or self.content.lower() in str(p[3]).lower() or self.content.lower() in str(p[4]).lower() or self.content.lower() in str(p[5]).lower() or self.content.lower() in str(p[6]).lower():              
+            if self.content.lower() in str(p[0]).lower() or self.content.lower() in str(p[1]).lower() or self.content.lower() in str(p[2]).lower() or self.content.lower() in str(p[3]).lower() or self.content.lower() in str(p[4]).lower() or self.content.lower() in str(p[5]).lower():              
                 filtered_results.append(p)
 
     # Borrar los elementos existentes en la tablaEquipos
@@ -133,7 +144,7 @@ class FormModulos():
 
     # Insertar los nuevos resultados en la tablaEquipos
         for p in filtered_results:
-            self.tablaModulos.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6]))
+            self.tablaModulos.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5]))
         self.cursor.close()
         self.connection.close()
 

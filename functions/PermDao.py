@@ -79,9 +79,9 @@ def consulPermisos(where):
             file.write(mensaje + '\n')
     return listarPermisos
 
-def PermisoDisable(id):
+def PermisoDelete(id):
     conexion = ConexionDB()
-    sql = f'UPDATE permisos SET activo = 0 WHERE id = {id}'
+    sql = f'DELETE FROM permisos WHERE id = {id}'
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()
