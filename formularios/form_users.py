@@ -6,7 +6,7 @@ import PIL
 from PIL import Image, ImageTk
 from util.util_alerts import edit_advice, error_advice, save_advice, set_opacity
 from functions.conexion import ConexionDB
-from util.util_functions import obtener_permisos, ObtenerRoles, buscarCorrelativo, actualizarCorrelativo
+from util.util_functions import obtener_permisos, ObtenerListaDeModulos, ObtenerPermisosDeModulos, ObtenerRoles, buscarCorrelativo, actualizarCorrelativo, ObtenerModulos
 from functions.UsersDao import usuarios, consulUsers, listarUsuarios, SaveUser, EditUser, UserDisable
 import sqlite3
 import datetime
@@ -154,6 +154,7 @@ class FormUsers():
         conexion.cerrarConexion()
 
     def crear_usuario(self, permisos, bg):
+        self.id = None
         #Creacion del top level
         self.topCreate = customtkinter.CTkToplevel()
         self.topCreate.title("Crear Usuarios")
@@ -217,7 +218,8 @@ class FormUsers():
         self.multioption = customtkinter.CTkOptionMenu(marco_crearusuario, values=[rol[1] for rol in roles], variable=self.svperfil_var)
         self.multioption.place(x=325, y=120)
 
-        self.buttonCreate = customtkinter.CTkButton(marco_crearusuario, text="Crear Usuario", font=("Roboto", 12), command=self.GuardarUsuario)
+        self.buttonCreate = tk.Button(marco_crearusuario, text="Crear Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", 
+                                        compound=tk.LEFT, padx=10, command=self.GuardarUsuario)
         self.buttonCreate.place(x=215, y=250)
 
     def editar_usuario(self, permisos, values):
@@ -292,7 +294,8 @@ class FormUsers():
         self.multioption = customtkinter.CTkOptionMenu(marco_editarusuario, values=[rol[1] for rol in ObtenerRoles()], variable=self.svperfil_var)
         self.multioption.place(x=325, y=120)
 
-        self.buttonSave = customtkinter.CTkButton(marco_editarusuario, text="Guardar Cambios", font=("Roboto", 12), command=self.GuardarUsuario)
+        self.buttonSave = tk.Button(marco_editarusuario, text="Guardar Cambios", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", 
+                                        compound=tk.LEFT, padx=10, command=self.GuardarUsuario)
         self.buttonSave.place(x=215, y=250)
 
         
@@ -320,37 +323,52 @@ class FormUsers():
 
         selected_item = self.tablaUsuarios.focus()
         values = self.tablaUsuarios.item(selected_item)['values']
+        
         #Datos para el usuario
         marco_modperm = customtkinter.CTkFrame(self.topModperm, width=700,height=500, bg_color="white", fg_color="white")
         marco_modperm.place(relx=0.5, rely=0.5, anchor="center")
-
-        perfil_id = values[3]
-        perfil_nombre = ''
-        for rol in ObtenerRoles():
-            if rol[0] == perfil_id:
-                perfil_nombre = rol[1]
-                break
-
-        lblperfil_select = customtkinter.CTkLabel(self.topModperm, font=("Roboto", 16), text="Permisos asignados a: {}".format(perfil_nombre))
-        lblperfil_select.place(x=150, rely=0.1)
         set_opacity(marco_modperm, 0.8)
 
-        #Inicio de seccion de switches asignados a permisos
-        self.switch_var = tk.BooleanVar()
-        self.switch = customtkinter.CTkSwitch(self.topModperm, variable=self.switch_var, text='USER101')
-        self.switch.place(x=150, rely=0.2)
-        self.verificar_permisos(values, permisos)
-        
+        self.tab_permisos = customtkinter.CTkTabview(marco_modperm, width=620,height=430)
+        self.tab_permisos.place(x=40, y=30)
 
-    def verificar_permisos(self, values, permisos):
-        perfil_id = values[3]
-        estado_switch = self.switch_var.get()
-        permisos_asignados = obtener_permisos(perfil_id)
+        modulos = ObtenerListaDeModulos()
+        self.tabs = {}
 
-        if permisos_asignados is not None and 'REG1000' in permisos_asignados:
-            self.switch_var.set(True)
-        else:
-            self.switch_var.set(False)
+        for modulo in modulos:
+            nombre_modulo = modulo['name']
+            tab = self.tab_permisos.add(nombre_modulo)
+            self.tabs[nombre_modulo] = tab
+
+            if modulo == 'Home':
+                self.tab_permisos.set(tab)
+
+            id_modulo = modulo['id']
+            permisos_modulo = ObtenerPermisosDeModulos(id_modulo)
+            
+            if permisos_modulo:
+                x_offset = 0.1
+                y_offset = 0.1
+                fila_actual = 0
+                columna_actual = 0
+                max_filas = 8
+                max_columnas = 3
+                for permiso in permisos_modulo:
+                    nombre_permiso = permiso['name']
+                    switch_var_permiso = tk.BooleanVar()
+                    switch_permiso = customtkinter.CTkSwitch(tab, variable=switch_var_permiso, text=nombre_permiso)
+            # Clcular posición relativa en la cuadrícula
+                    relx = x_offset + (columna_actual * 0.30)
+                    rely = y_offset + (fila_actual * 0.10)
+                    switch_permiso.place(relx=relx, rely=rely)
+                    columna_actual += 1
+                    if columna_actual >= max_columnas:
+                        columna_actual = 0
+                        fila_actual += 1
+                        if fila_actual >= max_filas:
+                            # Se alcanzó el límite de filas, salir del bucle
+                            break 
+
 
     def GuardarUsuario(self):
         try:

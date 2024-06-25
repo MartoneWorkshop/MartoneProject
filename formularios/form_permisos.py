@@ -17,7 +17,6 @@ from config import WIDTH_LOGO, HEIGHT_LOGO
 class FormPermisos():
     def __init__(self, cuerpo_principal, permisos):
         self.id = None
-        idmod = None
         # Crear paneles: barra superior
         self.barra_superior = tk.Frame(cuerpo_principal)
         self.barra_superior.pack(side=tk.TOP, fill=tk.X, expand=False) 
@@ -149,6 +148,7 @@ class FormPermisos():
 
 
     def crear_permiso(self, permisos):
+        self.id = None
         #Creacion del top level
         self.topCreatePerm = customtkinter.CTkToplevel()
         self.topCreatePerm.title("Crear permiso")
@@ -176,7 +176,7 @@ class FormPermisos():
         set_opacity(marco_crearpermisos, 0.8)
 
         self.lblinfo = customtkinter.CTkLabel(marco_crearpermisos, text="Creacion de nuevo permiso", font=("Roboto",14))
-        self.lblinfo.place(x=190, rely=0.1)
+        self.lblinfo.place(x=210, rely=0.1)
 
         modulos = ObtenerModulos()
         self.svmodulo_var = customtkinter.StringVar(value="Selecciona un modulo")
@@ -248,8 +248,8 @@ class FormPermisos():
         
         set_opacity(marco_editarpermisos, 0.8)
 
-        self.lblinfo = customtkinter.CTkLabel(marco_editarpermisos, text="Editar permiso", font=("Roboto",14), bg_color='#e1e3e5', fg_color='#e1e3e5')
-        self.lblinfo.place(x=220, rely=0.1)
+        self.lblinfo = customtkinter.CTkLabel(marco_editarpermisos, text="Editar permiso", font=("Roboto",14))
+        self.lblinfo.place(x=250, rely=0.1)
 
         ############ NOMBRE DEL ALIAS
         modulos = ObtenerModulos()
@@ -279,7 +279,7 @@ class FormPermisos():
         self.buttonEditperm = tk.Button(marco_editarpermisos, text="Actualizar", font=("Roboto", 12),
                                         bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", 
                                         compound=tk.LEFT, padx=10, command=lambda: self.GuardarPermiso())
-        self.buttonEditperm.place(x=240, y=290)
+        self.buttonEditperm.place(x=240, y=240)
 
     
 
@@ -318,10 +318,10 @@ class FormPermisos():
     def GuardarPermiso(self):
         try:
             # Otener el contenido del Entry
-            
             fecha_actual = datetime.datetime.now()
             date_created = fecha_actual.strftime("%d/%m/%Y")
             date_update = fecha_actual.strftime("%d/%m/%y %H:%M:%S")
+
             idmodulo = None
             for modul in ObtenerModulos():
                 if modul[1] == self.svmodulo_var.get():

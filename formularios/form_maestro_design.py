@@ -153,7 +153,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         else:
             pass
         
-        if 'CON1000' in permisos:
+        if 'CONF1000' in permisos:
             self.buttonSettings = tk.Button(self.menu_lateral, text="Settings",  font=("Roboto", 16),image=self.settings_icon, highlightthickness=20, width=ANCHO_MENU,
                 height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_config(permisos))
             self.buttonSettings.pack()
@@ -306,13 +306,13 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.buttonDatabase.pack_forget()
         if 'REP1000' in permisos:
             self.buttonInformes.pack_forget()
-        if 'CON1000' in permisos:
+        if 'CONF1000' in permisos:
             self.buttonSettings.pack_forget()
-        if 'USER1000' in permisos:
+        if 'CONF1002' in permisos:
             if hasattr(self, "buttonAdjustUsers"):
                 self.buttonAdjustUsers.pack_forget()
                 del self.buttonAdjustUsers
-        if 'CON1001' in permisos:
+        if 'CONF1001' in permisos:
             if hasattr(self, "buttonModulos"):
                 self.buttonModulos.pack_forget()
                 del self.buttonModulos
@@ -356,11 +356,11 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.buttonInformes.pack()
         else:
             pass
-        if 'CON1000' in permisos:
+        if 'CONF1000' in permisos:
             self.buttonSettings.pack()
         else:
             pass
-        if 'USER1000' in permisos:
+        if 'CONF1002' in permisos:
             self.buttonAdjustUsers.pack()
         else:
             pass
@@ -384,7 +384,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 del self.buttonHistoria
             else:
                 pass
-        if 'USER1000' in permisos:
+        if 'CONF1002' in permisos:
             if hasattr(self, "buttonAdjustUsers"):
                 self.buttonAdjustUsers.pack_forget()
                 del self.buttonAdjustUsers
@@ -394,7 +394,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonAdjustUsers.pack()
                 self.binding_hover_submenu_event(self.buttonAdjustUsers)
 
-        if 'CON1001' in permisos:
+        if 'CONF1001' in permisos:
             if hasattr(self, "buttonModulos"):
                 self.buttonModulos.pack_forget()
                 del self.buttonModulos

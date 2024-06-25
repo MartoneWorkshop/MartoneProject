@@ -16,6 +16,7 @@ class FormModulos():
 
     def __init__(self, cuerpo_principal, permisos):
         self.id = None
+        self.idMod = None
         # Crear paneles: barra superior
         self.barra_superior = tk.Frame(cuerpo_principal)
         self.barra_superior.pack(side=tk.TOP, fill=tk.X, expand=False) 
@@ -150,6 +151,7 @@ class FormModulos():
 
 
     def crear_Modulo(self, permisos):
+        self.id = None
         #Creacion del top level
         self.topCreateMod = customtkinter.CTkToplevel()
         self.topCreateMod.title("Crear Modulo")

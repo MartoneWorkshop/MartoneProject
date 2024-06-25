@@ -13,9 +13,60 @@ def ObtenerModulos():
                 return modulos
         except Exception as e:
                 error_advice()
-                mensaje = f'Error en obtenerRoles, util_funtions: {str(e)}'
+                mensaje = f'Error en obtenerModulos, util_funtions: {str(e)}'
                 with open('error_log.txt', 'a') as file:
                         file.write(mensaje + '\n')
+
+def ObtenerPermisosDeModulos(idmod):
+        try:
+                conexion = ConexionDB()
+                sql = f"SELECT id, idmod, name, codperm FROM permisos WHERE idmod = '{idmod}'"
+                conexion.ejecutar_consulta(sql)
+                resultados = conexion.obtener_resultados()
+                permisos = []
+                for resultado in resultados:
+                        permiso = {
+                                'id': resultado[0],
+                                'idmod': resultado[1],
+                                'name': resultado[2],
+                                'codperm': resultado[3]
+                        }
+                        permisos.append(permiso)
+                        
+                if permisos:
+                        return permisos
+                else:
+                        return None
+        except Exception as e:
+                error_advice()
+                mensaje = f'Error en ObtenerPermisosDeModulos, util_funtions: {str(e)}'
+                with open('error_log.txt', 'a') as file:
+                        file.write(mensaje + '\n') 
+                        
+def ObtenerListaDeModulos():
+        try:
+                conexion = ConexionDB()
+                sql = f"""SELECT id, name, codmod FROM modulos WHERE activo = 1"""
+                conexion.ejecutar_consulta(sql)
+                resultados = conexion.obtener_resultados()
+
+                modulos = []
+                for resultado in resultados:
+                        modulo = {
+                        'id': resultado[0],
+                         'name': resultado[1],
+                        'codmod': resultado[2]
+                        }
+                        modulos.append(modulo)
+
+                conexion.cerrarConexion()
+                return modulos
+        except Exception as e:
+                error_advice()
+                mensaje = f'Error en obtenerModulos, util_functions: {str(e)}'
+                with open('error_log.txt', 'a') as file:
+                        file.write(mensaje + '\n')
+
 def buscarCodigoModulo(dato):
         try:
                 conexion = ConexionDB()
@@ -30,6 +81,7 @@ def buscarCodigoModulo(dato):
                 mensaje = f'Error en buscarCodigoModulo, util_funtions: {str(e)}'
                 with open('error_log.txt', 'a') as file:
                         file.write(mensaje + '\n')
+
 def actualizarCodigoModulo(dato):
         try:
 
