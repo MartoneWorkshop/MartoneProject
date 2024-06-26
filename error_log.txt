@@ -423,3 +423,5 @@ Detalles del error: Traceback (most recent call last):
                    ^^^^^^^^^^^^^^^^^
 AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
 
+Error en GuardarPerfiles, form_Perfiles: 'Roles' object has no attribute 'alias'
+Error en GuardarPerfiles, form_Perfiles: 'FormPerfiles' object has no attribute 'topCreateProfile'

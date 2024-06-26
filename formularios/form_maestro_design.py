@@ -16,6 +16,7 @@ from formularios.form_home_design import FormularioHomeDesign
 from formularios.form_users import FormUsers
 from formularios.form_modulos import FormModulos
 from formularios.form_permisos import FormPermisos
+from formularios.form_perfiles import FormPerfiles
 from screeninfo import get_monitors
 
 class FormularioMaestroDesign(customtkinter.CTk):
@@ -312,6 +313,9 @@ class FormularioMaestroDesign(customtkinter.CTk):
             if hasattr(self, "buttonAdjustUsers"):
                 self.buttonAdjustUsers.pack_forget()
                 del self.buttonAdjustUsers
+            if hasattr(self, "buttonAdjustProfiles"):
+                self.buttonAdjustProfiles.pack_forget()
+                del self.buttonAdjustProfiles
         if 'CONF1001' in permisos:
             if hasattr(self, "buttonModulos"):
                 self.buttonModulos.pack_forget()
@@ -362,6 +366,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
             pass
         if 'CONF1002' in permisos:
             self.buttonAdjustUsers.pack()
+            self.buttonAdjustProfiles.pack()
         else:
             pass
                                 
@@ -388,20 +393,34 @@ class FormularioMaestroDesign(customtkinter.CTk):
             if hasattr(self, "buttonAdjustUsers"):
                 self.buttonAdjustUsers.pack_forget()
                 del self.buttonAdjustUsers
+            if hasattr(self, "buttonAdjustProfiles"):
+                self.buttonAdjustProfiles.pack_forget()
+                del self.buttonAdjustProfiles
             else:
                 self.buttonAdjustUsers = tk.Button(self.menu_lateral, text="Ajuste de Usuario", font=("Roboto", 12), image=self.adjustUser_icon, highlightthickness=20, width=ANCHO_MENU,
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_crear_usuarios(permisos))
                 self.buttonAdjustUsers.pack()
+
+                self.buttonAdjustProfiles = tk.Button(self.menu_lateral, text="Ajuste de Perfiles", font=("Roboto", 12), image=self.adjustUser_icon, highlightthickness=20, width=ANCHO_MENU,
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_adjustProfile(permisos))
+                self.buttonAdjustProfiles.pack()
+
                 self.binding_hover_submenu_event(self.buttonAdjustUsers)
+                self.binding_hover_submenu_event(self.buttonAdjustProfiles)
+
 
         if 'CONF1001' in permisos:
             if hasattr(self, "buttonModulos"):
                 self.buttonModulos.pack_forget()
                 del self.buttonModulos
+            if hasattr(self, "buttonPermisos"):
+                self.buttonPermisos.pack_forget()
+                del self.buttonPermisos
             else:
                 self.buttonModulos = tk.Button(self.menu_lateral, text="Modulos Menu", font=("Roboto", 12), image=self.adjustUser_icon, highlightthickness=20, width=ANCHO_MENU,
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_modulos(permisos))
                 self.buttonModulos.pack()
+
                 self.buttonPermisos = tk.Button(self.menu_lateral, text="Permisos", font=("Roboto", 12), image=self.adjustUser_icon, highlightthickness=20, width=ANCHO_MENU,
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_permisos(permisos))
                 self.buttonPermisos.pack()
@@ -446,6 +465,10 @@ class FormularioMaestroDesign(customtkinter.CTk):
     def abrir_home(self):   
         self.limpiar_panel(self.cuerpo_principal)
         FormularioHomeDesign(self.cuerpo_principal) 
+
+    def abrir_adjustProfile(self, permisos):   
+        self.limpiar_panel(self.cuerpo_principal)
+        FormPerfiles(self.cuerpo_principal, permisos) 
         
     def limpiar_panel(self, panel):
     # Función para limpiar el contenido del panel

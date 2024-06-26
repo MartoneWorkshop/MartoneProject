@@ -16,6 +16,27 @@ def ObtenerModulos():
                 mensaje = f'Error en obtenerModulos, util_funtions: {str(e)}'
                 with open('error_log.txt', 'a') as file:
                         file.write(mensaje + '\n')
+def ObtenerPermisosAsignados(perfil_id):
+        try:
+                conexion = ConexionDB()
+                sql = f"SELECT id, idrol, codpermiso FROM asigperm WHERE idrol = '{perfil_id}'"
+                conexion.ejecutar_consulta(sql)
+                resultados = conexion.obtener_resultados()
+                asigperm = []
+                for resultado in resultados:
+                        permisos = {
+                                'id': resultado[0],
+                                'idrol': resultado[1],
+                                'codpermiso': resultado[2]
+                        }
+                        asigperm.append(permisos)
+                        
+                return asigperm
+        except Exception as e:
+                error_advice()
+                mensaje = f'Error en ObtenerPermisosDeModulos, util_funtions: {str(e)}'
+                with open('error_log.txt', 'a') as file:
+                        file.write(mensaje + '\n')
 
 def ObtenerPermisosDeModulos(idmod):
         try:
@@ -54,7 +75,7 @@ def ObtenerListaDeModulos():
                 for resultado in resultados:
                         modulo = {
                         'id': resultado[0],
-                         'name': resultado[1],
+                        'name': resultado[1],
                         'codmod': resultado[2]
                         }
                         modulos.append(modulo)
