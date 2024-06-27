@@ -1,5 +1,6 @@
 from .conexion import ConexionDB
 from tkinter import messagebox
+import traceback
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 
 def EditProfile(roles, id):
@@ -31,6 +32,49 @@ def SaveProfile(roles):
         mensaje = f'Error en SaveProfile, rolesDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
+                        
+def ActualizacionPermisos(perfil_id, permisos_seleccionados):
+        try:
+            LimpiarPermisos(perfil_id)
+            GuardarNuevosPermisos(perfil_id, permisos_seleccionados)
+            print('actualizacion')
+        except Exception as e:
+                error_advice()
+                mensaje = f'Error en ActualizacionPermisos, ProfileDao: {str(e)}'
+                with open('error_log.txt', 'a') as file:
+                        file.write(mensaje + '\n')
+
+def LimpiarPermisos(perfil_id):
+        try:
+            conexion = ConexionDB()
+            sql = f"DELETE FROM asigperm WHERE idrol = '{perfil_id}'"
+            conexion.ejecutar_consulta(sql)
+        except Exception as e:
+            error_advice()
+            mensaje = f'Error en LimpiarPermisos, ProfileDao: {str(e)}'
+            mensaje += f'Detalles del error: {traceback.format_exc()}'
+            with open('error_log.txt', 'a') as file:
+                    file.write(mensaje + '\n')
+
+def GuardarNuevosPermisos(perfil_id, permisos_seleccionados):
+    try:
+        print(perfil_id)
+        print(permisos_seleccionados)
+
+        conexion = ConexionDB()
+        for codpermiso in permisos_seleccionados:
+            sql = f"INSERT INTO asigperm (idrol, codpermiso) VALUES('{perfil_id}', '{codpermiso}')"
+            conexion.ejecutar_consulta(sql)
+        conexion.cerrarConexion()
+        save_advice()
+    except Exception as e:
+            error_advice()
+            mensaje = f'Error en GuardarNuevosPermisos, ProfileDao: {str(e)}'
+
+            mensaje += f'Detalles del error: {traceback.format_exc()}'
+            with open('error_log.txt', 'a') as file:
+                    file.write(mensaje + '\n')
+
 
 def listarPerfil():
     conexion = ConexionDB()

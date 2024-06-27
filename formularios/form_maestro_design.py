@@ -97,7 +97,10 @@ class FormularioMaestroDesign(customtkinter.CTk):
         informes_image = Image.open("imagenes/reporte.png")
         settings_image = Image.open("imagenes/settings.png")
         usuarios_image = Image.open("imagenes/usuarios.png")
-        adjustUser_image = Image.open("imagenes/user_adjust.png")   
+        adjustUser_image = Image.open("imagenes/user_adjust.png")
+        userProfiles_image = Image.open("imagenes/user_profiles.png") 
+        permises_image = Image.open("imagenes/permise.png")
+        adjustModul_image = Image.open("imagenes/module.png")    
 
         #IMAGENES RENDERIZADAS
         home_resized = home_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
@@ -109,7 +112,10 @@ class FormularioMaestroDesign(customtkinter.CTk):
         informes_resized = informes_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         settings_resized = settings_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         usuarios_resized = usuarios_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        adjustUser_resized = adjustUser_image.resize((WIDTH_LOGO, HEIGHT_LOGO)) 
+        adjustUser_resized = adjustUser_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        userProfiles_resized = userProfiles_image.resize((WIDTH_LOGO, HEIGHT_LOGO)) 
+        permises_resized = permises_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        adjustModul_resized = adjustModul_image.resize((WIDTH_LOGO, HEIGHT_LOGO))    
         #IMAGENES FINALES
         self.home_icon = ImageTk.PhotoImage(home_resized)
         self.registros_icon = ImageTk.PhotoImage(registros_resized)
@@ -121,6 +127,10 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.settings_icon = ImageTk.PhotoImage(settings_resized)
         self.usuarios_icon = ImageTk.PhotoImage(usuarios_resized)
         self.adjustUser_icon = ImageTk.PhotoImage(adjustUser_resized)
+        self.userProfiles_icon = ImageTk.PhotoImage(userProfiles_resized)
+        self.permises_icon = ImageTk.PhotoImage(permises_resized)
+        self.adjustModul_icon = ImageTk.PhotoImage(adjustModul_resized)
+        
         #BOTONES DEL MENU
 
         if 'HOME1000' in permisos:
@@ -401,7 +411,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_crear_usuarios(permisos))
                 self.buttonAdjustUsers.pack()
 
-                self.buttonAdjustProfiles = tk.Button(self.menu_lateral, text="Ajuste de Perfiles", font=("Roboto", 12), image=self.adjustUser_icon, highlightthickness=20, width=ANCHO_MENU,
+                self.buttonAdjustProfiles = tk.Button(self.menu_lateral, text="Ajuste de Perfiles", font=("Roboto", 12), image=self.userProfiles_icon, highlightthickness=20, width=ANCHO_MENU,
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_adjustProfile(permisos))
                 self.buttonAdjustProfiles.pack()
 
@@ -417,11 +427,11 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonPermisos.pack_forget()
                 del self.buttonPermisos
             else:
-                self.buttonModulos = tk.Button(self.menu_lateral, text="Modulos Menu", font=("Roboto", 12), image=self.adjustUser_icon, highlightthickness=20, width=ANCHO_MENU,
+                self.buttonModulos = tk.Button(self.menu_lateral, text="Modulos Menu", font=("Roboto", 12), image=self.adjustModul_icon, highlightthickness=20, width=ANCHO_MENU,
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_modulos(permisos))
                 self.buttonModulos.pack()
 
-                self.buttonPermisos = tk.Button(self.menu_lateral, text="Permisos", font=("Roboto", 12), image=self.adjustUser_icon, highlightthickness=20, width=ANCHO_MENU,
+                self.buttonPermisos = tk.Button(self.menu_lateral, text="Permisos", font=("Roboto", 12), image=self.permises_icon, highlightthickness=20, width=ANCHO_MENU,
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_permisos(permisos))
                 self.buttonPermisos.pack()
                 self.binding_hover_submenu_event(self.buttonModulos)

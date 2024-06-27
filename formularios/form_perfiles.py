@@ -2,12 +2,13 @@ import tkinter as tk
 from config import  COLOR_FONDO, COLOR_MENU_LATERAL
 import customtkinter
 from util.util_alerts import set_opacity
+import traceback
 from functions.conexion import ConexionDB
 import datetime
 import sqlite3
 from tkinter import ttk
 from PIL import Image, ImageTk
-from functions.ProfileDao import Roles, listarPerfil, consulPerfiles, SaveProfile, EditProfile, ProfileDisable
+from functions.ProfileDao import Roles, listarPerfil, consulPerfiles, SaveProfile, EditProfile, ProfileDisable, ActualizacionPermisos, LimpiarPermisos, GuardarNuevosPermisos
 from util.util_functions import obtener_permisos, ObtenerListaDeModulos, ObtenerPermisosDeModulos, ObtenerRoles, ObtenerModulos, ObtenerPermisosAsignados
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 from config import WIDTH_LOGO, HEIGHT_LOGO
@@ -267,12 +268,15 @@ class FormPerfiles():
 
         self.tab_permisos = customtkinter.CTkTabview(marco_modperm, width=620,height=430)
         self.tab_permisos.place(x=40, y=30)
-    
-        perfil_id = self.id = self.tablaPerfiles.item(self.tablaPerfiles.selection())['text']
+        
 
+
+        perfil_id = self.tablaPerfiles.item(self.tablaPerfiles.selection())['text'] 
+        
         modulos = ObtenerListaDeModulos()
         asigperm = ObtenerPermisosAsignados(perfil_id)
         self.tabs = {}
+        self.interruptores = {}
 
         for modulo in modulos:
             nombre_modulo = modulo['name']
@@ -306,7 +310,7 @@ class FormPerfiles():
                         switch_var_permiso = tk.BooleanVar(value=False)
                     
                     switch_permiso = customtkinter.CTkSwitch(tab, variable=switch_var_permiso, text=nombre_permiso)
-
+                    self.interruptores[switch_permiso] = permiso
             # Clcular posición relativa en la cuadrícula
                     relx = x_offset + (columna_actual * 0.30)
                     rely = y_offset + (fila_actual * 0.10)
@@ -318,7 +322,52 @@ class FormPerfiles():
                         if fila_actual >= max_filas:
                             # Se alcanzó el límite de filas, salir del bucle
                             break
-                
+                    
+        
+        
+        print(asigperm_active)
+
+        self.buttonActualizar = tk.Button(self.topModperm, text="Actualizar\n Permisos", font=("Roboto", 12), 
+                                        bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, 
+                                        padx=10, command=lambda: ActualizarPermisos(perfil_id))
+        self.buttonActualizar.place(x=240, y=290)
+
+        
+            #return permisos_seleccionados
+
+        def guardarPermisosSeleccionados():
+            try:
+
+                permisos_seleccionados = []
+                for interruptor, permiso in self.interruptores.items():
+                    if interruptor.get():
+                        permisos_seleccionados.append(permiso['codperm'])
+                    else:
+                        pass
+                return permisos_seleccionados
+            
+            except Exception as e:
+                error_advice()
+                mensaje = f'Error en guardarPermisosSeleccionados, form_Perfiles: {str(e)}'
+                mensaje += f'Detalles del error: {traceback.format_exc()}'
+                with open('error_log.txt', 'a') as file:
+                    file.write(mensaje + '\n')
+        
+        def ActualizarPermisos(perfil_id):
+            try:
+                LimpiarPermisos(perfil_id)
+                permisos_seleccionados = guardarPermisosSeleccionados()
+                GuardarNuevosPermisos(perfil_id, permisos_seleccionados)
+
+                self.topModperm.destroy()
+            except Exception as e:
+                error_advice()
+                mensaje = f'Error en ActualizarPermisos, form_Perfiles: {str(e)}'
+                mensaje += f'Detalles del error: {traceback.format_exc()}'
+                with open('error_log.txt', 'a') as file:
+                    file.write(mensaje + '\n')
+
+    
     def GuardarPerfiles(self):
         try:
             # Otener el contenido del Entry
@@ -337,8 +386,8 @@ class FormPerfiles():
             else:
                 EditProfile(roles, self.id)
                 self.topEditProfile.destroy()
-
             self.listarPerfilEnTabla()
+
         except Exception as e:
             error_advice()
             mensaje = f'Error en GuardarPerfiles, form_Perfiles: {str(e)}'

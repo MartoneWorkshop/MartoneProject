@@ -425,3 +425,162 @@ AttributeError: 'FormPermisos' object has no attribute 'svmodulo_var'
 
 Error en GuardarPerfiles, form_Perfiles: 'Roles' object has no attribute 'alias'
 Error en GuardarPerfiles, form_Perfiles: 'FormPerfiles' object has no attribute 'topCreateProfile'
+Error en ActualizarPermisos, form_Perfiles: FormPerfiles.modificarPermisos.<locals>.guardarPermisosSeleccionados() missing 1 required positional argument: 'self'
+Error en ActualizarPermisos, form_Perfiles: 'CTkFrame' object has no attribute 'get_children'
+Error en LimpiarPermisos, ProfileDao: 'int' object has no attribute 'idrol'
+Error en LimpiarPermisos, ProfileDao: 'int' object has no attribute 'idrol'
+Error en LimpiarPermisos, ProfileDao: 'int' object has no attribute 'idrol'
+Error en LimpiarPermisos, ProfileDao: 'int' object has no attribute 'idrol'
+Error en LimpiarPermisos, ProfileDao: 'int' object has no attribute 'idrol'
+Error en LimpiarPermisos, ProfileDao: 'int' object has no attribute 'idrol'
+Error en ActualizarPermisos, form_Perfiles: 'codperm'
+Error en ActualizarPermisos, form_Perfiles: 'codperm'
+Error en ActualizarPermisos, form_Perfiles: 'codperm'
+Error en ActualizarPermisos, form_Perfiles: 'codperm'
+Error en ActualizarPermisos, form_Perfiles: 'codperm'
+Error en ActualizarPermisos, form_Perfiles: 'codperm'
+Error en ActualizarPermisos, form_Perfiles: 'codperm'
+Error en ActualizarPermisos, form_Perfiles: 'codperm'
+Error en ActualizarPermisos, form_Perfiles: cannot access local variable 'permisos_seleccionados' where it is not associated with a value
+Error en ActualizarPermisos, form_Perfiles: cannot access local variable 'permisos_seleccionados' where it is not associated with a value
+Error en ActualizarPermisos, form_Perfiles: cannot access local variable 'permisos_seleccionados' where it is not associated with a value
+Error en ActualizarPermisos, form_Perfiles: cannot access local variable 'permisos_seleccionados' where it is not associated with a value
+Error en ActualizarPermisos, form_Perfiles: cannot access local variable 'permisos_seleccionados' where it is not associated with a value
+Error en ActualizarPermisos, form_Perfiles: cannot access local variable 'permisos_seleccionados' where it is not associated with a value
+Error en ActualizarPermisos, form_Perfiles: 'codperm'
+Error en ActualizarPermisos, form_Perfiles: 'codperm'
+Error en ActualizarPermisos, form_Perfiles: 'codperm'
+Error en ActualizarPermisos, form_Perfiles: 'codperm'
+Error en ActualizarPermisos, form_Perfiles: 'codperm'
+Error en ActualizarPermisos, form_Perfiles: 'codperm'
+Error en ActualizarPermisos, form_Perfiles: 'codperm'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 344, in ActualizarPermisos
+    permisos_seleccionados = guardarPermisosSeleccionados(modulos)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 337, in guardarPermisosSeleccionados
+    permisos_seleccionados.append(permiso['codperm'])
+                                  ~~~~~~~^^^^^^^^^^^
+KeyError: 'codperm'
+
+Error en ActualizarPermisos, form_Perfiles: 'codperm'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 346, in ActualizarPermisos
+    permisos_seleccionados = guardarPermisosSeleccionados(modulos)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 337, in guardarPermisosSeleccionados
+    permisos_seleccionados.append(permiso['codperm'])
+                                  ~~~~~~~^^^^^^^^^^^
+KeyError: 'codperm'
+
+Error en ActualizarPermisos, form_Perfiles: 'codperm'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 346, in ActualizarPermisos
+    permisos_seleccionados = guardarPermisosSeleccionados(modulos)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 337, in guardarPermisosSeleccionados
+    permisos_seleccionados.append(permiso['codperm'])
+                                  ~~~~~~~^^^^^^^^^^^
+KeyError: 'codperm'
+
+Error en ActualizarPermisos, form_Perfiles: LimpiarPermisos() missing 1 required positional argument: 'permisos_seleccionados'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 345, in ActualizarPermisos
+    LimpiarPermisos(perfil_id)
+TypeError: LimpiarPermisos() missing 1 required positional argument: 'permisos_seleccionados'
+
+Error en ActualizarPermisos, form_Perfiles: LimpiarPermisos() missing 1 required positional argument: 'permisos_seleccionados'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 345, in ActualizarPermisos
+    LimpiarPermisos(perfil_id)
+TypeError: LimpiarPermisos() missing 1 required positional argument: 'permisos_seleccionados'
+
+Error en ActualizarPermisos, form_Perfiles: 'codperm'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 346, in ActualizarPermisos
+    permisos_seleccionados = guardarPermisosSeleccionados(modulos)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 337, in guardarPermisosSeleccionados
+    permisos_seleccionados.append(permiso['codperm'])
+                                  ~~~~~~~^^^^^^^^^^^
+KeyError: 'codperm'
+
+Error en ActualizarPermisos, form_Perfiles: 'codperm'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 346, in ActualizarPermisos
+    permisos_seleccionados = guardarPermisosSeleccionados(modulos)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 337, in guardarPermisosSeleccionados
+    permisos_seleccionados.append(permiso['codperm'])
+                                  ~~~~~~~^^^^^^^^^^^
+KeyError: 'codperm'
+
+Error en ActualizarPermisos, form_Perfiles: 'codperm'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 346, in ActualizarPermisos
+    permisos_seleccionados = guardarPermisosSeleccionados(modulos)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 337, in guardarPermisosSeleccionados
+    permisos_seleccionados.append(permiso['codperm'])
+                                  ~~~~~~~^^^^^^^^^^^
+KeyError: 'codperm'
+
+Error en ActualizarPermisos, form_Perfiles: 'builtin_function_or_method' object is not subscriptableDetalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 348, in ActualizarPermisos
+    permisos_seleccionados = guardarPermisosSeleccionados(modulos)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 337, in guardarPermisosSeleccionados
+    permisos_seleccionados.append(permiso.get['codperm'])
+                                  ~~~~~~~~~~~^^^^^^^^^^^
+TypeError: 'builtin_function_or_method' object is not subscriptable
+
+Error en ActualizarPermisos, form_Perfiles: 'builtin_function_or_method' object is not subscriptableDetalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 348, in ActualizarPermisos
+    permisos_seleccionados = guardarPermisosSeleccionados(modulos)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 337, in guardarPermisosSeleccionados
+    permisos_seleccionados.append(permiso.get['codperm'])
+                                  ~~~~~~~~~~~^^^^^^^^^^^
+TypeError: 'builtin_function_or_method' object is not subscriptable
+
+Error en ActualizarPermisos, form_Perfiles: 'builtin_function_or_method' object is not subscriptableDetalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 348, in ActualizarPermisos
+    permisos_seleccionados = guardarPermisosSeleccionados(modulos)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 337, in guardarPermisosSeleccionados
+    permisos_seleccionados.append(permiso.get['codperm'])
+                                  ~~~~~~~~~~~^^^^^^^^^^^
+TypeError: 'builtin_function_or_method' object is not subscriptable
+
+Error en ActualizarPermisos, form_Perfiles: 'codperm'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 348, in ActualizarPermisos
+    permisos_seleccionados = guardarPermisosSeleccionados(modulos)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 337, in guardarPermisosSeleccionados
+    permisos_seleccionados.append(permiso['codperm'])
+                                  ~~~~~~~^^^^^^^^^^^
+KeyError: 'codperm'
+
+Error en ActualizarPermisos, form_Perfiles: 'codperm'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 349, in ActualizarPermisos
+    permisos_seleccionados = guardarPermisosSeleccionados(modulos)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 341, in guardarPermisosSeleccionados
+    permisos_seleccionados.append(permiso['codperm'])
+                                  ~~~~~~~^^^^^^^^^^^
+KeyError: 'codperm'
+
+Error en guardarPermisosSeleccionados, form_Perfiles: 'codperm'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 342, in guardarPermisosSeleccionados
+    permisos_seleccionados.append(permiso['codperm'])
+                                  ~~~~~~~^^^^^^^^^^^
+KeyError: 'codperm'
+
+Error en GuardarNuevosPermisos, ProfileDao: 'NoneType' object is not iterableDetalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\functions\ProfileDao.py", line 65, in GuardarNuevosPermisos
+    for codpermiso in permisos_seleccionados:
+TypeError: 'NoneType' object is not iterable
+
+Error en guardarPermisosSeleccionados, form_Perfiles: 'codperm'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 344, in guardarPermisosSeleccionados
+    permisos_seleccionados.append(permiso['codperm'])
+                                  ~~~~~~~^^^^^^^^^^^
+KeyError: 'codperm'
+
+Error en GuardarNuevosPermisos, ProfileDao: 'NoneType' object is not iterableDetalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\functions\ProfileDao.py", line 65, in GuardarNuevosPermisos
+    for codpermiso in permisos_seleccionados:
+TypeError: 'NoneType' object is not iterable
+

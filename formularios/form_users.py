@@ -105,8 +105,8 @@ class FormUsers():
         self.tablaUsuarios.column("#2", width=125, stretch=False)
         self.tablaUsuarios.column("#3", width=125, stretch=False)
         self.tablaUsuarios.column("#4", width=125,stretch=False)
-        self.tablaUsuarios.column("#5", width=125, stretch=False)
-        self.tablaUsuarios.column("#6", width=125, stretch=False)
+        self.tablaUsuarios.column("#5", width=124, stretch=False)
+        self.tablaUsuarios.column("#6", width=124, stretch=False)
 
         
         #self.tablaUsuarios.bind('<Double-1>', self.crear_usuario)

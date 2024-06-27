@@ -16,6 +16,8 @@ def ObtenerModulos():
                 mensaje = f'Error en obtenerModulos, util_funtions: {str(e)}'
                 with open('error_log.txt', 'a') as file:
                         file.write(mensaje + '\n')
+
+                        
 def ObtenerPermisosAsignados(perfil_id):
         try:
                 conexion = ConexionDB()
