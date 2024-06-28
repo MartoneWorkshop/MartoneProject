@@ -4,10 +4,11 @@ from config import  COLOR_FONDO, WIDTH_LOGO, HEIGHT_LOGO, COLOR_MENU_LATERAL, AN
 import customtkinter
 import PIL
 from PIL import Image, ImageTk
+from tkinter import messagebox
 from util.util_alerts import edit_advice, error_advice, save_advice, set_opacity
 from functions.conexion import ConexionDB
 from util.util_functions import obtener_permisos, ObtenerListaDeModulos, ObtenerPermisosDeModulos, ObtenerRoles, buscarCorrelativo, actualizarCorrelativo, ObtenerModulos
-from functions.UsersDao import usuarios, consulUsers, listarUsuarios, SaveUser, EditUser, UserDisable
+from functions.UsersDao import usuarios, consulUsers, listarUsuarios, SaveUser, EditUser, UserDisable, UsuariosDesactivados
 import sqlite3
 import datetime
 import ctypes
@@ -58,11 +59,16 @@ class FormUsers():
 
         self.buttonEditUser = tk.Button(self.marco_create, text="Editar\n Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.editar_usuario(permisos, self.tablaUsuarios.item(self.tablaUsuarios.selection())['values']))
-        self.buttonEditUser.place(x=250, y=50)
+        self.buttonEditUser.place(x=245, y=50)
 
         self.buttonDeleteUser = tk.Button(self.marco_create, text="Desactivar\n Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.desactivarUsuario(permisos))
         self.buttonDeleteUser.place(x=350, y=50)
+        
+        self.switchPermStatus = customtkinter.CTkSwitch(self.marco_create, text="Activos", font=("Roboto", 12), command=self.MostrarActivosInactivos)
+        self.switchPermStatus.place(x=500, y=157)
+        self.switchPermStatus._state = True
+        
 
         ###################################################### BUSCADOR DE LA TABLA #################################################
         search_image = Image.open("imagenes/search.png")
@@ -114,6 +120,26 @@ class FormUsers():
             self.tablaUsuarios.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6]))
         
         self.tablaUsuarios.bind('<Double-1>', lambda event: self.editar_usuario(event, self.tablaUsuarios.item(self.tablaUsuarios.selection())['values']))
+    def MostrarActivosInactivos(self):
+        if self.switchPermStatus._state():
+            self.mostrarUsuariosActivos()
+        else:
+            self.mostrarUsuariosDesactivados()
+
+    def mostrarUsuariosActivos(self):
+        # Borrar los elementos existentes en la tabla de permisos
+        self.tablaUsuarios.delete(*self.tablaUsuarios.get_children())
+        # Obtener la lista de permisos activos
+        permisos_activos = listarUsuarios()
+        # Insertar los permisos activos en la tabla
+        for p in permisos_activos:
+            self.tablaUsuarios.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5],p[6]))
+
+    def mostrarUsuariosDesactivados(self):
+        self.tablaUsuarios.delete(*self.tablaUsuarios.get_children())
+        permisos_desactivados = UsuariosDesactivados()
+        for p in permisos_desactivados:
+            self.tablaUsuarios.insert('',0, text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6]))
 
     def update_users_content(self, event=None):
         conexion = ConexionDB()
@@ -339,8 +365,10 @@ class FormUsers():
     def desactivarUsuario(self, permisos):
         try:
             self.id = self.tablaUsuarios.item(self.tablaUsuarios.selection())['text']
-            UserDisable(self.id)
-            self.listarUsuariosEnTabla()
+            confirmar = messagebox.askyesno("Confirmar", "¿Estas Seguro de que deseas desactivar este usuario?")
+            if confirmar:
+                UserDisable(self.id)
+                self.listarUsuariosEnTabla()
             
         except Exception as e:
             error_advice()

@@ -6,6 +6,7 @@ from functions.conexion import ConexionDB
 import datetime
 import sqlite3
 from tkinter import ttk
+from tkinter import messagebox
 from PIL import Image, ImageTk
 from functions.ModuDao import Modulos, listarModulos, consulModulos, SaveModulo, EditModulo, ModuloDisable
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
@@ -69,11 +70,11 @@ class FormModulos():
 
         self.buttonEditMod = tk.Button(self.marco_modulos, text="Editar\n Modulo", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.editar_Modulo(permisos, self.tablaModulos.item(self.tablaModulos.selection())['values'])) 
-        self.buttonEditMod.place(x=350, y=60)
+        self.buttonEditMod.place(x=325, y=60)
         
         self.buttonDeleteMod = tk.Button(self.marco_modulos, text="Desactivar\n Modulo", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.desactivarModulo(permisos))
-        self.buttonDeleteMod.place(x=475, y=60)
+        self.buttonDeleteMod.place(x=425, y=60)
 
         ###################################### Tabla de modulos activos ######################
         where = ""
@@ -338,8 +339,10 @@ class FormModulos():
     def desactivarModulo(self, permisos):
         try:
             self.id = self.tablaModulos.item(self.tablaModulos.selection())['text']
-            ModuloDisable(self.id)
-            self.listarModuloEnTabla()
+            confirmar = messagebox.askyesno("Confirmar", "¿Estás seguro de que deseas desactivar este modulo?")
+            if confirmar:
+                ModuloDisable(self.id)
+                self.listarModuloEnTabla()
             
         except Exception as e:
             error_advice()

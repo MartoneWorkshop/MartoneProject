@@ -50,21 +50,21 @@ def listarUsuarios():
             file.write(mensaje + '\n')
     return listaUsuario
 
-def clientArchived():
+def UsuariosDesactivados():
     conexion = ConexionDB()
-    listaCliente = []
+    listaUsuarios = []
     sql = f'SELECT * FROM usuarios WHERE activo = 0'
     try:
         conexion.cursor.execute(sql)
-        listaCliente = conexion.cursor.fetchall()
+        listaUsuarios = conexion.cursor.fetchall()
         conexion.cerrarConexion()
     except Exception as e:
         conexion.cerrarConexion()
         error_advice()
-        mensaje = f'Error en clientArchived, usuariosDao: {str(e)}'
+        mensaje = f'Error en UsuariosDesactivados, usuariosDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
-    return listaCliente    
+    return listaUsuarios    
 
 def consulUsers(where):
     conexion = ConexionDB()

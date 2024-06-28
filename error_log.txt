@@ -584,3 +584,136 @@ Error en GuardarNuevosPermisos, ProfileDao: 'NoneType' object is not iterableDet
     for codpermiso in permisos_seleccionados:
 TypeError: 'NoneType' object is not iterable
 
+Error en ActualizarPermisos, form_Perfiles: GuardarNuevosPermisos() missing 1 required positional argument: 'permisos_seleccionados'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 355, in ActualizarPermisos
+    GuardarNuevosPermisos(asigperm)
+TypeError: GuardarNuevosPermisos() missing 1 required positional argument: 'permisos_seleccionados'
+
+Error en ActualizarPermisos, form_Perfiles: GuardarNuevosPermisos() missing 1 required positional argument: 'permisos_seleccionados'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 355, in ActualizarPermisos
+    GuardarNuevosPermisos(asigperm)
+TypeError: GuardarNuevosPermisos() missing 1 required positional argument: 'permisos_seleccionados'
+
+Error en ActualizarPermisos, form_Perfiles: GuardarNuevosPermisos() missing 1 required positional argument: 'permisos_seleccionados'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 355, in ActualizarPermisos
+    GuardarNuevosPermisos(asigperm)
+TypeError: GuardarNuevosPermisos() missing 1 required positional argument: 'permisos_seleccionados'
+
+Error en ActualizarPermisos, form_Perfiles: GuardarNuevosPermisos() missing 1 required positional argument: 'permisos_seleccionados'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 355, in ActualizarPermisos
+    GuardarNuevosPermisos(asigperm)
+TypeError: GuardarNuevosPermisos() missing 1 required positional argument: 'permisos_seleccionados'
+
+Error en ActualizarPermisos, form_Perfiles: GuardarNuevosPermisos() missing 1 required positional argument: 'permisos_seleccionados'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 355, in ActualizarPermisos
+    GuardarNuevosPermisos(asigperm)
+TypeError: GuardarNuevosPermisos() missing 1 required positional argument: 'permisos_seleccionados'
+
+Error en ActualizarPermisos, form_Perfiles: AsigPerm.__init__() got an unexpected keyword argument 'permisos_seleccionados'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 351, in ActualizarPermisos
+    asigperm = AsigPerm(
+               ^^^^^^^^^
+TypeError: AsigPerm.__init__() got an unexpected keyword argument 'permisos_seleccionados'
+
+Error en ActualizarPermisos, form_Perfiles: AsigPerm.__init__() got an unexpected keyword argument 'permisos_seleccionados'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 351, in ActualizarPermisos
+    asigperm = AsigPerm(
+               ^^^^^^^^^
+TypeError: AsigPerm.__init__() got an unexpected keyword argument 'permisos_seleccionados'
+
+Error en ActualizarPermisos, form_Perfiles: AsigPerm.__init__() got an unexpected keyword argument 'permisos_seleccionados'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 351, in ActualizarPermisos
+    asigperm = AsigPerm(
+               ^^^^^^^^^
+TypeError: AsigPerm.__init__() got an unexpected keyword argument 'permisos_seleccionados'
+
+Error en GuardarNuevosPermisos, ProfileDao: 'AsigPerm' object is not iterableDetalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\functions\AsigPermDao.py", line 32, in GuardarNuevosPermisos
+    for codpermiso in asigperm:
+TypeError: 'AsigPerm' object is not iterable
+
+Error en GuardarNuevosPermisos, ProfileDao: 'AsigPerm' object is not iterableDetalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\functions\AsigPermDao.py", line 32, in GuardarNuevosPermisos
+    for codpermiso in asigperm:
+TypeError: 'AsigPerm' object is not iterable
+
+Error en GuardarNuevosPermisos, ProfileDao: 'AsigPerm' object is not iterableDetalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\functions\AsigPermDao.py", line 32, in GuardarNuevosPermisos
+    for asigperm in asigperms:
+TypeError: 'AsigPerm' object is not iterable
+
+Error en guardarPermisosSeleccionados, form_Perfiles: 'codperm'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 334, in guardarPermisosSeleccionados
+    permisos_seleccionados.append(permiso['codperm'])
+                                  ~~~~~~~^^^^^^^^^^^
+KeyError: 'codperm'
+
+Error en GuardarNuevosPermisos, ProfileDao: 'NoneType' object is not iterableDetalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\functions\ProfileDao.py", line 65, in GuardarNuevosPermisos
+    for codpermiso in permisos_seleccionados:
+TypeError: 'NoneType' object is not iterable
+
+Error en guardarPermisosSeleccionados, form_Perfiles: 'codperm'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 334, in guardarPermisosSeleccionados
+    permisos_seleccionados.append(permiso['codperm'])
+                                  ~~~~~~~^^^^^^^^^^^
+KeyError: 'codperm'
+
+Error en GuardarNuevosPermisos, ProfileDao: 'NoneType' object is not iterableDetalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\functions\ProfileDao.py", line 62, in GuardarNuevosPermisos
+    for codpermiso in permisos_seleccionados:
+TypeError: 'NoneType' object is not iterable
+
+Error en ActualizarPermisos, form_Perfiles: FormPerfiles.guardarPermisosSeleccionados() takes 1 positional argument but 2 were givenDetalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 347, in ActualizarPermisos
+    permisos_seleccionados = self.guardarPermisosSeleccionados(interruptores)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FormPerfiles.guardarPermisosSeleccionados() takes 1 positional argument but 2 were given
+
+Error en guardarPermisosSeleccionados, form_Perfiles: 'codperm'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 334, in guardarPermisosSeleccionados
+    permisos_seleccionados.append(permiso['codperm'])
+                                  ~~~~~~~^^^^^^^^^^^
+KeyError: 'codperm'
+
+Error en guardarPermisosSeleccionados, form_Perfiles: 'codperm'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 334, in guardarPermisosSeleccionados
+    permisos_seleccionados.append(permiso['codperm'])
+                                  ~~~~~~~^^^^^^^^^^^
+KeyError: 'codperm'
+
+Error en ActualizarPermisos, form_Perfiles: FormPerfiles.guardarPermisosSeleccionados() takes 1 positional argument but 2 were givenDetalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 343, in ActualizarPermisos
+    permisos_seleccionados = self.guardarPermisosSeleccionados(interruptores)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FormPerfiles.guardarPermisosSeleccionados() takes 1 positional argument but 2 were given
+
+Error en guardarPermisosSeleccionados, form_Perfiles: unknown option "-codperm"Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 331, in guardarPermisosSeleccionados
+    permisos_seleccionados = [permiso['codperm'] for permiso, estado in interruptores.items() if estado]
+                              ~~~~~~~^^^^^^^^^^^
+  File "C:\Users\p3rsonal\AppData\Local\Programs\Python\Python312\Lib\tkinter\__init__.py", line 1722, in cget
+    return self.tk.call(self._w, 'cget', '-' + key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: unknown option "-codperm"
+
+Error en GuardarNuevosPermisos, ProfileDao: 'NoneType' object is not iterableDetalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\functions\ProfileDao.py", line 62, in GuardarNuevosPermisos
+    for codpermiso in permisos_seleccionados:
+TypeError: 'NoneType' object is not iterable
+
+Error en guardarPermisosSeleccionados, form_Perfiles: unknown option "-codperm"Detalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\formularios\form_perfiles.py", line 331, in guardarPermisosSeleccionados
+    permisos_seleccionados = [permiso['codperm'] for permiso, estado in interruptores.items() if estado]
+                              ~~~~~~~^^^^^^^^^^^
+  File "C:\Users\p3rsonal\AppData\Local\Programs\Python\Python312\Lib\tkinter\__init__.py", line 1722, in cget
+    return self.tk.call(self._w, 'cget', '-' + key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_tkinter.TclError: unknown option "-codperm"
+
+Error en GuardarNuevosPermisos, ProfileDao: 'NoneType' object is not iterableDetalles del error: Traceback (most recent call last):
+  File "C:\Users\p3rsonal\Documents\Proyectos\PECA_GI\functions\ProfileDao.py", line 62, in GuardarNuevosPermisos
+    for codpermiso in permisos_seleccionados:
+TypeError: 'NoneType' object is not iterable
+
+Error en listarPermisos, ModuDao: no such column: activo

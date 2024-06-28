@@ -48,21 +48,6 @@ def listarPermisos():
             file.write(mensaje + '\n')
     return listaPermisos
 
-def clientArchived():
-    conexion = ConexionDB()
-    listaCliente = []
-    sql = f'SELECT * FROM permisos WHERE activo = 0'
-    try:
-        conexion.cursor.execute(sql)
-        listaCliente = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
-    except Exception as e:
-        conexion.cerrarConexion()
-        error_advice()
-        mensaje = f'Error en clientArchived, ModuDao: {str(e)}'
-        with open('error_log.txt', 'a') as file:
-            file.write(mensaje + '\n')
-    return listaCliente    
 
 def consulPermisos(where):
     conexion = ConexionDB()

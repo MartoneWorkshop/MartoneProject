@@ -58,15 +58,12 @@ def LimpiarPermisos(perfil_id):
 
 def GuardarNuevosPermisos(perfil_id, permisos_seleccionados):
     try:
-        print(perfil_id)
-        print(permisos_seleccionados)
-
         conexion = ConexionDB()
         for codpermiso in permisos_seleccionados:
             sql = f"INSERT INTO asigperm (idrol, codpermiso) VALUES('{perfil_id}', '{codpermiso}')"
             conexion.ejecutar_consulta(sql)
-        conexion.cerrarConexion()
         save_advice()
+        conexion.cerrarConexion()
     except Exception as e:
             error_advice()
             mensaje = f'Error en GuardarNuevosPermisos, ProfileDao: {str(e)}'

@@ -5,10 +5,11 @@ from util.util_alerts import set_opacity
 import traceback
 from functions.conexion import ConexionDB
 import datetime
+from tkinter import messagebox
 import sqlite3
 from tkinter import ttk
 from PIL import Image, ImageTk
-from functions.ProfileDao import Roles, listarPerfil, consulPerfiles, SaveProfile, EditProfile, ProfileDisable, ActualizacionPermisos, LimpiarPermisos, GuardarNuevosPermisos
+from functions.ProfileDao import Roles, listarPerfil, consulPerfiles, SaveProfile, EditProfile, ProfileDisable, ActualizacionPermisos, GuardarNuevosPermisos, LimpiarPermisos
 from util.util_functions import obtener_permisos, ObtenerListaDeModulos, ObtenerPermisosDeModulos, ObtenerRoles, ObtenerModulos, ObtenerPermisosAsignados
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 from config import WIDTH_LOGO, HEIGHT_LOGO
@@ -64,13 +65,13 @@ class FormPerfiles():
         self.entrysearch_perfiles.bind('<KeyRelease>', self.update_profiles_content)
 
         ##################################################### BOTONES DE LA TABLA ##################################################
-        self.buttonCreateProfile = tk.Button(self.marco_perfiles, text="Crear Perfil", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+        self.buttonCreateProfile = tk.Button(self.marco_perfiles, text="Creacion de\nPerfiles", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.crear_Perfiles(permisos))
         self.buttonCreateProfile.place(x=225, y=60)
 
-        self.buttonEditProfile = tk.Button(self.marco_perfiles, text="Editar Perfil", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+        self.buttonEditProfile = tk.Button(self.marco_perfiles, text="Edicion de\nPerfil", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.editar_Perfil(permisos, self.tablaPerfiles.item(self.tablaPerfiles.selection())['values'])) 
-        self.buttonEditProfile.place(x=350, y=60)
+        self.buttonEditProfile.place(x=355, y=60)
         
         self.buttonDeleteProfile = tk.Button(self.marco_perfiles, text="Desactivar\n Perfil", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.desactivarPerfil(permisos))
@@ -198,7 +199,7 @@ class FormPerfiles():
         self.nombredit = self.tablaPerfiles.item(self.tablaPerfiles.selection())['values'][0]
         #Creacion del top level
         self.topEditProfile = customtkinter.CTkToplevel()
-        self.topEditProfile.title("Editar Modulo")
+        self.topEditProfile.title("Editar Perfil")
         self.topEditProfile.w = 600
         self.topEditProfile.h = 400
         self.topEditProfile.geometry(f"{self.topEditProfile.w}x{self.topEditProfile.h}")
@@ -222,22 +223,22 @@ class FormPerfiles():
         
         set_opacity(marco_editarpermisos, 0.8)
 
-        self.lblinfo = customtkinter.CTkLabel(self.topEditProfile, text="Editar Modulo", font=("Roboto",14), bg_color='#e1e3e5', fg_color='#e1e3e5')
-        self.lblinfo.place(x=220, rely=0.1)
+        self.lblinfo = customtkinter.CTkLabel(self.topEditProfile, text="Editar Perfil", font=("Roboto",14), bg_color='#e1e3e5', fg_color='#e1e3e5')
+        self.lblinfo.place(relx=0.43, rely=0.1)
 
         ############# NOMBRE DEL MODULO
-        self.lbleditnombre = customtkinter.CTkLabel(self.topEditProfile, text='Nombre del Modulo', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
-        self.lbleditnombre.place(x=102, y=120)
+        self.lbleditnombre = customtkinter.CTkLabel(self.topEditProfile, text='Nombre del Perfil', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
+        self.lbleditnombre.place(relx=0.42, y=120)
 
         self.svnombre_perfil = customtkinter.StringVar(value=self.nombredit)
         self.entryeditnombre_perfil = ttk.Entry(self.topEditProfile, style='Modern.TEntry', textvariable=self.svnombre_perfil)
-        self.entryeditnombre_perfil.place(x=95, y=170)
+        self.entryeditnombre_perfil.place(relx=0.4, y=170)
         self.entryeditnombre_perfil.configure(style='Entry.TEntry')
 
         self.entryeditnombre_perfil.bind("<Return>", lambda event: self.GuardarPerfiles())
         ######## BOTONE
         self.buttonEditProfile = tk.Button(self.topEditProfile, text="Actualizar", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.GuardarPerfiles)
-        self.buttonEditProfile.place(x=240, y=290)
+        self.buttonEditProfile.place(x=250, y=290)
 
     def modificarPermisos(self, permisos, values):
         #Creacion del top level
@@ -269,14 +270,12 @@ class FormPerfiles():
         self.tab_permisos = customtkinter.CTkTabview(marco_modperm, width=620,height=430)
         self.tab_permisos.place(x=40, y=30)
         
-
-
         perfil_id = self.tablaPerfiles.item(self.tablaPerfiles.selection())['text'] 
         
         modulos = ObtenerListaDeModulos()
         asigperm = ObtenerPermisosAsignados(perfil_id)
         self.tabs = {}
-        self.interruptores = {}
+        interruptores = {}
 
         for modulo in modulos:
             nombre_modulo = modulo['name']
@@ -298,11 +297,8 @@ class FormPerfiles():
 
                 for permiso in permisos_modulo:
                     nombre_permiso = permiso['name']
-                    permisos_modulos = []
-                    permisos_modulos.append(permiso['codperm'])
-                    asigperm_active = []
-                    for permiso in asigperm:
-                        asigperm_active.append(permiso['codpermiso'])
+                    permisos_modulos = [permiso['codperm']]
+                    asigperm_active = [permiso['codpermiso'] for permiso in asigperm]
 
                     if any(permiso_modulo in asigperm_active for permiso_modulo in permisos_modulos):
                         switch_var_permiso = tk.BooleanVar(value=True)
@@ -310,8 +306,8 @@ class FormPerfiles():
                         switch_var_permiso = tk.BooleanVar(value=False)
                     
                     switch_permiso = customtkinter.CTkSwitch(tab, variable=switch_var_permiso, text=nombre_permiso)
-                    self.interruptores[switch_permiso] = permiso
-            # Clcular posición relativa en la cuadrícula
+                    interruptores[switch_permiso] = permiso
+                # Clcular posición relativa en la cuadrícula
                     relx = x_offset + (columna_actual * 0.30)
                     rely = y_offset + (fila_actual * 0.10)
                     switch_permiso.place(relx=relx, rely=rely)
@@ -322,50 +318,39 @@ class FormPerfiles():
                         if fila_actual >= max_filas:
                             # Se alcanzó el límite de filas, salir del bucle
                             break
-                    
-        
-        
-        print(asigperm_active)
-
-        self.buttonActualizar = tk.Button(self.topModperm, text="Actualizar\n Permisos", font=("Roboto", 12), 
+        self.buttonActualizar = tk.Button(self.topModperm, text="Actualizar Permisos", font=("Roboto", 12), 
                                         bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, 
-                                        padx=10, command=lambda: ActualizarPermisos(perfil_id))
-        self.buttonActualizar.place(x=240, y=290)
+                                        padx=10, command=lambda: self.ActualizarPermisos(perfil_id, interruptores))
+        self.buttonActualizar.place(x=323, y=515)
 
-        
-            #return permisos_seleccionados
 
-        def guardarPermisosSeleccionados():
-            try:
-
-                permisos_seleccionados = []
-                for interruptor, permiso in self.interruptores.items():
-                    if interruptor.get():
-                        permisos_seleccionados.append(permiso['codperm'])
-                    else:
-                        pass
-                return permisos_seleccionados
+    def guardarPermisosSeleccionados(self, interruptores):
+        try:
+            permisos_seleccionados = [permiso['codperm'] for interruptor, permiso in interruptores.items() if permiso.get('codperm') and interruptor.get()]
+            return permisos_seleccionados
+    
+        except Exception as e:
+            error_advice()
+            mensaje = f'Error en guardarPermisosSeleccionados, form_Perfiles: {str(e)}'
+            mensaje += f'Detalles del error: {traceback.format_exc()}'
+            with open('error_log.txt', 'a') as file:
+                file.write(mensaje + '\n')
+    
+    def ActualizarPermisos(self, perfil_id, interruptores):
+        try:
+            permisos_seleccionados = self.guardarPermisosSeleccionados(interruptores)
+            LimpiarPermisos(perfil_id)
             
-            except Exception as e:
-                error_advice()
-                mensaje = f'Error en guardarPermisosSeleccionados, form_Perfiles: {str(e)}'
-                mensaje += f'Detalles del error: {traceback.format_exc()}'
-                with open('error_log.txt', 'a') as file:
-                    file.write(mensaje + '\n')
-        
-        def ActualizarPermisos(perfil_id):
-            try:
-                LimpiarPermisos(perfil_id)
-                permisos_seleccionados = guardarPermisosSeleccionados()
-                GuardarNuevosPermisos(perfil_id, permisos_seleccionados)
-
-                self.topModperm.destroy()
-            except Exception as e:
-                error_advice()
-                mensaje = f'Error en ActualizarPermisos, form_Perfiles: {str(e)}'
-                mensaje += f'Detalles del error: {traceback.format_exc()}'
-                with open('error_log.txt', 'a') as file:
-                    file.write(mensaje + '\n')
+            GuardarNuevosPermisos(perfil_id, permisos_seleccionados)
+            #permisos_seleccionados = guardarPermisosSeleccionados()
+            #GuardarNuevosPermisos(perfil_id, permisos_seleccionados)
+            self.topModperm.destroy()
+        except Exception as e:
+            error_advice()
+            mensaje = f'Error en ActualizarPermisos, form_Perfiles: {str(e)}'
+            mensaje += f'Detalles del error: {traceback.format_exc()}'
+            with open('error_log.txt', 'a') as file:
+                file.write(mensaje + '\n')
 
     
     def GuardarPerfiles(self):
@@ -397,8 +382,10 @@ class FormPerfiles():
     def desactivarPerfil(self, permisos):
         try:
             self.id = self.tablaPerfiles.item(self.tablaPerfiles.selection())['text']
-            ProfileDisable(self.id)
-            self.listarPerfilEnTabla()
+            confirmar = messagebox.askyesno("Confirmar", "¿Estás seguro de que deseas desactivar este perfil?")
+            if confirmar:
+                ProfileDisable(self.id)
+                self.listarPerfilEnTabla()
             
         except Exception as e:
             error_advice()

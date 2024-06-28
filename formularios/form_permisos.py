@@ -6,6 +6,7 @@ from functions.conexion import ConexionDB
 import datetime
 import sqlite3
 import traceback
+from tkinter import messagebox
 from tkinter import ttk
 from PIL import Image, ImageTk
 from util.util_functions import ObtenerModulos, buscarCodigoModulo, actualizarCodigoModulo
@@ -69,12 +70,12 @@ class FormPermisos():
         self.buttonEditPerm = tk.Button(self.marco_permisos, text="Editar\n Permiso", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, 
                                         fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.editar_permiso(permisos, self.tablapermisos.item(self.tablapermisos.selection())['values'])) 
-        self.buttonEditPerm.place(x=350, y=60)
+        self.buttonEditPerm.place(x=325, y=60)
         
         self.buttonDeletePerm = tk.Button(self.marco_permisos, text="Eliminar\n Permiso", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.desactivarpermiso(permisos))
-        self.buttonDeletePerm.place(x=475, y=60)
-
+        self.buttonDeletePerm.place(x=425, y=60)
+    
         ###################################### Tabla de permisos activos ######################
         where = ""
         if len(where) > 0:
@@ -109,7 +110,7 @@ class FormPermisos():
             self.tablapermisos.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4],p[5]))
         
         self.tablapermisos.bind('<Double-1>', lambda event: self.editar_permiso(event, self.tablapermisos.item(self.tablapermisos.selection())['values']))
-
+    
     def update_permisos_content(self, event=None):
     # Conectar a la base de datos
         self.connection = sqlite3.connect('database/database.db')
@@ -145,7 +146,6 @@ class FormPermisos():
             self.tablapermisos.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5]))
         self.cursor.close()
         self.connection.close()
-
 
     def crear_permiso(self, permisos):
         self.id = None
@@ -286,8 +286,10 @@ class FormPermisos():
     def desactivarpermiso(self, permisos):
         try:
             self.id = self.tablapermisos.item(self.tablapermisos.selection())['text']
-            PermisoDelete(self.id)
-            self.listarpermisoEnTabla()
+            confirmar = messagebox.askyesno("Confirmar", "¿Estás seguro de que deseas eliminar este permiso?")
+            if confirmar:
+                PermisoDelete(self.id)
+                self.listarpermisoEnTabla()
             
         except Exception as e:
             error_advice()

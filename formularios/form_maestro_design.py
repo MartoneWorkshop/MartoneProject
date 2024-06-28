@@ -132,8 +132,8 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.adjustModul_icon = ImageTk.PhotoImage(adjustModul_resized)
         
         #BOTONES DEL MENU
-
-        if 'HOME1000' in permisos:
+        #Home1001 visualizar modulo home
+        if 'HOME1001' in permisos:
             self.buttonHome = tk.Button(self.menu_lateral, text="Inicio", font=("Roboto", 16), image=self.home_icon, highlightthickness=20, width=ANCHO_MENU,
                 height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.abrir_home)
             self.buttonHome.pack()
@@ -141,7 +141,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         else:
             pass
 
-        if 'REG1000' in permisos:
+        if 'REG1001' in permisos:
             self.buttonRegistro = tk.Button(self.menu_lateral, text="Registros", font=("Roboto", 16), image=self.registros_icon, highlightthickness=20, width=ANCHO_MENU,
                 height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_registros(permisos))
             self.buttonRegistro.pack()
@@ -163,9 +163,9 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.binding_hover_event(self.buttonInformes)
         else:
             pass
-        
-        if 'CONF1000' in permisos:
-            self.buttonSettings = tk.Button(self.menu_lateral, text="Settings",  font=("Roboto", 16),image=self.settings_icon, highlightthickness=20, width=ANCHO_MENU,
+        #Home1001 visualizar modulo configuracion
+        if 'CONF1001' in permisos:
+            self.buttonSettings = tk.Button(self.menu_lateral, text="Ajustes",  font=("Roboto", 16),image=self.settings_icon, highlightthickness=20, width=ANCHO_MENU,
                 height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_config(permisos))
             self.buttonSettings.pack()
             self.binding_hover_event(self.buttonSettings)
@@ -315,18 +315,19 @@ class FormularioMaestroDesign(customtkinter.CTk):
         #VERIFICAR LOS PERMISOS Y QUE BOTONES ESTAN DISPONIBLES  
         if 'DATA100' in permisos:
             self.buttonDatabase.pack_forget()
-        if 'REP1000' in permisos:
+        if 'REP1001' in permisos:
             self.buttonInformes.pack_forget()
-        if 'CONF1000' in permisos:
+        if 'CONF1001' in permisos:
             self.buttonSettings.pack_forget()
         if 'CONF1002' in permisos:
             if hasattr(self, "buttonAdjustUsers"):
                 self.buttonAdjustUsers.pack_forget()
                 del self.buttonAdjustUsers
+        if 'CONF1003' in permisos:
             if hasattr(self, "buttonAdjustProfiles"):
                 self.buttonAdjustProfiles.pack_forget()
                 del self.buttonAdjustProfiles
-        if 'CONF1001' in permisos:
+        if 'CONF1004' in permisos:
             if hasattr(self, "buttonModulos"):
                 self.buttonModulos.pack_forget()
                 del self.buttonModulos
@@ -366,11 +367,11 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.buttonDatabase.pack()
         else:
             pass
-        if 'REP1000' in permisos:
+        if 'REP1001' in permisos:
             self.buttonInformes.pack()
         else:
             pass
-        if 'CONF1000' in permisos:
+        if 'CONF1001' in permisos:
             self.buttonSettings.pack()
         else:
             pass
@@ -403,38 +404,41 @@ class FormularioMaestroDesign(customtkinter.CTk):
             if hasattr(self, "buttonAdjustUsers"):
                 self.buttonAdjustUsers.pack_forget()
                 del self.buttonAdjustUsers
-            if hasattr(self, "buttonAdjustProfiles"):
-                self.buttonAdjustProfiles.pack_forget()
-                del self.buttonAdjustProfiles
             else:
                 self.buttonAdjustUsers = tk.Button(self.menu_lateral, text="Ajuste de Usuario", font=("Roboto", 12), image=self.adjustUser_icon, highlightthickness=20, width=ANCHO_MENU,
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_crear_usuarios(permisos))
                 self.buttonAdjustUsers.pack()
 
+                self.binding_hover_submenu_event(self.buttonAdjustUsers)
+        if 'CONF1003' in permisos:
+            if hasattr(self, "buttonAdjustProfiles"):
+                self.buttonAdjustProfiles.pack_forget()
+                del self.buttonAdjustProfiles
+            else:
                 self.buttonAdjustProfiles = tk.Button(self.menu_lateral, text="Ajuste de Perfiles", font=("Roboto", 12), image=self.userProfiles_icon, highlightthickness=20, width=ANCHO_MENU,
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_adjustProfile(permisos))
                 self.buttonAdjustProfiles.pack()
 
-                self.binding_hover_submenu_event(self.buttonAdjustUsers)
                 self.binding_hover_submenu_event(self.buttonAdjustProfiles)
-
-
-        if 'CONF1001' in permisos:
+        if 'CONF1004' in permisos:
             if hasattr(self, "buttonModulos"):
                 self.buttonModulos.pack_forget()
                 del self.buttonModulos
+            else:
+                self.buttonModulos = tk.Button(self.menu_lateral, text="Ajuste de Modulo", font=("Roboto", 12), image=self.adjustModul_icon, highlightthickness=20, width=ANCHO_MENU,
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_modulos(permisos))
+                self.buttonModulos.pack()
+
+                self.binding_hover_submenu_event(self.buttonModulos)
+        if 'CONF1005' in permisos:
             if hasattr(self, "buttonPermisos"):
                 self.buttonPermisos.pack_forget()
                 del self.buttonPermisos
             else:
-                self.buttonModulos = tk.Button(self.menu_lateral, text="Modulos Menu", font=("Roboto", 12), image=self.adjustModul_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_modulos(permisos))
-                self.buttonModulos.pack()
-
                 self.buttonPermisos = tk.Button(self.menu_lateral, text="Permisos", font=("Roboto", 12), image=self.permises_icon, highlightthickness=20, width=ANCHO_MENU,
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_permisos(permisos))
                 self.buttonPermisos.pack()
-                self.binding_hover_submenu_event(self.buttonModulos)
+            
                 self.binding_hover_submenu_event(self.buttonPermisos)
             
 
