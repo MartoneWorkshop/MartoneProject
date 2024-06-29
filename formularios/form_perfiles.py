@@ -9,7 +9,7 @@ from tkinter import messagebox
 import sqlite3
 from tkinter import ttk
 from PIL import Image, ImageTk
-from functions.ProfileDao import Roles, listarPerfil, consulPerfiles, SaveProfile, EditProfile, ProfileDisable, ActualizacionPermisos, GuardarNuevosPermisos, LimpiarPermisos
+from functions.ProfileDao import Roles, listarPerfil, consulPerfiles, SaveProfile, EditProfile, ProfileDisable, ActualizacionPermisos, PerfilesInactivos,GuardarNuevosPermisos, LimpiarPermisos
 from util.util_functions import obtener_permisos, ObtenerListaDeModulos, ObtenerPermisosDeModulos, ObtenerRoles, ObtenerModulos, ObtenerPermisosAsignados
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 from config import WIDTH_LOGO, HEIGHT_LOGO
@@ -80,6 +80,10 @@ class FormPerfiles():
         self.buttonModPerm = tk.Button(self.marco_perfiles, text="Modificar\n Permisos", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.modificarPermisos(permisos, self.tablaPerfiles.item(self.tablaPerfiles.selection())['values']))
         self.buttonModPerm.place(x=600, y=60)
+
+        self.switchStatus = tk.BooleanVar(value=True)
+        self.switchPermStatus = customtkinter.CTkSwitch(self.marco_perfiles, variable=self.switchStatus, text="Activos", font=("Roboto", 12), command=self.MostrarActivosInactivos)
+        self.switchPermStatus.place(x=700, y=157)
         ###################################### Tabla de modulos activos ######################
         where = ""
         if len(where) > 0:
@@ -111,7 +115,28 @@ class FormPerfiles():
         for p in self.ListaPerfiles:
             self.tablaPerfiles.insert('',0,text=p[0], values=(p[1],p[2],p[3]))
         
+        
         self.tablaPerfiles.bind('<Double-1>', lambda event: self.editar_Perfil(event, self.tablaPerfiles.item(self.tablaPerfiles.selection())['values']))
+    def MostrarActivosInactivos(self):
+        if self.switchStatus.get():
+            self.mostrarPerfilActivos()
+        else:
+            self.mostrarPerfilDesactivados()
+
+    def mostrarPerfilActivos(self):
+        # Borrar los elementos existentes en la tabla de permisos
+        self.tablaPerfiles.delete(*self.tablaPerfiles.get_children())
+        # Obtener la lista de permisos activos
+        permisos_activos = listarPerfil()
+        # Insertar los permisos activos en la tabla
+        for p in permisos_activos:
+            self.tablaPerfiles.insert('', 0, text=p[0], values=(p[1], p[2], p[3]))
+
+    def mostrarPerfilDesactivados(self):
+        self.tablaPerfiles.delete(*self.tablaPerfiles.get_children())
+        permisos_desactivados = PerfilesInactivos()
+        for p in permisos_desactivados:
+            self.tablaPerfiles.insert('',0, text=p[0], values=(p[1],p[2],p[3]))
 
     def update_profiles_content(self, event=None):
     # Conectar a la base de datos
@@ -408,7 +433,7 @@ class FormPerfiles():
                 self.tablaPerfiles.insert('', 0, text=p[0], values=(p[1], p[2], p[3]))
         except Exception as e:
             error_advice()
-            mensaje = f'Error en listarUsuariosEnTabla, form_users: {str(e)}'
+            mensaje = f'Error en listarPerfilEnTabla, form_users: {str(e)}'
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')
             

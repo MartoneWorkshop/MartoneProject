@@ -8,7 +8,7 @@ import sqlite3
 from tkinter import ttk
 from tkinter import messagebox
 from PIL import Image, ImageTk
-from functions.ModuDao import Modulos, listarModulos, consulModulos, SaveModulo, EditModulo, ModuloDisable
+from functions.ModuDao import Modulos, listarModulos, consulModulos, SaveModulo, EditModulo, ModuloDisable, ModulosInactivos
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 from config import WIDTH_LOGO, HEIGHT_LOGO
 
@@ -63,6 +63,10 @@ class FormModulos():
         self.entrysearch_modulos.place(x=270, y=157)
         self.entrysearch_modulos.bind('<KeyRelease>', self.update_modulos_content)
 
+        self.switchStatus = tk.BooleanVar(value=True)
+        self.switchPermStatus = customtkinter.CTkSwitch(self.marco_modulos, variable=self.switchStatus, text="Activos", font=("Roboto", 12), command=self.MostrarActivosInactivos)
+        self.switchPermStatus.place(x=700, y=157)
+
         ##################################################### BOTONES DE LA TABLA ##################################################
         self.buttonCreateMod = tk.Button(self.marco_modulos, text="Crear\n Modulo", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.crear_Modulo(permisos))
@@ -113,6 +117,26 @@ class FormModulos():
             self.tablaModulos.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4],p[5]))
         
         self.tablaModulos.bind('<Double-1>', lambda event: self.editar_Modulo(event, self.tablaModulos.item(self.tablaModulos.selection())['values']))
+    def MostrarActivosInactivos(self):
+        if self.switchStatus.get():
+            self.mostrarModulosActivos()
+        else:
+            self.mostrarModulosDesactivados()
+
+    def mostrarModulosActivos(self):
+        # Borrar los elementos existentes en la tabla de permisos
+        self.tablaModulos.delete(*self.tablaModulos.get_children())
+        # Obtener la lista de permisos activos
+        permisos_activos = listarModulos()
+        # Insertar los permisos activos en la tabla
+        for p in permisos_activos:
+            self.tablaModulos.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5]))
+
+    def mostrarModulosDesactivados(self):
+        self.tablaModulos.delete(*self.tablaModulos.get_children())
+        permisos_desactivados = ModulosInactivos()
+        for p in permisos_desactivados:
+            self.tablaModulos.insert('',0, text=p[0], values=(p[1],p[2],p[3],p[4],p[5]))
 
     def update_modulos_content(self, event=None):
     # Conectar a la base de datos
@@ -365,7 +389,7 @@ class FormModulos():
                 self.tablaModulos.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5]))
         except Exception as e:
             error_advice()
-            mensaje = f'Error en listarUsuariosEnTabla, form_users: {str(e)}'
+            mensaje = f'Error en listarModulosEnTabla, form_users: {str(e)}'
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')
             

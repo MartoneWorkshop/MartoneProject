@@ -49,21 +49,21 @@ def listarModulos():
             file.write(mensaje + '\n')
     return listaModulos
 
-def clientArchived():
+def ModulosInactivos():
     conexion = ConexionDB()
-    listaCliente = []
+    listarModulos = []
     sql = f'SELECT * FROM modulos WHERE activo = 0'
     try:
         conexion.cursor.execute(sql)
-        listaCliente = conexion.cursor.fetchall()
+        listarModulos = conexion.cursor.fetchall()
         conexion.cerrarConexion()
     except Exception as e:
         conexion.cerrarConexion()
         error_advice()
-        mensaje = f'Error en clientArchived, ModuDao: {str(e)}'
+        mensaje = f'Error en ModulosInactivos, ModuDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
-    return listaCliente    
+    return listarModulos    
 
 def consulModulos(where):
     conexion = ConexionDB()

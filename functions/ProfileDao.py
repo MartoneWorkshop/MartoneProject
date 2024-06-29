@@ -75,11 +75,11 @@ def GuardarNuevosPermisos(perfil_id, permisos_seleccionados):
 
 def listarPerfil():
     conexion = ConexionDB()
-    listaModulos = []
+    listaPerfiles = []
     sql = 'SELECT * FROM roles WHERE activo = 1'
     try:
         conexion.cursor.execute(sql)
-        listaModulos = conexion.cursor.fetchall()
+        listaPerfiles = conexion.cursor.fetchall()
         conexion.cerrarConexion()
     except Exception as e:
         conexion.cerrarConexion()
@@ -87,23 +87,23 @@ def listarPerfil():
         mensaje = f'Error en listarPerfil, ProfileDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
-    return listaModulos
+    return listaPerfiles
 
-def clientArchived():
+def PerfilesInactivos():
     conexion = ConexionDB()
-    listaCliente = []
+    listarPerfil = []
     sql = f'SELECT * FROM roles WHERE activo = 0'
     try:
         conexion.cursor.execute(sql)
-        listaCliente = conexion.cursor.fetchall()
+        listarPerfil = conexion.cursor.fetchall()
         conexion.cerrarConexion()
     except Exception as e:
         conexion.cerrarConexion()
         error_advice()
-        mensaje = f'Error en clientArchived, ModuDao: {str(e)}'
+        mensaje = f'Error en PerfilesInactivos, ProfileDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
-    return listaCliente    
+    return listarPerfil  
 
 def consulPerfiles(where):
     conexion = ConexionDB()
