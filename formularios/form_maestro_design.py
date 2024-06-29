@@ -17,7 +17,7 @@ from formularios.form_users import FormUsers
 from formularios.form_modulos import FormModulos
 from formularios.form_permisos import FormPermisos
 from formularios.form_perfiles import FormPerfiles
-from screeninfo import get_monitors
+
 
 class FormularioMaestroDesign(customtkinter.CTk):
     def __init__(self):
@@ -44,11 +44,11 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.iconbitmap("./imagenes/Logo_Ico.ico")
         #util_ventana.centrar_ventana(self, self.w, self.h)
 
-    def get_screen_resolution(self):
-        # Obtener la resolución del monitor principal
-        monitor = get_monitors()[0]
-        self.w = monitor.width
-        self.h = monitor.height
+    #def get_screen_resolution(self):
+    #    # Obtener la resolución del monitor principal
+    #    monitor = get_monitors()[0]
+    #    self.w = monitor.width
+    #    self.h = monitor.height
 
     def paneles(self):        
         # Crear paneles: barra superior, menú lateral y cuerpo principal

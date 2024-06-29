@@ -65,11 +65,10 @@ class FormUsers():
                                         command=lambda: self.desactivarUsuario(permisos))
         self.buttonDeleteUser.place(x=350, y=50)
         
-        self.switchPermStatus = customtkinter.CTkSwitch(self.marco_create, text="Activos", font=("Roboto", 12), command=self.MostrarActivosInactivos)
-        self.switchPermStatus.place(x=500, y=157)
-        self.switchPermStatus._state = True
-        
-
+        self.switchStatus = tk.BooleanVar(value=True)
+        self.switchPermStatus = customtkinter.CTkSwitch(self.marco_create, variable=self.switchStatus, text="Activos", font=("Roboto", 12), command=self.MostrarActivosInactivos)
+        self.switchPermStatus.place(x=700, y=157)
+    
         ###################################################### BUSCADOR DE LA TABLA #################################################
         search_image = Image.open("imagenes/search.png")
         search_resized = search_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
@@ -114,14 +113,14 @@ class FormUsers():
         self.tablaUsuarios.column("#5", width=124, stretch=False)
         self.tablaUsuarios.column("#6", width=124, stretch=False)
 
-        
         #self.tablaUsuarios.bind('<Double-1>', self.crear_usuario)
         for p in self.ListaUsuarios:
             self.tablaUsuarios.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6]))
         
         self.tablaUsuarios.bind('<Double-1>', lambda event: self.editar_usuario(event, self.tablaUsuarios.item(self.tablaUsuarios.selection())['values']))
+
     def MostrarActivosInactivos(self):
-        if self.switchPermStatus._state():
+        if self.switchStatus.get():
             self.mostrarUsuariosActivos()
         else:
             self.mostrarUsuariosDesactivados()
