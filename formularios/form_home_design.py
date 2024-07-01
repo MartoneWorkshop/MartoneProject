@@ -35,10 +35,12 @@ class FormularioHomeDesign():
             # Actualizar la imagen en el Label de fondo
             label_fondo.config(image=nueva_imagen_tk)
         
-        cuerpo_principal.bind("<Configure>", ajustar_imagen)
+        self.barra_inferior.bind("<Configure>", ajustar_imagen)
 
         # Segundo Label con la imagen
         self.label_imagen = tk.Label(self.barra_inferior, image=imagen_tk)
         self.label_imagen.place(x=0, y=0, relwidth=1, relheight=1)
         self.label_imagen.config(fg="#fff", font=("Roboto", 10), bg=COLOR_FONDO)
+
+        
         

@@ -119,8 +119,10 @@ class FormPerfiles():
         self.tablaPerfiles.bind('<Double-1>', lambda event: self.editar_Perfil(event, self.tablaPerfiles.item(self.tablaPerfiles.selection())['values']))
     def MostrarActivosInactivos(self):
         if self.switchStatus.get():
+            self.switchPermStatus.configure(text="Activos")
             self.mostrarPerfilActivos()
         else:
+            self.switchPermStatus.configure(text="Inactivos")
             self.mostrarPerfilDesactivados()
 
     def mostrarPerfilActivos(self):

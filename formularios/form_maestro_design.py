@@ -71,7 +71,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         # Configuración de la barra superior
         font_awesome = customtkinter.CTkFont(family='Roboto', size=12)
         # Etiqueta de título
-        self.labelTitulo = customtkinter.CTkLabel(self.barra_superior, text="Gestion de Inventario", font=font_awesome,padx=20, text_color="white")
+        self.labelTitulo = customtkinter.CTkLabel(self.barra_superior, text="Menu", font=font_awesome,padx=20, text_color="white")
         self.labelTitulo.configure(fg_color="transparent", font=("Roboto", 15), bg_color='transparent', pady=10, width=16)
         self.labelTitulo.pack(side=tk.LEFT)
         self.menu_original_image = Image.open("imagenes/menu.png")
@@ -83,10 +83,10 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.buttonMenuLateral.pack(side=tk.LEFT, padx=20)
         
     def controles_menu_lateral(self, permisos):
-        self.perfil = util_img.leer_imagen("./imagenes/logo.png", (100, 100))
+        self.perfil = util_img.leer_imagen("./imagenes/editado.png", (100, 100))
         ## ESTO AUN NO ESTA DEFINIDO42
         self.labelPerfil = tk.Label(self.menu_lateral, image=self.perfil, bg=COLOR_MENU_LATERAL)
-        self.labelPerfil.pack(side=tk.TOP, pady=10)
+        self.labelPerfil.pack(side=tk.TOP, pady=15, padx=10)
         #RUTAS DE LAS IMAGENES
         home_image = Image.open("imagenes/home.png") 
         registros_image = Image.open("imagenes/register.png")

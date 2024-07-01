@@ -119,8 +119,10 @@ class FormModulos():
         self.tablaModulos.bind('<Double-1>', lambda event: self.editar_Modulo(event, self.tablaModulos.item(self.tablaModulos.selection())['values']))
     def MostrarActivosInactivos(self):
         if self.switchStatus.get():
+            self.switchPermStatus.configure(text="Activos")
             self.mostrarModulosActivos()
         else:
+            self.switchPermStatus.configure(text="Inactivos")
             self.mostrarModulosDesactivados()
 
     def mostrarModulosActivos(self):
