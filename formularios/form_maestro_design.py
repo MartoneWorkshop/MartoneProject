@@ -304,10 +304,11 @@ class FormularioMaestroDesign(customtkinter.CTk):
         permisos = []
         for resultado in resultados:
             permisos.append(resultado[0])
+            
+        self.permisos_actualizados = permisos
         if permisos:
             #self.prueba_menu_lateral(permisos)
             self.controles_menu_lateral(permisos)
-            print(permisos)
         else:
             return None
     
@@ -430,6 +431,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonModulos.pack()
 
                 self.binding_hover_submenu_event(self.buttonModulos)
+
         if 'CONF1005' in permisos:
             if hasattr(self, "buttonPermisos"):
                 self.buttonPermisos.pack_forget()
@@ -440,13 +442,22 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonPermisos.pack()
             
                 self.binding_hover_submenu_event(self.buttonPermisos)
-            
+    def recargar_menu_lateral(self):
+        # Eliminar los controles existentes del menú lateral
+        for widget in self.menu_lateral.winfo_children():
+            widget.destroy()
+        # Volver a construir los controles del menú lateral
+        self.controles_menu_lateral(self.permisos_actualizados)
+
     def toggle_panel(self):
         # Alternar visibilidad del menú lateral
         if self.menu_lateral.winfo_ismapped():
             self.menu_lateral.pack_forget()
-
         else:
+            for widget in self.menu_lateral.winfo_children():
+                widget.destroy()
+            self.controles_menu_lateral(self.permisos_actualizados)
+            print(self.permisos_actualizados)
             self.menu_lateral.pack(side=tk.LEFT, fill='y')
 
     def check_size(self):
