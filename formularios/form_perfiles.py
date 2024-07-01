@@ -22,7 +22,6 @@ class FormPerfiles():
         # Crear paneles: barra superior
         self.barra_superior = tk.Frame(cuerpo_principal)
         self.barra_superior.pack(side=tk.TOP, fill=tk.X, expand=False) 
-
         # Crear paneles: barra inferior
         self.barra_inferior = tk.Frame(cuerpo_principal)
         self.barra_inferior.pack(side=tk.BOTTOM, fill='both', expand=True)  
@@ -117,6 +116,7 @@ class FormPerfiles():
         
         
         self.tablaPerfiles.bind('<Double-1>', lambda event: self.editar_Perfil(event, self.tablaPerfiles.item(self.tablaPerfiles.selection())['values']))
+    
     def MostrarActivosInactivos(self):
         if self.switchStatus.get():
             self.switchPermStatus.configure(text="Activos")

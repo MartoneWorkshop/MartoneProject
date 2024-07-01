@@ -141,11 +141,11 @@ class FormularioMaestroDesign(customtkinter.CTk):
         else:
             pass
 
-        if 'REG1001' in permisos:
-            self.buttonRegistro = tk.Button(self.menu_lateral, text="Registros", font=("Roboto", 16), image=self.registros_icon, highlightthickness=20, width=ANCHO_MENU,
+        if 'PROV1001' in permisos:
+            self.buttonProveedores = tk.Button(self.menu_lateral, text="Proveedores", font=("Roboto", 16), image=self.registros_icon, highlightthickness=20, width=ANCHO_MENU,
                 height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_registros(permisos))
-            self.buttonRegistro.pack()
-            self.binding_hover_event(self.buttonRegistro) 
+            self.buttonProveedores.pack()
+            self.binding_hover_event(self.buttonProveedores) 
         else:
             pass
 
@@ -441,15 +441,14 @@ class FormularioMaestroDesign(customtkinter.CTk):
             
                 self.binding_hover_submenu_event(self.buttonPermisos)
             
-
-
     def toggle_panel(self):
         # Alternar visibilidad del menú lateral
         if self.menu_lateral.winfo_ismapped():
             self.menu_lateral.pack_forget()
+
         else:
             self.menu_lateral.pack(side=tk.LEFT, fill='y')
-            
+
     def check_size(self):
         width_screen = self.winfo_width()
         height_screen = self.winfo_height()

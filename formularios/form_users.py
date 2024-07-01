@@ -94,9 +94,9 @@ class FormUsers():
 
         self.scroll = ttk.Scrollbar(self.marco_create, orient='vertical', command=self.tablaUsuarios.yview)
         self.scroll.place(x=890, y=200, height=526)
+
         self.tablaUsuarios.configure(yscrollcommand=self.scroll.set)
         self.tablaUsuarios.tag_configure('evenrow')
-        
 
         self.tablaUsuarios.heading('#0',text="ID")
         self.tablaUsuarios.heading('#1',text="Coduser")
@@ -106,20 +106,18 @@ class FormUsers():
         self.tablaUsuarios.heading('#5',text="Date-C")
         self.tablaUsuarios.heading('#6',text="Date-U")
 
-
         self.tablaUsuarios.column("#0", width=60, stretch=False, anchor='w')#HAY QUE CENTRARLO
         self.tablaUsuarios.column("#1", width=60, stretch=False)
         self.tablaUsuarios.column("#2", width=125, stretch=False)
         self.tablaUsuarios.column("#3", width=125, stretch=False)
-        self.tablaUsuarios.column("#4", width=125,stretch=False)
+        self.tablaUsuarios.column("#4", width=125, stretch=False)
         self.tablaUsuarios.column("#5", width=124, stretch=False)
         self.tablaUsuarios.column("#6", width=124, stretch=False)
 
-        #self.tablaUsuarios.bind('<Double-1>', self.crear_usuario)
         for p in self.ListaUsuarios:
             self.tablaUsuarios.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6]))
-            
         self.tablaUsuarios.bind('<Double-1>', lambda event: self.editar_usuario(event, self.tablaUsuarios.item(self.tablaUsuarios.selection())['values']))
+    
     def MostrarActivosInactivos(self):
         if self.switchStatus.get():
             self.switchPermStatus.configure(text="Activos")
