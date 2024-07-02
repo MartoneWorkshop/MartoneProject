@@ -218,79 +218,82 @@ class FormPermisos():
             self.svcodpermiso.set("")
 
     def editar_permiso(self, permisos, values):
-        #Creacion del top level
-        self.topEditperm = customtkinter.CTkToplevel()
-        self.topEditperm.title("Editar permiso")
-        self.topEditperm.w = 600
-        self.topEditperm.h = 400
-        self.topEditperm.geometry(f"{self.topEditperm.w}x{self.topEditperm.h}")
-        self.topEditperm.resizable(False, False)
-        self.topEditperm.configure(bg_color='#6a717e')
-        self.topEditperm.configure(fg_color='#6a717e')
+        if values:
+            #Creacion del top level
+            self.topEditperm = customtkinter.CTkToplevel()
+            self.topEditperm.title("Editar permiso")
+            self.topEditperm.w = 600
+            self.topEditperm.h = 400
+            self.topEditperm.geometry(f"{self.topEditperm.w}x{self.topEditperm.h}")
+            self.topEditperm.resizable(False, False)
+            self.topEditperm.configure(bg_color='#6a717e')
+            self.topEditperm.configure(fg_color='#6a717e')
 
-        self.id = self.tablapermisos.item(self.tablapermisos.selection())['text']
-        self.idmod = self.tablapermisos.item(self.tablapermisos.selection())['values'][0]
-        self.nombre_perm = self.tablapermisos.item(self.tablapermisos.selection())['values'][1]
-        self.codperm = self.tablapermisos.item(self.tablapermisos.selection())['values'][2]
+            self.id = self.tablapermisos.item(self.tablapermisos.selection())['text']
+            self.idmod = self.tablapermisos.item(self.tablapermisos.selection())['values'][0]
+            self.nombre_perm = self.tablapermisos.item(self.tablapermisos.selection())['values'][1]
+            self.codperm = self.tablapermisos.item(self.tablapermisos.selection())['values'][2]
 
-        #Centrar la ventana en la pantalla
-        screen_width = self.topEditperm.winfo_screenwidth()
-        screen_height = self.topEditperm.winfo_screenheight()
-        x = (screen_width - self.topEditperm.w) // 2
-        y = (screen_height - self.topEditperm.h) // 2
-        self.topEditperm.geometry(f"+{x}+{y}")
+            #Centrar la ventana en la pantalla
+            screen_width = self.topEditperm.winfo_screenwidth()
+            screen_height = self.topEditperm.winfo_screenheight()
+            x = (screen_width - self.topEditperm.w) // 2
+            y = (screen_height - self.topEditperm.h) // 2
+            self.topEditperm.geometry(f"+{x}+{y}")
 
-        self.topEditperm.lift()
-        self.topEditperm.grab_set()
-        self.topEditperm.transient()
-        marco_editarpermisos = customtkinter.CTkFrame(self.topEditperm, width=550,height=350, bg_color="white", fg_color="white")
-        marco_editarpermisos.place(relx=0.5, rely=0.5, anchor="center")
-        
-        set_opacity(marco_editarpermisos, 0.8)
+            self.topEditperm.lift()
+            self.topEditperm.grab_set()
+            self.topEditperm.transient()
+            marco_editarpermisos = customtkinter.CTkFrame(self.topEditperm, width=550,height=350, bg_color="white", fg_color="white")
+            marco_editarpermisos.place(relx=0.5, rely=0.5, anchor="center")
 
-        self.lblinfo = customtkinter.CTkLabel(marco_editarpermisos, text="Editar permiso", font=("Roboto",14))
-        self.lblinfo.place(x=250, rely=0.1)
+            set_opacity(marco_editarpermisos, 0.8)
 
-        ############ NOMBRE DEL ALIAS
-        modulos = ObtenerModulos()
-        self.svmodulo_var = customtkinter.StringVar(value="Selecciona un modulo")
-        self.multioption = customtkinter.CTkOptionMenu(marco_editarpermisos, values=[modulo[1] for modulo in modulos], variable=self.svmodulo_var, state='disabled')
-        self.multioption.place(x=38, y=120)
+            self.lblinfo = customtkinter.CTkLabel(marco_editarpermisos, text="Editar permiso", font=("Roboto",14))
+            self.lblinfo.place(x=250, rely=0.1)
 
-        ############# NOMBRE DEL permiso
-        self.lblnombrePerm = customtkinter.CTkLabel(marco_editarpermisos, text='Descripcion', font=("Roboto", 13))
-        self.lblnombrePerm.place(x=268, y=90) 
-        
-        self.svnombre_perm = customtkinter.StringVar(value=self.nombre_perm)        
-        self.entrynombre_perm = ttk.Entry(marco_editarpermisos, style='Modern.TEntry', textvariable=self.svnombre_perm, state='normal')        
-        self.entrynombre_perm.place(x=240, y=125)       
-        self.entrynombre_perm.configure(style='Entry.TEntry')
-        
-        ############# NOMBRE DEL ALIAS
-        self.lblcodpermiso = customtkinter.CTkLabel(marco_editarpermisos, text='Alias del permiso', font=("Roboto", 13))
-        self.lblcodpermiso.place(x=410, y=90)
-#
-        self.svcodpermiso = customtkinter.StringVar()
-        self.entrycodpermiso = ttk.Entry(marco_editarpermisos, style='Modern.TEntry', textvariable=self.svcodpermiso, state='disabled')
-        self.entrycodpermiso.place(x=390, y=125)
-        self.entrycodpermiso.configure(style='Entry.TEntry')
-        ######## BOTONE
+            ############ NOMBRE DEL ALIAS
+            modulos = ObtenerModulos()
+            self.svmodulo_var = customtkinter.StringVar(value="Selecciona un modulo")
+            self.multioption = customtkinter.CTkOptionMenu(marco_editarpermisos, values=[modulo[1] for modulo in modulos], variable=self.svmodulo_var, state='disabled')
+            self.multioption.place(x=38, y=120)
 
-        self.buttonEditperm = tk.Button(marco_editarpermisos, text="Actualizar", font=("Roboto", 12),
-                                        bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", 
-                                        compound=tk.LEFT, padx=10, command=lambda: self.GuardarPermiso())
-        self.buttonEditperm.place(x=240, y=240)
+            ############# NOMBRE DEL permiso
+            self.lblnombrePerm = customtkinter.CTkLabel(marco_editarpermisos, text='Descripcion', font=("Roboto", 13))
+            self.lblnombrePerm.place(x=268, y=90) 
 
+            self.svnombre_perm = customtkinter.StringVar(value=self.nombre_perm)        
+            self.entrynombre_perm = ttk.Entry(marco_editarpermisos, style='Modern.TEntry', textvariable=self.svnombre_perm, state='normal')        
+            self.entrynombre_perm.place(x=240, y=125)       
+            self.entrynombre_perm.configure(style='Entry.TEntry')
+
+            ############# NOMBRE DEL ALIAS
+            self.lblcodpermiso = customtkinter.CTkLabel(marco_editarpermisos, text='Alias del permiso', font=("Roboto", 13))
+            self.lblcodpermiso.place(x=410, y=90)
+#   
+            self.svcodpermiso = customtkinter.StringVar()
+            self.entrycodpermiso = ttk.Entry(marco_editarpermisos, style='Modern.TEntry', textvariable=self.svcodpermiso, state='disabled')
+            self.entrycodpermiso.place(x=390, y=125)
+            self.entrycodpermiso.configure(style='Entry.TEntry')
+            ######## BOTONE
+
+            self.buttonEditperm = tk.Button(marco_editarpermisos, text="Actualizar", font=("Roboto", 12),
+                                            bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", 
+                                            compound=tk.LEFT, padx=10, command=lambda: self.GuardarPermiso())
+            self.buttonEditperm.place(x=240, y=240)
+        else:
+            messagebox.showerror("Error", "Debe seleccionar un permiso")
     
 
     def desactivarpermiso(self, permisos):
         try:
             self.id = self.tablapermisos.item(self.tablapermisos.selection())['text']
             confirmar = messagebox.askyesno("Confirmar", "¿Estás seguro de que deseas eliminar este permiso?")
-            if confirmar:
+            if confirmar and 'CONF1009' in permisos:
                 PermisoDelete(self.id)
                 self.listarpermisoEnTabla()
-            
+            else:
+                messagebox.showerror("Error", "No posee permisos suficientes para realizar esta accion.")
         except Exception as e:
             error_advice()
             mensaje = f'Error en desactivarUsuario, form_users: {str(e)}'

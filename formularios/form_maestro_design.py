@@ -17,6 +17,7 @@ from formularios.form_users import FormUsers
 from formularios.form_modulos import FormModulos
 from formularios.form_permisos import FormPermisos
 from formularios.form_perfiles import FormPerfiles
+from formularios.form_proveedores import FormProv
 
 
 class FormularioMaestroDesign(customtkinter.CTk):
@@ -43,13 +44,6 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.resizable(False, False)
         self.iconbitmap("./imagenes/Logo_Ico.ico")
         #util_ventana.centrar_ventana(self, self.w, self.h)
-
-    #def get_screen_resolution(self):
-    #    # Obtener la resolución del monitor principal
-    #    monitor = get_monitors()[0]
-    #    self.w = monitor.width
-    #    self.h = monitor.height
-
     def paneles(self):        
         # Crear paneles: barra superior, menú lateral y cuerpo principal
         self.barra_superior = tk.Frame(
@@ -89,8 +83,8 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.labelPerfil.pack(side=tk.TOP, pady=15, padx=10)
         #RUTAS DE LAS IMAGENES
         home_image = Image.open("imagenes/home.png") 
-        registros_image = Image.open("imagenes/register.png")
-        clientes_image = Image.open("imagenes/person.png")
+        prov_image = Image.open("imagenes/prov.png")
+        listProv_image = Image.open("imagenes/listprov.png")
         equipos_image = Image.open("imagenes/computer.png")
         historia_image = Image.open("imagenes/history.png")
         database_image = Image.open("imagenes/database.png")
@@ -104,8 +98,8 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
         #IMAGENES RENDERIZADAS
         home_resized = home_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        registros_resized = registros_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        clientes_resized = clientes_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        prov_resized = prov_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        listProv_resized = listProv_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         equipos_resized = equipos_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         historia_resized = historia_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         database_resized = database_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
@@ -118,8 +112,8 @@ class FormularioMaestroDesign(customtkinter.CTk):
         adjustModul_resized = adjustModul_image.resize((WIDTH_LOGO, HEIGHT_LOGO))    
         #IMAGENES FINALES
         self.home_icon = ImageTk.PhotoImage(home_resized)
-        self.registros_icon = ImageTk.PhotoImage(registros_resized)
-        self.clientes_icon = ImageTk.PhotoImage(clientes_resized)
+        self.prov_icon = ImageTk.PhotoImage(prov_resized)
+        self.listProv_icon = ImageTk.PhotoImage(listProv_resized)
         self.equipos_icon = ImageTk. PhotoImage(equipos_resized)
         self.historia_icon = ImageTk.PhotoImage(historia_resized)
         self.database_icon = ImageTk.PhotoImage(database_resized)
@@ -142,8 +136,8 @@ class FormularioMaestroDesign(customtkinter.CTk):
             pass
 
         if 'PROV1001' in permisos:
-            self.buttonProveedores = tk.Button(self.menu_lateral, text="Proveedores", font=("Roboto", 16), image=self.registros_icon, highlightthickness=20, width=ANCHO_MENU,
-                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_registros(permisos))
+            self.buttonProveedores = tk.Button(self.menu_lateral, text="Proveedores", font=("Roboto", 16), image=self.prov_icon, highlightthickness=20, width=ANCHO_MENU,
+                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_proveedores(permisos))
             self.buttonProveedores.pack()
             self.binding_hover_event(self.buttonProveedores) 
         else:
@@ -297,6 +291,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         btnLogIn.place(x=120, y=180)
 
     def obtener_idrol(self, idrol):
+        self
         conexion = ConexionDB()
         sql = f"SELECT codpermiso FROM asigperm WHERE idrol = '{idrol}'"
         conexion.ejecutar_consulta(sql)
@@ -304,7 +299,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         permisos = []
         for resultado in resultados:
             permisos.append(resultado[0])
-            
+
         self.permisos_actualizados = permisos
         if permisos:
             #self.prueba_menu_lateral(permisos)
@@ -312,12 +307,13 @@ class FormularioMaestroDesign(customtkinter.CTk):
         else:
             return None
     
-    def submenu_registros(self, permisos):
+    def submenu_proveedores(self, permisos):
         #VERIFICAR LOS PERMISOS Y QUE BOTONES ESTAN DISPONIBLES  
         if 'DATA100' in permisos:
             self.buttonDatabase.pack_forget()
         if 'REP1001' in permisos:
             self.buttonInformes.pack_forget()
+
         if 'CONF1001' in permisos:
             self.buttonSettings.pack_forget()
         if 'CONF1002' in permisos:
@@ -332,17 +328,20 @@ class FormularioMaestroDesign(customtkinter.CTk):
             if hasattr(self, "buttonModulos"):
                 self.buttonModulos.pack_forget()
                 del self.buttonModulos
+        if 'CONF1005' in permisos:
+            if hasattr(self, "buttonPermisos"):
+                self.buttonPermisos.pack_forget()
+                del self.buttonPermisos
         
-                
-        if 'MED101' in permisos:
-            if hasattr(self, "buttonClientes"):
-                self.buttonClientes.pack_forget()
-                del self.buttonClientes
+        if 'PROV1002' in permisos:
+            if hasattr(self, "buttonListaProv"):
+                self.buttonListaProv.pack_forget()
+                del self.buttonListaProv
             else:
-                self.buttonClientes = tk.Button(self.menu_lateral, text="Clientes", font=("Roboto", 12), image=self.clientes_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.abrir_registros_clientes)
-                self.buttonClientes.pack()
-                self.binding_hover_submenu_event(self.buttonClientes)
+                self.buttonListaProv = tk.Button(self.menu_lateral, text="Listado de\n Proveedores", font=("Roboto", 12), image=self.listProv_icon, highlightthickness=20, width=ANCHO_MENU,
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_proveedores(permisos))
+                self.buttonListaProv.pack()
+                self.binding_hover_submenu_event(self.buttonListaProv)
 
         if 'MED102' in permisos:
             if hasattr(self, "buttonEquipos"):
@@ -363,7 +362,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
                 self.buttonHistoria.pack()
                 self.binding_hover_submenu_event(self.buttonHistoria)
-        
+
         if 'DATA100' in permisos:
             self.buttonDatabase.pack()
         else:
@@ -372,21 +371,33 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.buttonInformes.pack()
         else:
             pass
+
+
+
         if 'CONF1001' in permisos:
             self.buttonSettings.pack()
         else:
             pass
         if 'CONF1002' in permisos:
             self.buttonAdjustUsers.pack()
+        else:
+            pass
+        if 'CONF1003' in permisos:
             self.buttonAdjustProfiles.pack()
         else:
             pass
+        if 'CONF1004' in permisos:
+            self.buttonModulos.pack()
+        else:
+            pass
+        if 'CONF1005' in permisos:
+            self.buttonPermisos.pack()
                                 
     def submenu_config(self, permisos):
-        if 'MED101' in permisos:
-            if hasattr(self, "buttonClientes"):
-                self.buttonClientes.pack_forget()
-                del self.buttonClientes
+        if 'PROV1002' in permisos:
+            if hasattr(self, "buttonListaProv"):
+                self.buttonListaProv.pack_forget()
+                del self.buttonListaProv
             else:
                 pass
         if 'MED102' in permisos:
@@ -407,7 +418,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 del self.buttonAdjustUsers
             else:
                 self.buttonAdjustUsers = tk.Button(self.menu_lateral, text="Ajuste de Usuario", font=("Roboto", 12), image=self.adjustUser_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_crear_usuarios(permisos))
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_usuarios(permisos))
                 self.buttonAdjustUsers.pack()
 
                 self.binding_hover_submenu_event(self.buttonAdjustUsers)
@@ -442,22 +453,29 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonPermisos.pack()
             
                 self.binding_hover_submenu_event(self.buttonPermisos)
-    def recargar_menu_lateral(self):
-        # Eliminar los controles existentes del menú lateral
-        for widget in self.menu_lateral.winfo_children():
-            widget.destroy()
-        # Volver a construir los controles del menú lateral
-        self.controles_menu_lateral(self.permisos_actualizados)
 
+    def obtener_idrol(self, idrol):
+        conexion = ConexionDB()
+        sql = f"SELECT codpermiso FROM asigperm WHERE idrol = '{idrol}'"
+        conexion.ejecutar_consulta(sql)
+        resultados = conexion.obtener_resultados()
+        permisos = []
+        for resultado in resultados:
+            permisos.append(resultado[0])
+        
+        self.permisos_actualizados = permisos
+
+        if permisos:
+            #self.prueba_menu_lateral(permisos)
+            self.controles_menu_lateral(permisos)
+        else:
+            return None
+        
     def toggle_panel(self):
         # Alternar visibilidad del menú lateral
         if self.menu_lateral.winfo_ismapped():
             self.menu_lateral.pack_forget()
         else:
-            for widget in self.menu_lateral.winfo_children():
-                widget.destroy()
-            self.controles_menu_lateral(self.permisos_actualizados)
-            print(self.permisos_actualizados)
             self.menu_lateral.pack(side=tk.LEFT, fill='y')
 
     def check_size(self):
@@ -474,9 +492,13 @@ class FormularioMaestroDesign(customtkinter.CTk):
         elif width_screen <= 1440 and height_screen <= 900:
             FormularioRegistrosDesign(self.cuerpo_principal,width_screen, height_screen)
 
-    def abrir_crear_usuarios(self, permisos):
+    def abrir_usuarios(self, permisos):
         self.limpiar_panel(self.cuerpo_principal)
         FormUsers(self.cuerpo_principal, permisos)
+
+    def abrir_proveedores(self, permisos):
+        self.limpiar_panel(self.cuerpo_principal)
+        FormProv(self.cuerpo_principal, permisos)
         
     def abrir_modulos(self, permisos):
         self.limpiar_panel(self.cuerpo_principal)

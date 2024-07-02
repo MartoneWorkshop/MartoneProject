@@ -255,71 +255,73 @@ class FormModulos():
         self.svnombre_mod.trace("w", actualizar_alias)
 
     def editar_Modulo(self, permisos, values):
-        self.id = self.tablaModulos.item(self.tablaModulos.selection())['text']
-        self.nombredit = self.tablaModulos.item(self.tablaModulos.selection())['values'][0]
-        self.aliasedit = self.tablaModulos.item(self.tablaModulos.selection())['values'][1]
-        self.codmodedit = self.tablaModulos.item(self.tablaModulos.selection())['values'][2]
-        #Creacion del top level
-        self.topEditMod = customtkinter.CTkToplevel()
-        self.topEditMod.title("Editar Modulo")
-        self.topEditMod.w = 600
-        self.topEditMod.h = 400
-        self.topEditMod.geometry(f"{self.topEditMod.w}x{self.topEditMod.h}")
-        self.topEditMod.resizable(False, False)
-        self.topEditMod.configure(bg_color='#6a717e')
-        self.topEditMod.configure(fg_color='#6a717e')
-        
-        #Centrar la ventana en la pantalla
-        screen_width = self.topEditMod.winfo_screenwidth()
-        screen_height = self.topEditMod.winfo_screenheight()
-        x = (screen_width - self.topEditMod.w) // 2
-        y = (screen_height - self.topEditMod.h) // 2
-        self.topEditMod.geometry(f"+{x}+{y}")
+        if values:
+            self.id = self.tablaModulos.item(self.tablaModulos.selection())['text']
+            self.nombredit = self.tablaModulos.item(self.tablaModulos.selection())['values'][0]
+            self.aliasedit = self.tablaModulos.item(self.tablaModulos.selection())['values'][1]
+            self.codmodedit = self.tablaModulos.item(self.tablaModulos.selection())['values'][2]
+            #Creacion del top level
+            self.topEditMod = customtkinter.CTkToplevel()
+            self.topEditMod.title("Editar Modulo")
+            self.topEditMod.w = 600
+            self.topEditMod.h = 400
+            self.topEditMod.geometry(f"{self.topEditMod.w}x{self.topEditMod.h}")
+            self.topEditMod.resizable(False, False)
+            self.topEditMod.configure(bg_color='#6a717e')
+            self.topEditMod.configure(fg_color='#6a717e')
 
-        self.topEditMod.lift()
-        self.topEditMod.grab_set()
-        self.topEditMod.transient()
+            #Centrar la ventana en la pantalla
+            screen_width = self.topEditMod.winfo_screenwidth()
+            screen_height = self.topEditMod.winfo_screenheight()
+            x = (screen_width - self.topEditMod.w) // 2
+            y = (screen_height - self.topEditMod.h) // 2
+            self.topEditMod.geometry(f"+{x}+{y}")
 
-        marco_editarpermisos = customtkinter.CTkFrame(self.topEditMod, width=550,height=350, bg_color="white", fg_color="white")
-        marco_editarpermisos.place(relx=0.5, rely=0.5, anchor="center")
-        
-        set_opacity(marco_editarpermisos, 0.8)
+            self.topEditMod.lift()
+            self.topEditMod.grab_set()
+            self.topEditMod.transient()
 
-        self.lblinfo = customtkinter.CTkLabel(self.topEditMod, text="Editar Modulo", font=("Roboto",14), bg_color='#e1e3e5', fg_color='#e1e3e5')
-        self.lblinfo.place(x=220, rely=0.1)
+            marco_editarpermisos = customtkinter.CTkFrame(self.topEditMod, width=550,height=350, bg_color="white", fg_color="white")
+            marco_editarpermisos.place(relx=0.5, rely=0.5, anchor="center")
 
-        ############# NOMBRE DEL MODULO
-        self.lbleditnombre = customtkinter.CTkLabel(self.topEditMod, text='Nombre del Modulo', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
-        self.lbleditnombre.place(x=102, y=120)
+            set_opacity(marco_editarpermisos, 0.8)
 
-        self.svnombre_mod = customtkinter.StringVar(value=self.nombredit)
-        self.entryeditnombre_mod = ttk.Entry(self.topEditMod, style='Modern.TEntry', textvariable=self.svnombre_mod)
-        self.entryeditnombre_mod.place(x=95, y=170)
-        self.entryeditnombre_mod.configure(style='Entry.TEntry')
+            self.lblinfo = customtkinter.CTkLabel(self.topEditMod, text="Editar Modulo", font=("Roboto",14), bg_color='#e1e3e5', fg_color='#e1e3e5')
+            self.lblinfo.place(x=220, rely=0.1)
 
-        ############ NOMBRE DEL ALIAS
-        self.lblalias = customtkinter.CTkLabel(self.topEditMod, text='Alias del Modulo', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
-        self.lblalias.place(x=255, y=120)
+            ############# NOMBRE DEL MODULO
+            self.lbleditnombre = customtkinter.CTkLabel(self.topEditMod, text='Nombre del Modulo', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
+            self.lbleditnombre.place(x=102, y=120)
 
-        self.svalias = customtkinter.StringVar(value=self.aliasedit)
-        self.entryeditalias = ttk.Entry(self.topEditMod, style='Modern.TEntry', textvariable=self.svalias)
-        self.entryeditalias.place(x=240, y=170)
-        self.entryeditalias.configure(style='Entry.TEntry')
+            self.svnombre_mod = customtkinter.StringVar(value=self.nombredit)
+            self.entryeditnombre_mod = ttk.Entry(self.topEditMod, style='Modern.TEntry', textvariable=self.svnombre_mod)
+            self.entryeditnombre_mod.place(x=95, y=170)
+            self.entryeditnombre_mod.configure(style='Entry.TEntry')
 
-        ############ CODIGO DEL MODULO
-        self.lbleditcodmod = customtkinter.CTkLabel(self.topEditMod, text='Codigo del Modulo', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
-        self.lbleditcodmod.place(x=392, y=120)
+            ############ NOMBRE DEL ALIAS
+            self.lblalias = customtkinter.CTkLabel(self.topEditMod, text='Alias del Modulo', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
+            self.lblalias.place(x=255, y=120)
 
-        self.svcodmod = customtkinter.StringVar(value=self.codmodedit)
-        self.entryeditcodmod = ttk.Entry(self.topEditMod, style='Modern.TEntry', textvariable=self.svcodmod)
-        self.entryeditcodmod.place(x=385, y=170)
-        self.entryeditcodmod.configure(style='Entry.TEntry')
+            self.svalias = customtkinter.StringVar(value=self.aliasedit)
+            self.entryeditalias = ttk.Entry(self.topEditMod, style='Modern.TEntry', textvariable=self.svalias)
+            self.entryeditalias.place(x=240, y=170)
+            self.entryeditalias.configure(style='Entry.TEntry')
 
-        self.entryeditnombre_mod.bind("<Return>", lambda event: self.GuardarModulo())
-        ######## BOTONE
-        self.buttonEditMod = tk.Button(self.topEditMod, text="Actualizar", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.GuardarModulo)
-        self.buttonEditMod.place(x=240, y=290)
+            ############ CODIGO DEL MODULO
+            self.lbleditcodmod = customtkinter.CTkLabel(self.topEditMod, text='Codigo del Modulo', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
+            self.lbleditcodmod.place(x=392, y=120)
 
+            self.svcodmod = customtkinter.StringVar(value=self.codmodedit)
+            self.entryeditcodmod = ttk.Entry(self.topEditMod, style='Modern.TEntry', textvariable=self.svcodmod)
+            self.entryeditcodmod.place(x=385, y=170)
+            self.entryeditcodmod.configure(style='Entry.TEntry')
+
+            self.entryeditnombre_mod.bind("<Return>", lambda event: self.GuardarModulo())
+            ######## BOTONE
+            self.buttonEditMod = tk.Button(self.topEditMod, text="Actualizar", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.GuardarModulo)
+            self.buttonEditMod.place(x=240, y=290)
+        else:
+            messagebox.showerror("Error", "Debe seleccionar un modulo")
         def actualizar_alias(*args):
             nombre = self.svnombre_mod.get()
             nombre = nombre.capitalize()  # Capitalizar la primera letra del nombre
@@ -366,9 +368,11 @@ class FormModulos():
         try:
             self.id = self.tablaModulos.item(self.tablaModulos.selection())['text']
             confirmar = messagebox.askyesno("Confirmar", "¿Estás seguro de que deseas desactivar este modulo?")
-            if confirmar:
+            if confirmar and 'CONF1010' in permisos:
                 ModuloDisable(self.id)
                 self.listarModuloEnTabla()
+            else:
+                messagebox.showerror("Error", "No posee permisos suficientes para realizar esta accion.")
             
         except Exception as e:
             error_advice()

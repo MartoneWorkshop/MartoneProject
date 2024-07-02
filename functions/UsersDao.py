@@ -17,6 +17,7 @@ def EditUser(usuarios, id):
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
+
 def SaveUser(usuarios):
     conexion = ConexionDB()
     sql = f"""INSERT INTO usuarios (coduser, username, password, idrol, date_created, date_update, activo)

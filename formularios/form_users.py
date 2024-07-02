@@ -116,6 +116,7 @@ class FormUsers():
 
         for p in self.ListaUsuarios:
             self.tablaUsuarios.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6]))
+
         self.tablaUsuarios.bind('<Double-1>', lambda event: self.editar_usuario(event, self.tablaUsuarios.item(self.tablaUsuarios.selection())['values']))
     
     def MostrarActivosInactivos(self):
@@ -246,84 +247,83 @@ class FormUsers():
         self.buttonCreate.place(x=215, y=250)
 
     def editar_usuario(self, permisos, values):
+        if values:
     # Creación del top level
-        self.id = self.tablaUsuarios.item(self.tablaUsuarios.selection())['text']
-        self.usuario = self.tablaUsuarios.item(self.tablaUsuarios.selection())['values'][1]
-        self.password = self.tablaUsuarios.item(self.tablaUsuarios.selection())['values'][2]
+            self.id = self.tablaUsuarios.item(self.tablaUsuarios.selection())['text']
+            self.usuario = self.tablaUsuarios.item(self.tablaUsuarios.selection())['values'][1]
+            self.password = self.tablaUsuarios.item(self.tablaUsuarios.selection())['values'][2]
 
-        self.topEdit = customtkinter.CTkToplevel()
-        self.topEdit.title("Editar Usuario")
-        self.topEdit.iconbitmap("imagenes/logo_ico.ico")
-        self.topEdit.w = 600
-        self.topEdit.h = 400
-        self.topEdit.geometry(f"{self.topEdit.w}x{self.topEdit.h}")
-        self.topEdit.resizable(False, False)
-        self.topEdit.configure(bg_color='#6a717e')
-        self.topEdit.configure(fg_color='#6a717e')
+            self.topEdit = customtkinter.CTkToplevel()
+            self.topEdit.title("Editar Usuario")
+            self.topEdit.iconbitmap("imagenes/logo_ico.ico")
+            self.topEdit.w = 600
+            self.topEdit.h = 400
+            self.topEdit.geometry(f"{self.topEdit.w}x{self.topEdit.h}")
+            self.topEdit.resizable(False, False)
+            self.topEdit.configure(bg_color='#6a717e')
+            self.topEdit.configure(fg_color='#6a717e')
 
 
-        # Centrar la ventana en la pantalla
-        screen_width = self.topEdit.winfo_screenwidth()
-        screen_height = self.topEdit.winfo_screenheight()
-        x = (screen_width - self.topEdit.w) // 2
-        y = (screen_height - self.topEdit.h) // 2
-        self.topEdit.geometry(f"+{x}+{y}")
+            # Centrar la ventana en la pantalla
+            screen_width = self.topEdit.winfo_screenwidth()
+            screen_height = self.topEdit.winfo_screenheight()
+            x = (screen_width - self.topEdit.w) // 2
+            y = (screen_height - self.topEdit.h) // 2
+            self.topEdit.geometry(f"+{x}+{y}")
 
-        self.topEdit.lift()
-        self.topEdit.grab_set()
-        self.topEdit.transient()
+            self.topEdit.lift()
+            self.topEdit.grab_set()
+            self.topEdit.transient()
 
-        # Conversion de ico
-        user_ico = Image.open("imagenes/user.png")
-        user_ico = user_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
-        user_img = ImageTk.PhotoImage(user_ico)
+            # Conversion de ico
+            user_ico = Image.open("imagenes/user.png")
+            user_ico = user_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
+            user_img = ImageTk.PhotoImage(user_ico)
 
-        pass_ico = Image.open("imagenes/pass.png")
-        pass_ico = pass_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
-        pass_img = ImageTk.PhotoImage(pass_ico)
-        # Datos para el usuario
-        marco_editarusuario = customtkinter.CTkFrame(self.topEdit, width=550, height=350, bg_color="white", fg_color="white")
-        marco_editarusuario.place(relx=0.5, rely=0.5, anchor="center")
+            pass_ico = Image.open("imagenes/pass.png")
+            pass_ico = pass_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
+            pass_img = ImageTk.PhotoImage(pass_ico)
+            # Datos para el usuario
+            marco_editarusuario = customtkinter.CTkFrame(self.topEdit, width=550, height=350, bg_color="white", fg_color="white")
+            marco_editarusuario.place(relx=0.5, rely=0.5, anchor="center")
 
-        set_opacity(marco_editarusuario, 0.8)
+            set_opacity(marco_editarusuario, 0.8)
 
-        self.lblinfo = customtkinter.CTkLabel(marco_editarusuario, text="Edición de usuario", font=("Roboto", 14))
-        self.lblinfo.place(x=205, rely=0.1)
+            self.lblinfo = customtkinter.CTkLabel(marco_editarusuario, text="Edición de usuario", font=("Roboto", 14))
+            self.lblinfo.place(x=205, rely=0.1)
 
-        self.lblusuario = customtkinter.CTkLabel(marco_editarusuario, text='', image=user_img, font=("Roboto", 14))
-        self.lblusuario.place(x=75, y=120)
+            self.lblusuario = customtkinter.CTkLabel(marco_editarusuario, text='', image=user_img, font=("Roboto", 14))
+            self.lblusuario.place(x=75, y=120)
 
-        self.svusuario = customtkinter.StringVar(value=self.usuario)  # Valor del usuario a editar
-        self.entryusuario = ttk.Entry(marco_editarusuario, style='Modern.TEntry', textvariable=self.svusuario)
-        self.entryusuario.place(x=125, y=120)
-        self.entryusuario.configure(style='Entry.TEntry')
+            self.svusuario = customtkinter.StringVar(value=self.usuario)  # Valor del usuario a editar
+            self.entryusuario = ttk.Entry(marco_editarusuario, style='Modern.TEntry', textvariable=self.svusuario)
+            self.entryusuario.place(x=125, y=120)
+            self.entryusuario.configure(style='Entry.TEntry')
 
-        # Datos de la Contraseña
-        self.lblpassword = customtkinter.CTkLabel(marco_editarusuario, text='', image=pass_img, font=("Roboto", 14))
-        self.lblpassword.place(x=75, y=170)
+            # Datos de la Contraseña
+            self.lblpassword = customtkinter.CTkLabel(marco_editarusuario, text='', image=pass_img, font=("Roboto", 14))
+            self.lblpassword.place(x=75, y=170)
 
-        self.svpassword = customtkinter.StringVar(value=self.password)  # Valor de la contraseña a editar
-        self.entrypassword = ttk.Entry(marco_editarusuario, style='Modern.TEntry', textvariable=self.svpassword, show='*')
-        self.entrypassword.place(x=125, y=170)
-        self.entrypassword.configure(style='Entry.TEntry')
+            self.svpassword = customtkinter.StringVar(value=self.password)  # Valor de la contraseña a editar
+            self.entrypassword = ttk.Entry(marco_editarusuario, style='Modern.TEntry', textvariable=self.svpassword, show='*')
+            self.entrypassword.place(x=125, y=170)
+            self.entrypassword.configure(style='Entry.TEntry')
 
-        perfil_id = values[3]
-        perfil_nombre = ''
-        for rol in ObtenerRoles():
-            if rol[0] == perfil_id:
-                perfil_nombre = rol[1]
-                break
-        self.svperfil_var = customtkinter.StringVar(value=perfil_nombre)  # Valor del perfil a editar
-        self.multioption = customtkinter.CTkOptionMenu(marco_editarusuario, values=[rol[1] for rol in ObtenerRoles()], variable=self.svperfil_var)
-        self.multioption.place(x=325, y=120)
+            perfil_id = values[3]
+            perfil_nombre = ''
+            for rol in ObtenerRoles():
+                if rol[0] == perfil_id:
+                    perfil_nombre = rol[1]
+                    break
+            self.svperfil_var = customtkinter.StringVar(value=perfil_nombre)  # Valor del perfil a editar
+            self.multioption = customtkinter.CTkOptionMenu(marco_editarusuario, values=[rol[1] for rol in ObtenerRoles()], variable=self.svperfil_var)
+            self.multioption.place(x=325, y=120)
 
-        self.buttonSave = tk.Button(marco_editarusuario, text="Guardar Cambios", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", 
-                                        compound=tk.LEFT, padx=10, command=self.GuardarUsuario)
-        self.buttonSave.place(x=215, y=250)
-
-        
-    
-
+            self.buttonSave = tk.Button(marco_editarusuario, text="Guardar Cambios", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", 
+                                            compound=tk.LEFT, padx=10, command=self.GuardarUsuario)
+            self.buttonSave.place(x=215, y=250)
+        else:
+            messagebox.showerror("Error", "Debe seleccionar un usuario")
 
     def GuardarUsuario(self):
         try:
@@ -366,10 +366,12 @@ class FormUsers():
         try:
             self.id = self.tablaUsuarios.item(self.tablaUsuarios.selection())['text']
             confirmar = messagebox.askyesno("Confirmar", "¿Estas Seguro de que deseas desactivar este usuario?")
-            if confirmar:
+
+            if confirmar and 'CONF1006' in permisos:
                 UserDisable(self.id)
                 self.listarUsuariosEnTabla()
-            
+            else:
+                messagebox.showerror("Error", "No posee permisos suficientes para realizar esta accion.")
         except Exception as e:
             error_advice()
             mensaje = f'Error en desactivarUsuario, form_users: {str(e)}'
