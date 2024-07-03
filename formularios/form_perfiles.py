@@ -71,18 +71,34 @@ class FormPerfiles():
         self.buttonEditProfile = tk.Button(self.marco_perfiles, text="Edicion de\nPerfil", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.editar_Perfil(permisos, self.tablaPerfiles.item(self.tablaPerfiles.selection())['values'])) 
         self.buttonEditProfile.place(x=355, y=60)
-        
-        self.buttonDeleteProfile = tk.Button(self.marco_perfiles, text="Desactivar\n Perfil", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                        command=lambda: self.desactivarPerfil(permisos))
-        self.buttonDeleteProfile.place(x=475, y=60)
 
-        self.buttonModPerm = tk.Button(self.marco_perfiles, text="Modificar\n Permisos", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                        command=lambda: self.modificarPermisos(permisos, self.tablaPerfiles.item(self.tablaPerfiles.selection())['values']))
-        self.buttonModPerm.place(x=600, y=60)
+        if 'CONF1007' in permisos:
+            self.buttonDeleteProfile = tk.Button(self.marco_perfiles, text="Desactivar\n Perfil", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                            command=lambda: self.desactivarPerfil(permisos))
+            self.buttonDeleteProfile.place(x=475, y=60)
+        else:
+            self.buttonDeleteProfile = tk.Button(self.marco_perfiles, text="Desactivar\n Perfil", font=("Roboto", 12), state='disabled', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                            command=lambda: self.desactivarPerfil(permisos))
+            self.buttonDeleteProfile.place(x=475, y=60)
 
-        self.switchStatus = tk.BooleanVar(value=True)
-        self.switchPermStatus = customtkinter.CTkSwitch(self.marco_perfiles, variable=self.switchStatus, text="Activos", font=("Roboto", 12), command=self.MostrarActivosInactivos)
-        self.switchPermStatus.place(x=700, y=157)
+        if 'CONF1008' in permisos:
+            self.buttonModPerm = tk.Button(self.marco_perfiles, text="Modificar\n Permisos", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                            command=lambda: self.modificarPermisos(permisos, self.tablaPerfiles.item(self.tablaPerfiles.selection())['values']))
+            self.buttonModPerm.place(x=600, y=60)
+        else:
+            self.buttonModPerm = tk.Button(self.marco_perfiles, text="Modificar\n Permisos", font=("Roboto", 12), state='disabled', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                            command=lambda: self.modificarPermisos(permisos, self.tablaPerfiles.item(self.tablaPerfiles.selection())['values']))
+            self.buttonModPerm.place(x=600, y=60)
+
+        if 'CONF1012' in permisos:
+            self.switchStatus = tk.BooleanVar(value=True)
+            self.switchPermStatus = customtkinter.CTkSwitch(self.marco_perfiles, variable=self.switchStatus, state='normal', text="Activos", font=("Roboto", 12), command=self.MostrarActivosInactivos)
+            self.switchPermStatus.place(x=700, y=157)
+        else:
+            self.switchStatus = tk.BooleanVar(value=True)
+            self.switchPermStatus = customtkinter.CTkSwitch(self.marco_perfiles, variable=self.switchStatus, state='disabled', text="Activos", font=("Roboto", 12), command=self.MostrarActivosInactivos)
+            self.switchPermStatus.place(x=700, y=157)
+
         ###################################### Tabla de modulos activos ######################
         where = ""
         if len(where) > 0:
@@ -272,91 +288,75 @@ class FormPerfiles():
 
 
     def modificarPermisos(self, permisos, values):
-        if 'CONF1008' in permisos:
-            #Creacion del top level
-            self.topModperm = customtkinter.CTkToplevel()
-            self.topModperm.title("Modificar Permisos a Usuario")
-            self.topModperm.w = 800
-            self.topModperm.h = 600
-            self.topModperm.geometry(f"{self.topModperm.w}x{self.topModperm.h}")
-            self.topModperm.resizable(False, False)
-            self.topModperm.configure(bg_color='#6a717e')
-            self.topModperm.configure(fg_color='#6a717e')
-
-            #Centrar la ventana en la pantalla
-            screen_width = self.topModperm.winfo_screenwidth()
-            screen_height = self.topModperm.winfo_screenheight()
-            x = (screen_width - self.topModperm.w) // 2
-            y = (screen_height - self.topModperm.h) // 2
-            self.topModperm.geometry(f"+{x}+{y}")
-
-            self.topModperm.lift()
-            self.topModperm.grab_set()
-            self.topModperm.transient()
-
-            #Datos para el usuario
-            marco_modperm = customtkinter.CTkFrame(self.topModperm, width=700,height=500, bg_color="white", fg_color="white")
-            marco_modperm.place(relx=0.5, rely=0.5, anchor="center")
-            set_opacity(marco_modperm, 0.8)
-
-            self.tab_permisos = customtkinter.CTkTabview(marco_modperm, width=620,height=430)
-            self.tab_permisos.place(x=40, y=30)
-
-            perfil_id = self.tablaPerfiles.item(self.tablaPerfiles.selection())['text'] 
-
-            modulos = ObtenerListaDeModulos()
-            asigperm = ObtenerPermisosAsignados(perfil_id)
-            self.tabs = {}
-            interruptores = {}
-
-            for modulo in modulos:
-                nombre_modulo = modulo['name']
-                tab = self.tab_permisos.add(nombre_modulo)
-                self.tabs[nombre_modulo] = tab
-
-                if modulo == 'Home':
-                    self.tab_permisos.set(tab)
-
-                id_modulo = modulo['id']
-                permisos_modulo = ObtenerPermisosDeModulos(id_modulo)
-                if permisos_modulo:
-                    x_offset = 0.1
-                    y_offset = 0.1
-                    fila_actual = 0
-                    columna_actual = 0
-                    max_filas = 8
-                    max_columnas = 3
-
-                    for permiso in permisos_modulo:
-                        nombre_permiso = permiso['name']
-                        permisos_modulos = [permiso['codperm']]
-                        asigperm_active = [permiso['codpermiso'] for permiso in asigperm]
-
-                        if any(permiso_modulo in asigperm_active for permiso_modulo in permisos_modulos):
-                            switch_var_permiso = tk.BooleanVar(value=True)
-                        else:
-                            switch_var_permiso = tk.BooleanVar(value=False)
-
-                        switch_permiso = customtkinter.CTkSwitch(tab, variable=switch_var_permiso, text=nombre_permiso)
-                        interruptores[switch_permiso] = permiso
-                    # Clcular posición relativa en la cuadrícula
-                        relx = x_offset + (columna_actual * 0.30)
-                        rely = y_offset + (fila_actual * 0.10)
-                        switch_permiso.place(relx=relx, rely=rely)
-                        columna_actual += 1
-                        if columna_actual >= max_columnas:
-                            columna_actual = 0
-                            fila_actual += 1
-                            if fila_actual >= max_filas:
-                                # Se alcanzó el límite de filas, salir del bucle
-                                break
-            self.buttonActualizar = tk.Button(self.topModperm, text="Actualizar Permisos", font=("Roboto", 12), 
-                                            bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, 
-                                            padx=10, command=lambda: self.ActualizarPermisos(perfil_id, interruptores))
-            self.buttonActualizar.place(x=323, y=515)
-        else:
-            messagebox.showerror("Error", "No posee permisos suficientes para realizar esta accion.")
-
+        #Creacion del top level
+        self.topModperm = customtkinter.CTkToplevel()
+        self.topModperm.title("Modificar Permisos a Usuario")
+        self.topModperm.w = 800
+        self.topModperm.h = 600
+        self.topModperm.geometry(f"{self.topModperm.w}x{self.topModperm.h}")
+        self.topModperm.resizable(False, False)
+        self.topModperm.configure(bg_color='#6a717e')
+        self.topModperm.configure(fg_color='#6a717e')
+        #Centrar la ventana en la pantalla
+        screen_width = self.topModperm.winfo_screenwidth()
+        screen_height = self.topModperm.winfo_screenheight()
+        x = (screen_width - self.topModperm.w) // 2
+        y = (screen_height - self.topModperm.h) // 2
+        self.topModperm.geometry(f"+{x}+{y}")
+        self.topModperm.lift()
+        self.topModperm.grab_set()
+        self.topModperm.transient()
+        #Datos para el usuario
+        marco_modperm = customtkinter.CTkFrame(self.topModperm, width=700,height=500, bg_color="white", fg_color="white")
+        marco_modperm.place(relx=0.5, rely=0.5, anchor="center")
+        set_opacity(marco_modperm, 0.8)
+        self.tab_permisos = customtkinter.CTkTabview(marco_modperm, width=620,height=430)
+        self.tab_permisos.place(x=40, y=30)
+        perfil_id = self.tablaPerfiles.item(self.tablaPerfiles.selection())['text'] 
+        modulos = ObtenerListaDeModulos()
+        asigperm = ObtenerPermisosAsignados(perfil_id)
+        self.tabs = {}
+        interruptores = {}
+        for modulo in modulos:
+            nombre_modulo = modulo['name']
+            tab = self.tab_permisos.add(nombre_modulo)
+            self.tabs[nombre_modulo] = tab
+            if modulo == 'Home':
+                self.tab_permisos.set(tab)
+            id_modulo = modulo['id']
+            permisos_modulo = ObtenerPermisosDeModulos(id_modulo)
+            if permisos_modulo:
+                x_offset = 0.1
+                y_offset = 0.1
+                fila_actual = 0
+                columna_actual = 0
+                max_filas = 8
+                max_columnas = 3
+                for permiso in permisos_modulo:
+                    nombre_permiso = permiso['name']
+                    permisos_modulos = [permiso['codperm']]
+                    asigperm_active = [permiso['codpermiso'] for permiso in asigperm]
+                    if any(permiso_modulo in asigperm_active for permiso_modulo in permisos_modulos):
+                        switch_var_permiso = tk.BooleanVar(value=True)
+                    else:
+                        switch_var_permiso = tk.BooleanVar(value=False)
+                    switch_permiso = customtkinter.CTkSwitch(tab, variable=switch_var_permiso, text=nombre_permiso)
+                    interruptores[switch_permiso] = permiso
+                # Clcular posición relativa en la cuadrícula
+                    relx = x_offset + (columna_actual * 0.30)
+                    rely = y_offset + (fila_actual * 0.10)
+                    switch_permiso.place(relx=relx, rely=rely)
+                    columna_actual += 1
+                    if columna_actual >= max_columnas:
+                        columna_actual = 0
+                        fila_actual += 1
+                        if fila_actual >= max_filas:
+                            # Se alcanzó el límite de filas, salir del bucle
+                            break
+        self.buttonActualizar = tk.Button(self.topModperm, text="Actualizar Permisos", font=("Roboto", 12), 
+                                        bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, 
+                                        padx=10, command=lambda: self.ActualizarPermisos(perfil_id, interruptores))
+        self.buttonActualizar.place(x=323, y=515)
 
     def guardarPermisosSeleccionados(self, interruptores):
         try:

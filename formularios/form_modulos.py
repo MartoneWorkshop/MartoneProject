@@ -62,10 +62,14 @@ class FormModulos():
         self.entrysearch_modulos = ttk.Entry(self.marco_modulos, textvariable=self.sventrysearch_modulos, style='Modern.TEntry', width=30)
         self.entrysearch_modulos.place(x=270, y=157)
         self.entrysearch_modulos.bind('<KeyRelease>', self.update_modulos_content)
-
-        self.switchStatus = tk.BooleanVar(value=True)
-        self.switchPermStatus = customtkinter.CTkSwitch(self.marco_modulos, variable=self.switchStatus, text="Activos", font=("Roboto", 12), command=self.MostrarActivosInactivos)
-        self.switchPermStatus.place(x=700, y=157)
+        if 'CONF1013' in permisos:
+            self.switchStatus = tk.BooleanVar(value=True)
+            self.switchModStatus = customtkinter.CTkSwitch(self.marco_modulos, variable=self.switchStatus, state='normal',text="Activos", font=("Roboto", 12), command=self.MostrarActivosInactivos)
+            self.switchModStatus.place(x=700, y=157)
+        else:
+            self.switchStatus = tk.BooleanVar(value=True)
+            self.switchModStatus = customtkinter.CTkSwitch(self.marco_modulos, variable=self.switchStatus, state='disabled', text="Activos", font=("Roboto", 12), command=self.MostrarActivosInactivos)
+            self.switchModStatus.place(x=700, y=157)
 
         ##################################################### BOTONES DE LA TABLA ##################################################
         self.buttonCreateMod = tk.Button(self.marco_modulos, text="Crear\n Modulo", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
@@ -76,9 +80,14 @@ class FormModulos():
                                         command=lambda: self.editar_Modulo(permisos, self.tablaModulos.item(self.tablaModulos.selection())['values'])) 
         self.buttonEditMod.place(x=325, y=60)
         
-        self.buttonDeleteMod = tk.Button(self.marco_modulos, text="Desactivar\n Modulo", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                        command=lambda: self.desactivarModulo(permisos))
-        self.buttonDeleteMod.place(x=425, y=60)
+        if 'CONF1010' in permisos:
+            self.buttonDeleteMod = tk.Button(self.marco_modulos, text="Desactivar\n Modulo", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                            command=lambda: self.desactivarModulo(permisos))
+            self.buttonDeleteMod.place(x=425, y=60)
+        else:
+            self.buttonDeleteMod = tk.Button(self.marco_modulos, text="Desactivar\n Modulo", font=("Roboto", 12), state='disabled', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                            command=lambda: self.desactivarModulo(permisos))
+            self.buttonDeleteMod.place(x=425, y=60)
 
         ###################################### Tabla de modulos activos ######################
         where = ""
@@ -119,10 +128,10 @@ class FormModulos():
         self.tablaModulos.bind('<Double-1>', lambda event: self.editar_Modulo(event, self.tablaModulos.item(self.tablaModulos.selection())['values']))
     def MostrarActivosInactivos(self):
         if self.switchStatus.get():
-            self.switchPermStatus.configure(text="Activos")
+            self.switchModStatus.configure(text="Activos")
             self.mostrarModulosActivos()
         else:
-            self.switchPermStatus.configure(text="Inactivos")
+            self.switchModStatus.configure(text="Inactivos")
             self.mostrarModulosDesactivados()
 
     def mostrarModulosActivos(self):
@@ -368,12 +377,9 @@ class FormModulos():
         try:
             self.id = self.tablaModulos.item(self.tablaModulos.selection())['text']
             confirmar = messagebox.askyesno("Confirmar", "¿Estás seguro de que deseas desactivar este modulo?")
-            if confirmar and 'CONF1010' in permisos:
+            if confirmar:
                 ModuloDisable(self.id)
                 self.listarModuloEnTabla()
-            else:
-                messagebox.showerror("Error", "No posee permisos suficientes para realizar esta accion.")
-            
         except Exception as e:
             error_advice()
             mensaje = f'Error en desactivarUsuario, form_users: {str(e)}'

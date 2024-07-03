@@ -61,14 +61,24 @@ class FormUsers():
                                         command=lambda: self.editar_usuario(permisos, self.tablaUsuarios.item(self.tablaUsuarios.selection())['values']))
         self.buttonEditUser.place(x=245, y=50)
 
-        self.buttonDeleteUser = tk.Button(self.marco_create, text="Desactivar\n Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                        command=lambda: self.desactivarUsuario(permisos))
-        self.buttonDeleteUser.place(x=350, y=50)
-        
-        self.switchStatus = tk.BooleanVar(value=True)
-        self.switchPermStatus = customtkinter.CTkSwitch(self.marco_create, variable=self.switchStatus, text="Activos", font=("Roboto", 12), command=self.MostrarActivosInactivos)
-        self.switchPermStatus.place(x=700, y=157)
-    
+        if 'CONF1006' in permisos:
+            self.buttonDeleteUser = tk.Button(self.marco_create, text="Desactivar\n Usuario", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                            command=lambda: self.desactivarUsuario(permisos))
+            self.buttonDeleteUser.place(x=350, y=50)
+        else: 
+            self.buttonDeleteUser = tk.Button(self.marco_create, text="Desactivar\n Usuario", font=("Roboto", 12), state='disabled', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                            command=lambda: self.desactivarUsuario(permisos))
+            self.buttonDeleteUser.place(x=350, y=50)
+
+        if 'CONF1014' in permisos:
+            self.switchStatus = tk.BooleanVar(value=True)
+            self.switchUserStatus = customtkinter.CTkSwitch(self.marco_create, variable=self.switchStatus, state='normal', text="Activos", font=("Roboto", 12), command=self.MostrarActivosInactivos)
+            self.switchUserStatus.place(x=700, y=157)
+        else:
+            self.switchStatus = tk.BooleanVar(value=True)
+            self.switchUserStatus = customtkinter.CTkSwitch(self.marco_create, variable=self.switchStatus, state='disabled', text="Activos", font=("Roboto", 12), command=self.MostrarActivosInactivos)
+            self.switchUserStatus.place(x=700, y=157)
+
         ###################################################### BUSCADOR DE LA TABLA #################################################
         search_image = Image.open("imagenes/search.png")
         search_resized = search_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
@@ -121,10 +131,10 @@ class FormUsers():
     
     def MostrarActivosInactivos(self):
         if self.switchStatus.get():
-            self.switchPermStatus.configure(text="Activos")
+            self.switchUserStatus.configure(text="Activos")
             self.mostrarUsuariosActivos()
         else:
-            self.switchPermStatus.configure(text="Inactivos")
+            self.switchUserStatus.configure(text="Inactivos")
             self.mostrarUsuariosDesactivados()
 
     def mostrarUsuariosActivos(self):
@@ -354,8 +364,8 @@ class FormUsers():
             else:
                 EditUser(usuario, self.id)
                 self.topEdit.destroy()
-
             self.listarUsuariosEnTabla()
+
         except Exception as e:
             error_advice()
             mensaje = f'Error en GuardarUsuario, form_users: {str(e)}'
@@ -367,11 +377,10 @@ class FormUsers():
             self.id = self.tablaUsuarios.item(self.tablaUsuarios.selection())['text']
             confirmar = messagebox.askyesno("Confirmar", "¿Estas Seguro de que deseas desactivar este usuario?")
 
-            if confirmar and 'CONF1006' in permisos:
+            if confirmar:
                 UserDisable(self.id)
                 self.listarUsuariosEnTabla()
-            else:
-                messagebox.showerror("Error", "No posee permisos suficientes para realizar esta accion.")
+
         except Exception as e:
             error_advice()
             mensaje = f'Error en desactivarUsuario, form_users: {str(e)}'

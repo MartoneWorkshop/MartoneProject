@@ -71,10 +71,15 @@ class FormPermisos():
                                         fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.editar_permiso(permisos, self.tablapermisos.item(self.tablapermisos.selection())['values'])) 
         self.buttonEditPerm.place(x=325, y=60)
-        
-        self.buttonDeletePerm = tk.Button(self.marco_permisos, text="Eliminar\n Permiso", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                        command=lambda: self.desactivarpermiso(permisos))
-        self.buttonDeletePerm.place(x=425, y=60)
+
+        if 'CONF1009' in permisos:
+            self.buttonDeletePerm = tk.Button(self.marco_permisos, text="Eliminar\n Permiso", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                            command=lambda: self.desactivarpermiso(permisos))
+            self.buttonDeletePerm.place(x=425, y=60)
+        else:
+            self.buttonDeletePerm = tk.Button(self.marco_permisos, text="Eliminar\n Permiso", font=("Roboto", 12), state='disabled', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                            command=lambda: self.desactivarpermiso(permisos))
+            self.buttonDeletePerm.place(x=425, y=60)
     
         ###################################### Tabla de permisos activos ######################
         where = ""
@@ -289,11 +294,9 @@ class FormPermisos():
         try:
             self.id = self.tablapermisos.item(self.tablapermisos.selection())['text']
             confirmar = messagebox.askyesno("Confirmar", "¿Estás seguro de que deseas eliminar este permiso?")
-            if confirmar and 'CONF1009' in permisos:
+            if confirmar:
                 PermisoDelete(self.id)
                 self.listarpermisoEnTabla()
-            else:
-                messagebox.showerror("Error", "No posee permisos suficientes para realizar esta accion.")
         except Exception as e:
             error_advice()
             mensaje = f'Error en desactivarUsuario, form_users: {str(e)}'
