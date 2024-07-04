@@ -243,29 +243,29 @@ class FormProv():
 
         #Codigo Proveedor
         self.lblcodProv = customtkinter.CTkLabel(marco_crearproveedor, text='Codigo Proveedor', font=("Roboto", 13))
-        self.lblcodProv.place(x=82, y=90)
+        self.lblcodProv.place(x=75, y=90)
 
         self.svcodProv = customtkinter.StringVar()  # Valor del proveedor a editar
         self.entrycodProv = ttk.Entry(marco_crearproveedor, style='Modern.TEntry', textvariable=self.svcodProv)
-        self.entrycodProv.place(x=75, y=120)
+        self.entrycodProv.place(x=65, y=120)
         self.entrycodProv.configure(style='Entry.TEntry')
 
         #Nombre Fiscal
         self.lblnom_fiscal = customtkinter.CTkLabel(marco_crearproveedor, text='Nombre Fiscal', font=("Roboto", 13))
-        self.lblnom_fiscal.place(x=290, y=90)
+        self.lblnom_fiscal.place(x=275, y=90)
 
         self.svnom_fiscal = customtkinter.StringVar()  # Valor del proveedor a editar
         self.entrynom_fiscal = ttk.Entry(marco_crearproveedor, width=35, style='Modern.TEntry', textvariable=self.svnom_fiscal)
-        self.entrynom_fiscal.place(x=280, y=120)
+        self.entrynom_fiscal.place(x=265, y=120)
         self.entrynom_fiscal.configure(style='Entry.TEntry')
 
         #RIF
-        self.lblrif_prov = customtkinter.CTkLabel(marco_crearproveedor, text='Codigo Proveedor', font=("Roboto", 13))
-        self.lblrif_prov.place(x=82, y=90)
+        self.lblrif_prov = customtkinter.CTkLabel(marco_crearproveedor, text='RIF', font=("Roboto", 13))
+        self.lblrif_prov.place(x=550, y=90)
 
         self.svrif_prov = customtkinter.StringVar()  # Valor del proveedor a editar
         self.entryrif_prov = ttk.Entry(marco_crearproveedor, style='Modern.TEntry', textvariable=self.svrif_prov)
-        self.entryrif_prov.place(x=75, y=120)
+        self.entryrif_prov.place(x=540, y=120)
         self.entryrif_prov.configure(style='Entry.TEntry')
 
 
