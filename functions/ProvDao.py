@@ -22,9 +22,10 @@ def EditProv(proveedores, id):
 
 def SaveProv(proveedores):
     conexion = ConexionDB()
-    sql = f"""INSERT INTO proveedores (codProv, nom_fiscal, rif_prov, nit_prov, tipo_per, telf_prov, dir_fiscal, email_prov, dias_credito, date_created, date_update, activo)
+    sql = f"""INSERT INTO proveedores (codProv, nom_fiscal, rif_prov, nit_prov, tipo_per, telf_prov, dir_fiscal, 
+    email_prov, dias_credito, date_created, date_update, activo)
     VALUES('{proveedores.codProv}','{proveedores.nom_fiscal}','{proveedores.rif_prov}','{proveedores.nit_prov}',
-    '{proveedores.tipo_per}','{proveedores.telf_prov},'{proveedores.dir_fiscal}','{proveedores.email_prov},
+    '{proveedores.tipo_per}','{proveedores.telf_prov}','{proveedores.dir_fiscal}','{proveedores.email_prov}',
     '{proveedores.dias_credito}','{proveedores.date_created}','{proveedores.date_update}',1)"""
     try:
         conexion.cursor.execute(sql)

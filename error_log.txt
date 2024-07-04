@@ -717,3 +717,9 @@ Error en GuardarNuevosPermisos, ProfileDao: 'NoneType' object is not iterableDet
 TypeError: 'NoneType' object is not iterable
 
 Error en listarPermisos, ModuDao: no such column: activo
+Error en GuardarProveedor, form_proveedores: 'FormProv' object has no attribute 'svperfil_var'
+Error en GuardarProveedor, form_proveedores: Proveedores.__init__() missing 1 required positional argument: 'date_update'
+Error en GuardarProveedor, form_proveedores: Proveedores.__init__() missing 1 required positional argument: 'date_update'
+Error en GuardarProveedor, form_proveedores: CTkTextbox.get() missing 1 required positional argument: 'index1'
+Error en SaveProv, ProvDao: near "INICIO12313212312313232123123112312123132123123132ads123ads132sad132sad132sda132sad132asd321das123asd123dsa123asd321321ASD3211111111111FINAL": syntax error
+Error en SaveProv, ProvDao: near "INICIO12313212312313232123123112312123132123123132ads123ads132sad132sad132sda132sad132asd321das123asd123dsa123asd321321ASD3211111111111FINAL": syntax error

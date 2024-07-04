@@ -229,7 +229,7 @@ class FormUsers():
 
         self.lblinfo = customtkinter.CTkLabel(marco_crearusuario, text="Creacion de nuevo usuario", font=("Roboto",14))
         self.lblinfo.place(x=205, rely=0.1)
-
+        
         self.lblusuario = customtkinter.CTkLabel(marco_crearusuario, text='', image=user_img, font=("Roboto", 14))
         self.lblusuario.place(x=75, y=120)
 
