@@ -223,11 +223,11 @@ class FormPerfiles():
 
         ############# NOMBRE DEL MODULO
         self.lblnombre = customtkinter.CTkLabel(self.topCreateProfile, text='Nombre del Perfil', font=("Roboto", 13), bg_color='#e1e3e5', fg_color='#e1e3e5')
-        self.lblnombre.place(x=102, y=120)
+        self.lblnombre.place(relx=0.42, y=120)
 
         self.svnombre_perfil = customtkinter.StringVar()
         self.entrynombre_perfil = ttk.Entry(self.topCreateProfile, style='Modern.TEntry', textvariable=self.svnombre_perfil)
-        self.entrynombre_perfil.place(x=95, y=170)
+        self.entrynombre_perfil.place(relx=0.4, y=170)
         self.entrynombre_perfil.configure(style='Entry.TEntry')
 
     

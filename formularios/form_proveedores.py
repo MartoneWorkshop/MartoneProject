@@ -106,7 +106,7 @@ class FormProv():
         self.tablaProveedores.tag_configure('evenrow')
 
         self.tablaProveedores.heading('#0',text="ID")
-        self.tablaProveedores.heading('#1',text="Cod Prov")
+        self.tablaProveedores.heading('#1',text="CodProv")
         self.tablaProveedores.heading('#2',text="N Fiscal")
         self.tablaProveedores.heading('#3',text="RIF")
         self.tablaProveedores.heading('#4',text="NIT")
@@ -116,16 +116,16 @@ class FormProv():
         self.tablaProveedores.heading('#8',text="Dir-Fiscal")
         self.tablaProveedores.heading('#9',text="Dias Credito")
 
-        self.tablaProveedores.column("#0", width=60, stretch=False, anchor='w')#HAY QUE CENTRARLO
-        self.tablaProveedores.column("#1", width=100, stretch=False)
-        self.tablaProveedores.column("#2", width=140, stretch=False)
+        self.tablaProveedores.column("#0", width=50, stretch=False, anchor='w')#HAY QUE CENTRARLO
+        self.tablaProveedores.column("#1", width=50, stretch=False)
+        self.tablaProveedores.column("#2", width=150, stretch=False)
         self.tablaProveedores.column("#3", width=100, stretch=False)
         self.tablaProveedores.column("#4", width=100, stretch=False)
         self.tablaProveedores.column("#5", width=100, stretch=False)
-        self.tablaProveedores.column("#6", width=140, stretch=False)
+        self.tablaProveedores.column("#6", width=150, stretch=False)
         self.tablaProveedores.column("#7", width=100, stretch=False)
-        self.tablaProveedores.column("#8", width=140, stretch=False)
-        self.tablaProveedores.column("#9", width=100, stretch=False)
+        self.tablaProveedores.column("#8", width=200, stretch=False)
+        self.tablaProveedores.column("#9", width=80, stretch=False)
 
         for p in self.ListaProveedores:
             self.tablaProveedores.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6],p[7],p[8],p[9]))
@@ -253,30 +253,32 @@ class FormProv():
         
         self.svtipo_per = customtkinter.StringVar(value="Seleccione el Tipo")
 
-        self.multioption = customtkinter.CTkOptionMenu(marco_crearproveedor, values=["V(NATURAL)", "J(JURIDICO)", "E(EXTRANJERO)", "G(GUBERNAMENTAL)"], width=140, variable=self.svtipo_per)
+        self.multioption = customtkinter.CTkOptionMenu(marco_crearproveedor, values=["V (NATURAL)", "J (JURIDICO)", "E (EXTRANJERO)", "G (GUBERNAMENTAL)"], width=140, variable=self.svtipo_per)
         self.multioption.place(x=530, y=115)
-        
 
         def update_rif_prefix(*args):
             selected_option = self.svtipo_per.get()
             rif_value = self.svrif_prov.get()
             prefix = ""
 
-            if selected_option == "V(NATURAL)":
+            if selected_option == "V (NATURAL)":
                 prefix = "V-"
-            elif selected_option == "E(EXTRANJERO)":
+            elif selected_option == "E (EXTRANJERO)":
                 prefix = "E-"
-            elif selected_option == "J(JURIDICO)":
+            elif selected_option == "J (JURIDICO)":
                 prefix = "J-"
-            elif selected_option == "G(GUBERNAMENTAL)":
+            elif selected_option == "G (GUBERNAMENTAL)":
                 prefix = "G-"
 
             if rif_value.startswith("V-"):
                 rif_value = rif_value[2:]
+
             elif rif_value.startswith("E-"):
                 rif_value = rif_value[2:]
+
             elif rif_value.startswith("J-"):
                 rif_value = rif_value[2:]
+
             elif rif_value.startswith("G-"):
                 rif_value = rif_value[2:]
 
@@ -362,77 +364,176 @@ class FormProv():
         if values:
     # Creación del top level
             self.id = self.tablaProveedores.item(self.tablaProveedores.selection())['text']
-            self.proveedor = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][1]
-            self.password = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][2]
+            self.nom_fiscal = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][1]
+            self.rif_prov = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][2]
+            self.nit_prov = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][3]
+            self.tipo_per = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][4]
+            self.email_prov = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][5]
+            self.telf_prov = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][6]
+            self.Edir_fiscal = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][7]
+            self.dias_credito = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][8]
 
-            self.topEdit = customtkinter.CTkToplevel()
-            self.topEdit.title("Editar Proveedor")
-            self.topEdit.iconbitmap("imagenes/logo_ico.ico")
-            self.topEdit.w = 600
-            self.topEdit.h = 400
-            self.topEdit.geometry(f"{self.topEdit.w}x{self.topEdit.h}")
-            self.topEdit.resizable(False, False)
-            self.topEdit.configure(bg_color='#6a717e')
-            self.topEdit.configure(fg_color='#6a717e')
+            self.topEditProv = customtkinter.CTkToplevel()
+            self.topEditProv.title("Crear Proveedor")
+            self.topEditProv.w = 800
+            self.topEditProv.h = 600
+            self.topEditProv.geometry(f"{self.topEditProv.w}x{self.topEditProv.h}")
+            self.topEditProv.resizable(False, False)
+            self.topEditProv.configure(bg_color='#6a717e')
+            self.topEditProv.configure(fg_color='#6a717e')
 
-            # Centrar la ventana en la pantalla
-            screen_width = self.topEdit.winfo_screenwidth()
-            screen_height = self.topEdit.winfo_screenheight()
-            x = (screen_width - self.topEdit.w) // 2
-            y = (screen_height - self.topEdit.h) // 2
-            self.topEdit.geometry(f"+{x}+{y}")
+            #Centrar la ventana en la pantalla
+            screen_width = self.topEditProv.winfo_screenwidth()
+            screen_height = self.topEditProv.winfo_screenheight()
+            x = (screen_width - self.topEditProv.w) // 2
+            y = (screen_height - self.topEditProv.h) // 2
+            self.topEditProv.geometry(f"+{x}+{y}")
 
-            self.topEdit.lift()
-            self.topEdit.grab_set()
-            self.topEdit.transient()
-
-            # Conversion de ico
-            prov_ico = Image.open("imagenes/user.png")
-            prov_ico = prov_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
-            prov_img = ImageTk.PhotoImage(prov_ico)
-
-            pass_ico = Image.open("imagenes/pass.png")
-            pass_ico = pass_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
-            pass_img = ImageTk.PhotoImage(pass_ico)
-            # Datos para el proveedor
-            marco_editarproveedor = customtkinter.CTkFrame(self.topEdit, width=550, height=350, bg_color="white", fg_color="white")
+            self.topEditProv.lift()
+            self.topEditProv.grab_set()
+            self.topEditProv.transient()
+            selected_item = self.tablaProveedores.focus()
+            values = self.tablaProveedores.item(selected_item)['values']
+            #Datos para el proveedor
+            marco_editarproveedor = customtkinter.CTkFrame(self.topEditProv, width=750,height=550, bg_color="white", fg_color="white")
             marco_editarproveedor.place(relx=0.5, rely=0.5, anchor="center")
 
             set_opacity(marco_editarproveedor, 0.8)
+            self.lblinfo = customtkinter.CTkLabel(marco_editarproveedor, text="Editar un proveedor", font=("Roboto",14))
+            self.lblinfo.place(relx=0.4, rely=0.05)
 
-            self.lblinfo = customtkinter.CTkLabel(marco_editarproveedor, text="Edición de proveedor", font=("Roboto", 14))
-            self.lblinfo.place(x=205, rely=0.1)
+            #RIF
+            self.lblrif_prov = customtkinter.CTkLabel(marco_editarproveedor, text='RIF', font=("Roboto", 13))
+            self.lblrif_prov.place(x=75, y=90)
 
-            self.lblproveedor = customtkinter.CTkLabel(marco_editarproveedor, text='', image=prov_img, font=("Roboto", 14))
-            self.lblproveedor.place(x=75, y=120)
+            self.svrif_prov = customtkinter.StringVar(value=self.rif_prov)
+            self.entryrif_prov = ttk.Entry(marco_editarproveedor, style='Modern.TEntry', textvariable=self.svrif_prov)
+            self.entryrif_prov.place(x=65, y=120)
+            self.entryrif_prov.configure(style='Entry.TEntry')
 
-            self.svproveedor = customtkinter.StringVar(value=self.proveedor)  # Valor del proveedor a editar
-            self.entryproveedor = ttk.Entry(marco_editarproveedor, style='Modern.TEntry', textvariable=self.svproveedor)
-            self.entryproveedor.place(x=125, y=120)
-            self.entryproveedor.configure(style='Entry.TEntry')
+            #Nombre Fiscal
+            self.lblnom_fiscal = customtkinter.CTkLabel(marco_editarproveedor, text='Nombre Fiscal', font=("Roboto", 13))
+            self.lblnom_fiscal.place(x=275, y=90)
 
-            # Datos de la Contraseña
-            self.lblpassword = customtkinter.CTkLabel(marco_editarproveedor, text='', image=pass_img, font=("Roboto", 14))
-            self.lblpassword.place(x=75, y=170)
+            self.svnom_fiscal = customtkinter.StringVar(value=self.nom_fiscal)
+            self.entrynom_fiscal = ttk.Entry(marco_editarproveedor, width=35, style='Modern.TEntry', textvariable=self.svnom_fiscal)
+            self.entrynom_fiscal.place(x=265, y=120)
+            self.entrynom_fiscal.configure(style='Entry.TEntry')
 
-            self.svpassword = customtkinter.StringVar(value=self.password)  # Valor de la contraseña a editar
-            self.entrypassword = ttk.Entry(marco_editarproveedor, style='Modern.TEntry', textvariable=self.svpassword, show='*')
-            self.entrypassword.place(x=125, y=170)
-            self.entrypassword.configure(style='Entry.TEntry')
 
-            perfil_id = values[3]
-            perfil_nombre = ''
-            for rol in ObtenerRoles():
-                if rol[0] == perfil_id:
-                    perfil_nombre = rol[1]
-                    break
-            self.svperfil_var = customtkinter.StringVar(value=perfil_nombre)  # Valor del perfil a editar
-            self.multioption = customtkinter.CTkOptionMenu(marco_editarproveedor, values=[rol[1] for rol in ObtenerRoles()], variable=self.svperfil_var)
-            self.multioption.place(x=325, y=120)
+            #Tipo Persona Esto es un multi options editar despues
+            self.lbltipo_per = customtkinter.CTkLabel(marco_editarproveedor, text='Tipo de Persona', font=("Roboto", 13))
+            self.lbltipo_per.place(x=550, y=90)
 
-            self.buttonGuardarP = tk.Button(marco_editarproveedor, text="Guardar Cambios", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", 
-                                            compound=tk.LEFT, padx=10, command=self.GuardarProveedor)
-            self.buttonGuardarP.place(x=215, y=250)
+            self.svtipo_per = customtkinter.StringVar(value=self.tipo_per)
+
+            self.multioption = customtkinter.CTkOptionMenu(marco_editarproveedor, values=["V (NATURAL)", "J (JURIDICO)", "E (EXTRANJERO)", "G (GUBERNAMENTAL)"], width=140, variable=self.svtipo_per)
+            self.multioption.place(x=530, y=115)
+
+            def update_rif_prefix(*args):
+                selected_option = self.svtipo_per.get()
+                rif_value = self.svrif_prov.get()
+                prefix = ""
+
+                if selected_option == "V (NATURAL)":
+                    prefix = "V-"
+                elif selected_option == "E (EXTRANJERO)":
+                    prefix = "E-"
+                elif selected_option == "J (JURIDICO)":
+                    prefix = "J-"
+                elif selected_option == "G (GUBERNAMENTAL)":
+                    prefix = "G-"
+
+                if rif_value.startswith("V-"):
+                    rif_value = rif_value[2:]
+
+                elif rif_value.startswith("E-"):
+                    rif_value = rif_value[2:]
+
+                elif rif_value.startswith("J-"):
+                    rif_value = rif_value[2:]
+
+                elif rif_value.startswith("G-"):
+                    rif_value = rif_value[2:]
+
+                self.svrif_prov.set(f"{prefix}{rif_value}")
+            self.svtipo_per.trace("w", update_rif_prefix)
+
+            #NIT
+            self.lblnit_prov = customtkinter.CTkLabel(marco_editarproveedor, text='NIT', font=("Roboto", 13))
+            self.lblnit_prov.place(x=75, y=180)
+
+            self.svnit_prov = customtkinter.StringVar(value=self.nit_prov)
+            self.entrynit_prov = ttk.Entry(marco_editarproveedor, style='Modern.TEntry', textvariable=self.svnit_prov)
+            self.entrynit_prov.place(x=65, y=210)
+            self.entrynit_prov.configure(style='Entry.TEntry')
+
+            #Email
+            self.lblemail_prov = customtkinter.CTkLabel(marco_editarproveedor, text='Email', font=("Roboto", 13))
+            self.lblemail_prov.place(x=275, y=180)
+
+            self.svemail_prov = customtkinter.StringVar(value=self.email_prov)
+            self.entryemail_prov = ttk.Entry(marco_editarproveedor, style='Modern.TEntry', textvariable=self.svemail_prov, width=35)
+            self.entryemail_prov.place(x=265, y=210)
+            self.entryemail_prov.configure(style='Entry.TEntry')
+
+            #Telefono
+            self.lbltelf_prov = customtkinter.CTkLabel(marco_editarproveedor, text='Telefono', font=("Roboto", 13))
+            self.lbltelf_prov.place(x=550, y=180)
+
+            self.svtelf_prov = customtkinter.StringVar(value=self.telf_prov)
+            self.entrytelf_prov = ttk.Entry(marco_editarproveedor, style='Modern.TEntry', textvariable=self.svtelf_prov)
+            self.entrytelf_prov.place(x=540, y=210)
+            self.entrytelf_prov.configure(style='Entry.TEntry')        
+
+            ##Textbox para dir_fiscal
+            def validate_text(text):
+                character_count = len(text)
+                remaining_characters = 140 - character_count
+
+                if character_count <= 69:
+                    character_count_label.configure(text_color="black")
+                elif character_count >= 140:
+                    character_count_label.configure(text_color="red")
+                elif character_count >= 69:
+                    character_count_label.configure(text_color="#cc953d")
+                character_count_label.configure(text=f"{character_count}/{remaining_characters}")
+
+                if character_count > 140:
+                    text = text[:140]
+                    self.dir_fiscal.delete("1.141", "end")
+
+                    self.dir_fiscal.configure(state="normal")
+                    self.dir_fiscal.delete("1.0", "end")
+                    self.dir_fiscal.insert("1.0", text)
+
+            self.lbldir_fiscal = customtkinter.CTkLabel(marco_editarproveedor, text='Direccion Fiscal', font=("Roboto", 13))
+            self.lbldir_fiscal.place(x=75, y=270)
+
+            self.dir_fiscal = customtkinter.CTkTextbox(marco_editarproveedor, width=410, height=55, border_width=1)
+            self.dir_fiscal.place(x=65, y=300)
+            self.dir_fiscal.insert("1.0", self.Edir_fiscal)
+
+            character_count_label = customtkinter.CTkLabel(marco_editarproveedor, text="")
+            character_count_label.place(x=440, y=360)
+
+            def on_text_change(event):
+                validate_text(self.dir_fiscal.get("1.0", "end-1c"))
+
+            self.dir_fiscal.bind("<KeyRelease>", on_text_change)
+
+            #Dias de Credito
+            self.lbldias_credito = customtkinter.CTkLabel(marco_editarproveedor, text='Dias de Credito', font=("Roboto", 13))
+            self.lbldias_credito.place(x=550, y=270)
+
+            self.svdias_credito = customtkinter.StringVar(value=self.dias_credito)
+            self.entrydias_credito = ttk.Entry(marco_editarproveedor, style='Modern.TEntry', textvariable=self.svdias_credito)
+            self.entrydias_credito.place(x=540, y=300)
+            self.entrydias_credito.configure(style='Entry.TEntry')
+
+            self.buttonGuardarProv = tk.Button(marco_editarproveedor, text="Guardar Proveedor", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", 
+                                                compound=tk.LEFT, padx=10, command=self.GuardarProveedor)
+            self.buttonGuardarProv.place(relx=0.4, y=500)
         else:
             messagebox.showerror("Error", "Debe seleccionar un proveedor")
 
@@ -464,7 +565,7 @@ class FormProv():
                 self.topCreateProv.destroy()
             else:
                 EditProv(proveedor, self.id)
-                self.topEdit.destroy()
+                self.topEditProv.destroy()
 
             self.listarProveedoresEnTabla()
             

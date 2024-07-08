@@ -4,9 +4,9 @@ from util.util_alerts import save_advice, edit_advice, error_advice, delete_advi
 
 def EditProv(proveedores, id):
     conexion = ConexionDB()
-    sql = f"""UPDATE proveedores SET codProv = '{proveedores.codProv}', nom_fiscal = '{proveedores.nom_fiscal}', rif_prov = '{proveedores.rif_prov}',
+    sql = f"""UPDATE proveedores SET nom_fiscal = '{proveedores.nom_fiscal}', rif_prov = '{proveedores.rif_prov}',
     nit_prov = '{proveedores.nit_prov}', tipo_per = '{proveedores.tipo_per}', telf_prov = '{proveedores.telf_prov}',
-    dir_fiscal = '{proveedores.dir_fiscal}', email_prov = '{proveedores.email_prov}', rif_prov = '{proveedores.dias_credito}', 
+    dir_fiscal = '{proveedores.dir_fiscal}', email_prov = '{proveedores.email_prov}', dias_credito = '{proveedores.dias_credito}', 
     date_update = '{proveedores.date_update}', activo = 1 WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
