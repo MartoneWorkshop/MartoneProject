@@ -227,14 +227,15 @@ class FormProv():
         self.lblinfo = customtkinter.CTkLabel(marco_crearproveedor, text="Creacion de nuevo proveedor", font=("Roboto",14))
         self.lblinfo.place(relx=0.4, rely=0.05)
 
-        #Codigo Proveedor
-        self.lblcodProv = customtkinter.CTkLabel(marco_crearproveedor, text='Codigo Proveedor', font=("Roboto", 13))
-        self.lblcodProv.place(x=75, y=90)
-
-        self.svcodProv = customtkinter.StringVar()
-        self.entrycodProv = ttk.Entry(marco_crearproveedor, style='Modern.TEntry', textvariable=self.svcodProv)
-        self.entrycodProv.place(x=65, y=120)
-        self.entrycodProv.configure(style='Entry.TEntry')
+        #RIF
+        self.lblrif_prov = customtkinter.CTkLabel(marco_crearproveedor, text='RIF', font=("Roboto", 13))
+        self.lblrif_prov.place(x=75, y=90)
+        
+        self.svrif_prov = customtkinter.StringVar()
+        self.entryrif_prov = ttk.Entry(marco_crearproveedor, style='Modern.TEntry', textvariable=self.svrif_prov)
+        self.entryrif_prov.place(x=65, y=120)
+        self.entryrif_prov.configure(style='Entry.TEntry')
+        self.entryrif_prov.insert(0, self.svrif_prov.get())
 
         #Nombre Fiscal
         self.lblnom_fiscal = customtkinter.CTkLabel(marco_crearproveedor, text='Nombre Fiscal', font=("Roboto", 13))
@@ -245,14 +246,42 @@ class FormProv():
         self.entrynom_fiscal.place(x=265, y=120)
         self.entrynom_fiscal.configure(style='Entry.TEntry')
 
-        #RIF
-        self.lblrif_prov = customtkinter.CTkLabel(marco_crearproveedor, text='RIF', font=("Roboto", 13))
-        self.lblrif_prov.place(x=550, y=90)
 
-        self.svrif_prov = customtkinter.StringVar()
-        self.entryrif_prov = ttk.Entry(marco_crearproveedor, style='Modern.TEntry', textvariable=self.svrif_prov)
-        self.entryrif_prov.place(x=540, y=120)
-        self.entryrif_prov.configure(style='Entry.TEntry')
+        #Tipo Persona Esto es un multi options editar despues
+        self.lbltipo_per = customtkinter.CTkLabel(marco_crearproveedor, text='Tipo de Persona', font=("Roboto", 13))
+        self.lbltipo_per.place(x=550, y=90)
+        
+        self.svtipo_per = customtkinter.StringVar(value="Seleccione el Tipo")
+
+        self.multioption = customtkinter.CTkOptionMenu(marco_crearproveedor, values=["V(NATURAL)", "J(JURIDICO)", "E(EXTRANJERO)", "G(GUBERNAMENTAL)"], width=140, variable=self.svtipo_per)
+        self.multioption.place(x=530, y=115)
+        
+
+        def update_rif_prefix(*args):
+            selected_option = self.svtipo_per.get()
+            rif_value = self.svrif_prov.get()
+            prefix = ""
+
+            if selected_option == "V(NATURAL)":
+                prefix = "V-"
+            elif selected_option == "E(EXTRANJERO)":
+                prefix = "E-"
+            elif selected_option == "J(JURIDICO)":
+                prefix = "J-"
+            elif selected_option == "G(GUBERNAMENTAL)":
+                prefix = "G-"
+
+            if rif_value.startswith("V-"):
+                rif_value = rif_value[2:]
+            elif rif_value.startswith("E-"):
+                rif_value = rif_value[2:]
+            elif rif_value.startswith("J-"):
+                rif_value = rif_value[2:]
+            elif rif_value.startswith("G-"):
+                rif_value = rif_value[2:]
+
+            self.svrif_prov.set(f"{prefix}{rif_value}")
+        self.svtipo_per.trace("w", update_rif_prefix)
 
         #NIT
         self.lblnit_prov = customtkinter.CTkLabel(marco_crearproveedor, text='NIT', font=("Roboto", 13))
@@ -262,33 +291,24 @@ class FormProv():
         self.entrynit_prov = ttk.Entry(marco_crearproveedor, style='Modern.TEntry', textvariable=self.svnit_prov)
         self.entrynit_prov.place(x=65, y=210)
         self.entrynit_prov.configure(style='Entry.TEntry')
-
-        #Tipo Persona Esto es un multi options editar despues
-        self.lbltipo_per = customtkinter.CTkLabel(marco_crearproveedor, text='Tipo de Persona', font=("Roboto", 13))
-        self.lbltipo_per.place(x=275, y=180)
-
-        self.svtipo_per = customtkinter.StringVar(value="Seleccione el Tipo")
-        self.multioption = customtkinter.CTkOptionMenu(marco_crearproveedor, values=["Natural Residenciada", "Juridica Domiciliada", "Natural No Residenciada", "Juridica No Domiciliada"], width=217, variable=self.svtipo_per)
-        self.multioption.place(x=265, y=210)
-
+        
         #Email
-        #NIT
         self.lblemail_prov = customtkinter.CTkLabel(marco_crearproveedor, text='Email', font=("Roboto", 13))
-        self.lblemail_prov.place(x=550, y=180)
+        self.lblemail_prov.place(x=275, y=180)
 
         self.svemail_prov = customtkinter.StringVar()
-        self.entryemail_prov = ttk.Entry(marco_crearproveedor, style='Modern.TEntry', textvariable=self.svemail_prov)
-        self.entryemail_prov.place(x=540, y=210)
+        self.entryemail_prov = ttk.Entry(marco_crearproveedor, style='Modern.TEntry', textvariable=self.svemail_prov, width=35)
+        self.entryemail_prov.place(x=265, y=210)
         self.entryemail_prov.configure(style='Entry.TEntry')
 
         #Telefono
         self.lbltelf_prov = customtkinter.CTkLabel(marco_crearproveedor, text='Telefono', font=("Roboto", 13))
-        self.lbltelf_prov.place(x=75, y=270)
+        self.lbltelf_prov.place(x=550, y=180)
 
         self.svtelf_prov = customtkinter.StringVar()
         self.entrytelf_prov = ttk.Entry(marco_crearproveedor, style='Modern.TEntry', textvariable=self.svtelf_prov)
-        self.entrytelf_prov.place(x=65, y=300)
-        self.entrytelf_prov.configure(style='Entry.TEntry')
+        self.entrytelf_prov.place(x=540, y=210)
+        self.entrytelf_prov.configure(style='Entry.TEntry')        
 
         ##Textbox para dir_fiscal
         def validate_text(text):
@@ -312,10 +332,10 @@ class FormProv():
                 self.dir_fiscal.insert("1.0", text)
         
         self.lbldir_fiscal = customtkinter.CTkLabel(marco_crearproveedor, text='Direccion Fiscal', font=("Roboto", 13))
-        self.lbldir_fiscal.place(x=275, y=270)
+        self.lbldir_fiscal.place(x=75, y=270)
 
-        self.dir_fiscal = customtkinter.CTkTextbox(marco_crearproveedor, width=212, height=55, border_width=1)
-        self.dir_fiscal.place(x=265, y=300)
+        self.dir_fiscal = customtkinter.CTkTextbox(marco_crearproveedor, width=410, height=55, border_width=1)
+        self.dir_fiscal.place(x=65, y=300)
 
         character_count_label = customtkinter.CTkLabel(marco_crearproveedor, text="")
         character_count_label.place(x=440, y=360)
@@ -419,13 +439,13 @@ class FormProv():
     def GuardarProveedor(self):
         try:
             # Otener el contenido del Entry
-            buscarCorrelativo('proveedor')
+            codprov = buscarCorrelativo('proveedor')
             fecha_actual = datetime.datetime.now()
             date_created = fecha_actual.strftime("%d/%m/%Y")
             date_update = fecha_actual.strftime("%d/%m/%y %H:%M:%S")
 
             proveedor = Proveedores(
-                self.svcodProv.get(),
+                codprov,
                 self.svnom_fiscal.get(),
                 self.svrif_prov.get(),
                 self.svnit_prov.get(),
