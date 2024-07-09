@@ -314,9 +314,30 @@ class FormularioMaestroDesign(customtkinter.CTk):
     def submenu_almacen(self, permisos):
         if 'PROV1001' in permisos:
             self.buttonProveedores.pack_forget()
-
+        if 'PROV1002' in permisos:
+            if hasattr(self, "buttonListaProv"):
+                self.buttonListaProv.pack_forget()
+                del self.buttonListaProv
         if 'CONF1001' in permisos:
             self.buttonSettings.pack_forget()
+        if 'CONF1002' in permisos:
+            if hasattr(self, "buttonAdjustUsers"):
+                self.buttonAdjustUsers.pack_forget()
+                del self.buttonAdjustUsers
+        if 'CONF1003' in permisos:
+            if hasattr(self, "buttonAdjustProfiles"):
+                self.buttonAdjustProfiles.pack_forget()
+                del self.buttonAdjustProfiles
+        if 'CONF1004' in permisos:
+            if hasattr(self, "buttonModulos"):
+                self.buttonModulos.pack_forget()
+                del self.buttonModulos
+        if 'CONF1005' in permisos:
+            if hasattr(self, "buttonPermisos"):
+                self.buttonPermisos.pack_forget()
+                del self.buttonPermisos
+
+        
 
         if 'ALMA1002' in permisos:
             if hasattr(self, "buttonDepositos"):
@@ -343,7 +364,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonSubGrupos.pack_forget()
                 del self.buttonSubGrupos
             else:
-                self.buttonSubGrupos = tk.Button(self.menu_lateral, text="Depositos", font=("Roboto", 12), image=self.depositos_icon, highlightthickness=20, width=ANCHO_MENU,
+                self.buttonSubGrupos = tk.Button(self.menu_lateral, text="SubGrupos de \nArticulos", font=("Roboto", 12), image=self.depositos_icon, highlightthickness=20, width=ANCHO_MENU,
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
                 self.buttonSubGrupos.pack()
                 self.binding_hover_submenu_event(self.buttonSubGrupos)
@@ -355,11 +376,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
     def submenu_proveedores(self, permisos):
         #VERIFICAR LOS PERMISOS Y QUE BOTONES ESTAN DISPONIBLES  
-        if 'CONF1001' in permisos:
-            self.buttonSettings.pack_forget()
-        #LIMPIEZA DE ALMACEN Y SUBMENU
-        if 'ALMA1001' in permisos:
-            self.buttonAlmacen.pack_forget()
+        #LIMPIEZA DE ALMACEN Y SUBMENU      
         if 'ALMA1002' in permisos:
             if hasattr(self, "buttonDepositos"):
                 self.buttonDepositos.pack_forget()
@@ -396,16 +413,6 @@ class FormularioMaestroDesign(customtkinter.CTk):
         if 'ALMA1001' in permisos:
             self.buttonAlmacen.pack()
         
-        if 'PROV1001' in permisos:
-            if hasattr(self, "buttonProveedores"):
-                self.buttonProveedores.pack_forget()
-                del self.buttonProveedores
-            else:
-                self.buttonProveedores = tk.Button(self.menu_lateral, text="Listado de\n Proveedores", font=("Roboto", 12), image=self.prov_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_proveedores(permisos))
-                self.buttonProveedores.pack()
-                self.binding_hover_submenu_event(self.buttonProveedores)
-                
         if 'PROV1002' in permisos:
             if hasattr(self, "buttonListaProv"):
                 self.buttonListaProv.pack_forget()
@@ -423,61 +430,25 @@ class FormularioMaestroDesign(customtkinter.CTk):
             pass
      
     def submenu_config(self, permisos):
-        if 'PROV1001' in permisos:
-            if hasattr(self, "buttonProveedores"):
-                self.buttonProveedores.pack_forget()
-                del self.buttonProveedores
-            else:
-                self.buttonProveedores = tk.Button(self.menu_lateral, text="Listado de\n Proveedores", font=("Roboto", 12), image=self.prov_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_proveedores(permisos))
-                self.buttonProveedores.pack()
-                self.binding_hover_submenu_event(self.buttonProveedores)
-        if 'PROV1002' in permisos:
-            if hasattr(self, "buttonListaProv"):
-                self.buttonListaProv.pack_forget()
-                del self.buttonListaProv
-            else:
-                self.buttonListaProv = tk.Button(self.menu_lateral, text="Listado de\n Proveedores", font=("Roboto", 12), image=self.listProv_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_proveedores(permisos))
-                self.buttonListaProv.pack()
-                self.binding_hover_submenu_event(self.buttonListaProv)
-
-        if 'ALMA1001' in permisos:
-            if hasattr(self, "buttonAlmacen"):
-                self.buttonAlmacen.pack_forget()
-                del self.buttonAlmacen
-        else:
-            pass
+        #lIMPIEZA DE SUBMENU ALMACEN
         if 'ALMA1002' in permisos:
             if hasattr(self, "buttonDepositos"):
                 self.buttonDepositos.pack_forget()
                 del self.buttonDepositos
-        else:
-            self.buttonDepositos = tk.Button(self.menu_lateral, text="Depositos", font=("Roboto", 12), image=self.depositos_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
-            self.buttonDepositos.pack()
-            self.binding_hover_submenu_event(self.buttonDepositos)
-
         if 'ALMA1003' in permisos:
             if hasattr(self, "buttonGrupos"):
                 self.buttonGrupos.pack_forget()
                 del self.buttonGrupos
-        else:
-            self.buttonGrupos = tk.Button(self.menu_lateral, text="Grupos de \nArticulos", font=("Roboto", 12), image=self.depositos_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
-            self.buttonGrupos.pack()
-            self.binding_hover_submenu_event(self.buttonGrupos)
-
         if 'ALMA1004' in permisos:
             if hasattr(self, "buttonSubGrupos"):
                 self.buttonSubGrupos.pack_forget()
                 del self.buttonSubGrupos
-        else:
-            self.buttonSubGrupos = tk.Button(self.menu_lateral, text="Depositos", font=("Roboto", 12), image=self.depositos_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
-            self.buttonSubGrupos.pack()
-            self.binding_hover_submenu_event(self.buttonSubGrupos)
-
+        #LIMPIEZA SUBMENU PROVEEDORES
+        if 'PROV1002' in permisos:
+            if hasattr(self, "buttonListaProv"):
+                self.buttonListaProv.pack_forget()
+                del self.buttonListaProv
+        #INICIALIZACION DE SUBMENU DE AJUSTES
         if 'CONF1002' in permisos:
             if hasattr(self, "buttonAdjustUsers"):
                 self.buttonAdjustUsers.pack_forget()
@@ -519,12 +490,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonPermisos.pack()
             
                 self.binding_hover_submenu_event(self.buttonPermisos)
-
-
-    
-        
-
-        
+   
     def obtener_idrol(self, idrol):
         conexion = ConexionDB()
         sql = f"SELECT codpermiso FROM asigperm WHERE idrol = '{idrol}'"

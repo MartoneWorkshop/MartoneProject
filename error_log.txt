@@ -723,3 +723,21 @@ Error en GuardarProveedor, form_proveedores: Proveedores.__init__() missing 1 re
 Error en GuardarProveedor, form_proveedores: CTkTextbox.get() missing 1 required positional argument: 'index1'
 Error en SaveProv, ProvDao: near "INICIO12313212312313232123123112312123132123123132ads123ads132sad132sad132sda132sad132asd321das123asd123dsa123asd321321ASD3211111111111FINAL": syntax error
 Error en SaveProv, ProvDao: near "INICIO12313212312313232123123112312123132123123132ads123ads132sad132sad132sda132sad132asd321das123asd123dsa123asd321321ASD3211111111111FINAL": syntax error
+Error en ActualizarPermisos, form_Perfiles: 'FormPerfiles' object has no attribute 'controles_menu_lateral'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\marto\OneDrive\Documents\Proyectos\Modern-GUI\formularios\form_perfiles.py", line 380, in ActualizarPermisos
+    self.controles_menu_lateral(permisos)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPerfiles' object has no attribute 'controles_menu_lateral'
+
+Error en ActualizarPermisos, form_Perfiles: 'FormPerfiles' object has no attribute 'controles_menu_lateral'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\marto\OneDrive\Documents\Proyectos\Modern-GUI\formularios\form_perfiles.py", line 380, in ActualizarPermisos
+    self.controles_menu_lateral(permisos)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPerfiles' object has no attribute 'controles_menu_lateral'
+
+Error en ActualizarPermisos, form_Perfiles: 'FormPerfiles' object has no attribute 'controles_menu_lateral'Detalles del error: Traceback (most recent call last):
+  File "C:\Users\marto\OneDrive\Documents\Proyectos\Modern-GUI\formularios\form_perfiles.py", line 380, in ActualizarPermisos
+    self.controles_menu_lateral(permisos)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'FormPerfiles' object has no attribute 'controles_menu_lateral'
+

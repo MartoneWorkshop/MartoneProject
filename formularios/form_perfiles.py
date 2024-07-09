@@ -362,7 +362,7 @@ class FormPerfiles():
         try:
             permisos_seleccionados = [permiso['codperm'] for interruptor, permiso in interruptores.items() if permiso.get('codperm') and interruptor.get()]
             return permisos_seleccionados
-    
+
         except Exception as e:
             error_advice()
             mensaje = f'Error en guardarPermisosSeleccionados, form_Perfiles: {str(e)}'
@@ -376,8 +376,6 @@ class FormPerfiles():
             LimpiarPermisos(perfil_id)
             
             GuardarNuevosPermisos(perfil_id, permisos_seleccionados)
-            #permisos_seleccionados = guardarPermisosSeleccionados()
-            #GuardarNuevosPermisos(perfil_id, permisos_seleccionados)
             self.topModperm.destroy()
         except Exception as e:
             error_advice()
