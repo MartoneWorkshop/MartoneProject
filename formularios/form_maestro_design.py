@@ -309,102 +309,15 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.controles_menu_lateral(permisos)
         else:
             return None
-    
-    def submenu_proveedores(self, permisos):
-        #VERIFICAR LOS PERMISOS Y QUE BOTONES ESTAN DISPONIBLES  
-        if 'REP1001' in permisos:
-            self.buttonInformes.pack_forget()
-        if 'CONF1001' in permisos:
-            self.buttonSettings.pack_forget()
-        if 'ALMA1001' in permisos:
-            if hasattr(self, "buttonAlmacen"):
-                self.buttonAlmacen.pack_forget()
-                del self.buttonAlmacen
-            else:
-                self.buttonAlmacen = tk.Button(self.menu_lateral, text="Almacen",  font=("Roboto", 16), image=self.depositos_icon, highlightthickness=20, width=ANCHO_MENU,
-                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_almacen(permisos))
-                self.buttonAlmacen.pack()
-                self.binding_hover_event(self.buttonAlmacen)
-        if 'ALMA1002' in permisos:
-            if hasattr(self, "buttonDepositos"):
-                self.buttonDepositos.pack_forget()
-                del self.buttonDepositos
-        if 'ALMA1003' in permisos:
-            if hasattr(self, "buttonGrupos"):
-                self.buttonGrupos.pack_forget()
-                del self.buttonGrupos
-        if 'ALMA1004' in permisos:
-            if hasattr(self, "buttonSubGrupos"):
-                self.buttonSubGrupos.pack_forget()
-                del self.buttonSubGrupos
-        if 'CONF1001' in permisos:
-            if hasattr(self, "buttonSettings"):
-                self.buttonSettings.pack_forget()
-                del self.buttonSettings
-        if 'CONF1002' in permisos:
-            if hasattr(self, "buttonAdjustUsers"):
-                self.buttonAdjustUsers.pack_forget()
-                del self.buttonAdjustUsers
-
-        if 'CONF1003' in permisos:
-            if hasattr(self, "buttonAdjustProfiles"):
-                self.buttonAdjustProfiles.pack_forget()
-                del self.buttonAdjustProfiles
-
-        if 'CONF1004' in permisos:
-            if hasattr(self, "buttonModulos"):
-                self.buttonModulos.pack_forget()
-                del self.buttonModulos
-
-        if 'CONF1005' in permisos:
-            if hasattr(self, "buttonPermisos"):
-                self.buttonPermisos.pack_forget()
-                del self.buttonPermisos
-
-        if 'PROV1001' in permisos:
-            if hasattr(self, "buttonProveedores"):
-                self.buttonProveedores.pack_forget()
-                del self.buttonProveedores
-            else:
-                self.buttonProveedores = tk.Button(self.menu_lateral, text="Listado de\n Proveedores", font=("Roboto", 12), image=self.prov_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_proveedores(permisos))
-                self.buttonProveedores.pack()
-                self.binding_hover_submenu_event(self.buttonProveedores)
-                
-        if 'PROV1002' in permisos:
-            if hasattr(self, "buttonListaProv"):
-                self.buttonListaProv.pack_forget()
-                del self.buttonListaProv
-            else:
-                self.buttonListaProv = tk.Button(self.menu_lateral, text="Listado de\n Proveedores", font=("Roboto", 12), image=self.listProv_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_proveedores(permisos))
-                self.buttonListaProv.pack()
-                self.binding_hover_submenu_event(self.buttonListaProv)
-        if 'ALMA1001' in permisos:
-            self.buttonAlmacen.pack()
-        else:
-            pass
-        if 'REP1001' in permisos:
-            self.buttonInformes.pack()
-        else:
-            pass
         
- 
+
     def submenu_almacen(self, permisos):
-        
         if 'PROV1001' in permisos:
             self.buttonProveedores.pack_forget()
-            del self.buttonProveedores
 
         if 'CONF1001' in permisos:
             self.buttonSettings.pack_forget()
-            del self.buttonSettings
-        else:
-            self.buttonProveedores = tk.Button(self.menu_lateral, text="Listado de\n Proveedores", font=("Roboto", 12), image=self.prov_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_proveedores(permisos))
-            self.buttonProveedores.pack()
-            self.binding_hover_submenu_event(self.buttonProveedores)
-            
+
         if 'ALMA1002' in permisos:
             if hasattr(self, "buttonDepositos"):
                 self.buttonDepositos.pack_forget()
@@ -435,9 +348,80 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonSubGrupos.pack()
                 self.binding_hover_submenu_event(self.buttonSubGrupos)
 
+        if 'PROV1001' in permisos:
+            self.buttonProveedores.pack()
         if 'CONF1001' in permisos:
             self.buttonSettings.pack()
+
+    def submenu_proveedores(self, permisos):
+        #VERIFICAR LOS PERMISOS Y QUE BOTONES ESTAN DISPONIBLES  
+        if 'CONF1001' in permisos:
+            self.buttonSettings.pack_forget()
+        #LIMPIEZA DE ALMACEN Y SUBMENU
+        if 'ALMA1001' in permisos:
+            self.buttonAlmacen.pack_forget()
+        if 'ALMA1002' in permisos:
+            if hasattr(self, "buttonDepositos"):
+                self.buttonDepositos.pack_forget()
+                del self.buttonDepositos
+        if 'ALMA1003' in permisos:
+            if hasattr(self, "buttonGrupos"):
+                self.buttonGrupos.pack_forget()
+                del self.buttonGrupos
+        if 'ALMA1004' in permisos:
+            if hasattr(self, "buttonSubGrupos"):
+                self.buttonSubGrupos.pack_forget()
+                del self.buttonSubGrupos
+        #LIMPIEZA DE AJUSTES Y SUBMENU
+        if 'CONF1001' in permisos:
+            if hasattr(self, "buttonSettings"):
+                self.buttonSettings.pack_forget()
+        if 'CONF1002' in permisos:
+            if hasattr(self, "buttonAdjustUsers"):
+                self.buttonAdjustUsers.pack_forget()
+                del self.buttonAdjustUsers
+        if 'CONF1003' in permisos:
+            if hasattr(self, "buttonAdjustProfiles"):
+                self.buttonAdjustProfiles.pack_forget()
+                del self.buttonAdjustProfiles
+        if 'CONF1004' in permisos:
+            if hasattr(self, "buttonModulos"):
+                self.buttonModulos.pack_forget()
+                del self.buttonModulos
+        if 'CONF1005' in permisos:
+            if hasattr(self, "buttonPermisos"):
+                self.buttonPermisos.pack_forget()
+                del self.buttonPermisos
+        #INICIALIZACION DE PROVEEDORES
+        if 'ALMA1001' in permisos:
+            self.buttonAlmacen.pack()
         
+        if 'PROV1001' in permisos:
+            if hasattr(self, "buttonProveedores"):
+                self.buttonProveedores.pack_forget()
+                del self.buttonProveedores
+            else:
+                self.buttonProveedores = tk.Button(self.menu_lateral, text="Listado de\n Proveedores", font=("Roboto", 12), image=self.prov_icon, highlightthickness=20, width=ANCHO_MENU,
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_proveedores(permisos))
+                self.buttonProveedores.pack()
+                self.binding_hover_submenu_event(self.buttonProveedores)
+                
+        if 'PROV1002' in permisos:
+            if hasattr(self, "buttonListaProv"):
+                self.buttonListaProv.pack_forget()
+                del self.buttonListaProv
+            else:
+                self.buttonListaProv = tk.Button(self.menu_lateral, text="Listado de\n Proveedores", font=("Roboto", 12), image=self.listProv_icon, highlightthickness=20, width=ANCHO_MENU,
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_proveedores(permisos))
+                self.buttonListaProv.pack()
+                self.binding_hover_submenu_event(self.buttonListaProv)
+        
+            pass
+        if 'CONF1001' in permisos:
+            self.buttonSettings.pack()
+        else:
+            pass
+     
     def submenu_config(self, permisos):
         if 'PROV1001' in permisos:
             if hasattr(self, "buttonProveedores"):
@@ -536,6 +520,9 @@ class FormularioMaestroDesign(customtkinter.CTk):
             
                 self.binding_hover_submenu_event(self.buttonPermisos)
 
+
+    
+        
 
         
     def obtener_idrol(self, idrol):
