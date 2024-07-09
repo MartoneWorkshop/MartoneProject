@@ -51,7 +51,7 @@ class FormPermisos():
 
         set_opacity(self.marco_permisos, 0.8)
         ###################################################### BUSCADOR DE LA TABLA #################################################
-        search_image = Image.open("imagenes/search.png")
+        search_image = Image.open("imagenes/icons/search.png")
         search_resized = search_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         self.search_icon = ImageTk.PhotoImage(search_resized)
         self.lblsearch_permisos = customtkinter.CTkLabel(self.marco_permisos, text='', image=self.search_icon, font=("Roboto", 14))

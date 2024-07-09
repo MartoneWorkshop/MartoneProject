@@ -11,13 +11,14 @@ from customtkinter import *
 from ctypes import windll
 from functions.conexion import ConexionDB
 from tkinter import messagebox
-from formularios.form_registros_design import FormularioRegistrosDesign
+
 from formularios.form_home_design import FormularioHomeDesign
 from formularios.form_users import FormUsers
 from formularios.form_modulos import FormModulos
 from formularios.form_permisos import FormPermisos
 from formularios.form_perfiles import FormPerfiles
 from formularios.form_proveedores import FormProv
+from formularios.form_adjustdepot import FormAdjustDepot
 
 
 class FormularioMaestroDesign(customtkinter.CTk):
@@ -42,7 +43,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
         #self.geometry(f"{self.w}x{self.h}")
         self.resizable(False, False)
-        self.iconbitmap("./imagenes/Logo_Ico.ico")
+        self.iconbitmap("./imagenes/icons/logo_ico.ico")
         #util_ventana.centrar_ventana(self, self.w, self.h)
     def paneles(self):        
         # Crear paneles: barra superior, menú lateral y cuerpo principal
@@ -57,7 +58,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.cuerpo_principal.pack(side=tk.RIGHT, fill='both', expand=True)
 
     def set_window_icon(self):
-        icon_path = "imagenes/logo_ico.ico"  # Ruta del archivo de icono
+        icon_path = "imagenes/icons/logo_ico.ico"  # Ruta del archivo de icono
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("PECA-GesInv")  # Cambia "myappid" por un identificador único para tu aplicación
         self.iconbitmap(icon_path)
 
@@ -68,7 +69,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.labelTitulo = customtkinter.CTkLabel(self.barra_superior, text="Menu", font=font_awesome,padx=20, text_color="white")
         self.labelTitulo.configure(fg_color="transparent", font=("Roboto", 15), bg_color='transparent', pady=10, width=16)
         self.labelTitulo.pack(side=tk.LEFT)
-        self.menu_original_image = Image.open("imagenes/menu.png")
+        self.menu_original_image = Image.open("imagenes/icons/menu.png")
         self.menu_resized_image = self.menu_original_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         self.menu_image = ImageTk.PhotoImage(self.menu_resized_image)
         # Botón del menú lateral
@@ -77,57 +78,58 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.buttonMenuLateral.pack(side=tk.LEFT, padx=20)
         
     def controles_menu_lateral(self, permisos):
-        self.perfil = util_img.leer_imagen("./imagenes/editado.png", (100, 100))
+        self.perfil = util_img.leer_imagen("./imagenes/icons/logo.png", (100, 100))
         ## ESTO AUN NO ESTA DEFINIDO42
         self.labelPerfil = tk.Label(self.menu_lateral, image=self.perfil, bg=COLOR_MENU_LATERAL)
         self.labelPerfil.pack(side=tk.TOP, pady=15, padx=10)
         #RUTAS DE LAS IMAGENES
-        home_image = Image.open("imagenes/home.png") 
-        prov_image = Image.open("imagenes/prov.png")
-        listProv_image = Image.open("imagenes/listprov.png")
-        equipos_image = Image.open("imagenes/computer.png")
-        historia_image = Image.open("imagenes/history.png")
-        database_image = Image.open("imagenes/database.png")
-        informes_image = Image.open("imagenes/reporte.png")
-        settings_image = Image.open("imagenes/settings.png")
-        usuarios_image = Image.open("imagenes/usuarios.png")
-        adjustUser_image = Image.open("imagenes/user_adjust.png")
-        userProfiles_image = Image.open("imagenes/user_profiles.png") 
-        permises_image = Image.open("imagenes/permise.png")
-        adjustModul_image = Image.open("imagenes/module.png")
-        depositos_image = Image.open("imagenes/depositos.png")    
+        home_image = Image.open("imagenes/icons/home.png") 
+        prov_image = Image.open("imagenes/icons/prov.png")
+        listProv_image = Image.open("imagenes/icons/listprov.png")
+        #equipos_image = Image.open("imagenes/computer.png")
+        #historia_image = Image.open("imagenes/history.png")
+        #database_image = Image.open("imagenes/database.png")
+        #informes_image = Image.open("imagenes/reporte.png")
+        settings_image = Image.open("imagenes/icons/settings.png")
+        adjustdepot_image = Image.open("imagenes/icons/adjustdepot.png")
+        adjustUser_image = Image.open("imagenes/icons/user_adjust.png")
+        userProfiles_image = Image.open("imagenes/icons/user_profiles.png") 
+        permises_image = Image.open("imagenes/icons/permise.png")
+        adjustModul_image = Image.open("imagenes/icons/module.png")
+        almacen_image = Image.open("imagenes/icons/almacen.png")
+
 
         #IMAGENES RENDERIZADAS
         home_resized = home_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         prov_resized = prov_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         listProv_resized = listProv_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        equipos_resized = equipos_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        historia_resized = historia_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        database_resized = database_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        informes_resized = informes_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        #equipos_resized = equipos_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        #historia_resized = historia_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        #database_resized = database_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        #informes_resized = informes_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         settings_resized = settings_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        usuarios_resized = usuarios_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         adjustUser_resized = adjustUser_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         userProfiles_resized = userProfiles_image.resize((WIDTH_LOGO, HEIGHT_LOGO)) 
         permises_resized = permises_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         adjustModul_resized = adjustModul_image.resize((WIDTH_LOGO, HEIGHT_LOGO)) 
-        depositos_resized = depositos_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        
+        almacen_resized = almacen_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        adjustdepot_resized = adjustdepot_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+
         #IMAGENES FINALES
         self.home_icon = ImageTk.PhotoImage(home_resized)
         self.prov_icon = ImageTk.PhotoImage(prov_resized)
         self.listProv_icon = ImageTk.PhotoImage(listProv_resized)
-        self.equipos_icon = ImageTk. PhotoImage(equipos_resized)
-        self.historia_icon = ImageTk.PhotoImage(historia_resized)
-        self.database_icon = ImageTk.PhotoImage(database_resized)
-        self.informes_icon = ImageTk.PhotoImage(informes_resized)
+        #self.equipos_icon = ImageTk. PhotoImage(equipos_resized)
+        #self.historia_icon = ImageTk.PhotoImage(historia_resized)
+        #self.database_icon = ImageTk.PhotoImage(database_resized)
+        #self.informes_icon = ImageTk.PhotoImage(informes_resized)
         self.settings_icon = ImageTk.PhotoImage(settings_resized)
-        self.usuarios_icon = ImageTk.PhotoImage(usuarios_resized)
+        self.adjustdepot_icon = ImageTk.PhotoImage(adjustdepot_resized)
         self.adjustUser_icon = ImageTk.PhotoImage(adjustUser_resized)
         self.userProfiles_icon = ImageTk.PhotoImage(userProfiles_resized)
         self.permises_icon = ImageTk.PhotoImage(permises_resized)
         self.adjustModul_icon = ImageTk.PhotoImage(adjustModul_resized)
-        self.depositos_icon = ImageTk.PhotoImage(depositos_resized)
+        self.almacen_icon = ImageTk.PhotoImage(almacen_resized)
         
         #BOTONES DEL MENU
         #Home1001 visualizar modulo home
@@ -139,7 +141,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         else:
             pass
         if 'ALMA1001' in permisos:
-            self.buttonAlmacen = tk.Button(self.menu_lateral, text="Almacen",  font=("Roboto", 16), image=self.depositos_icon, highlightthickness=20, width=ANCHO_MENU,
+            self.buttonAlmacen = tk.Button(self.menu_lateral, text="Almacen",  font=("Roboto", 16), image=self.almacen_icon, highlightthickness=20, width=ANCHO_MENU,
                 height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_almacen(permisos))
             self.buttonAlmacen.pack()
             self.binding_hover_event(self.buttonAlmacen)
@@ -154,7 +156,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
             pass
 
         if 'REP1000' in permisos:
-            self.buttonInformes = tk.Button(self.menu_lateral, text="Informes",  font=("Roboto", 16),image=self.informes_icon, highlightthickness=20, width=ANCHO_MENU,
+            self.buttonInformes = tk.Button(self.menu_lateral, text="Informes",  font=("Roboto", 16), highlightthickness=20, width=ANCHO_MENU,
                 height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10)        
             self.buttonInformes.pack()
             self.binding_hover_event(self.buttonInformes)
@@ -248,16 +250,12 @@ class FormularioMaestroDesign(customtkinter.CTk):
         marco_login.place(relx=0.5, rely=0.5, anchor="center")
 
         set_opacity(marco_login, 0.9)
-        logo_image = Image.open("imagenes/logo_completo.png")
-        logo_resized = logo_image.resize((205, 55))
-        self.logo_final = ImageTk.PhotoImage(logo_resized)
-
         #Iconos
-        user_ico = Image.open("imagenes/user.png")
+        user_ico = Image.open("imagenes/icons/user.png")
         user_ico = user_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
         user_img = ImageTk.PhotoImage(user_ico)
 
-        pass_ico = Image.open("imagenes/pass.png")
+        pass_ico = Image.open("imagenes/icons/pass.png")
         pass_ico = pass_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
         pass_img = ImageTk.PhotoImage(pass_ico)
 
@@ -312,12 +310,14 @@ class FormularioMaestroDesign(customtkinter.CTk):
         
 
     def submenu_almacen(self, permisos):
+        #LIMPIEZA PROVEEDORES
         if 'PROV1001' in permisos:
             self.buttonProveedores.pack_forget()
         if 'PROV1002' in permisos:
             if hasattr(self, "buttonListaProv"):
                 self.buttonListaProv.pack_forget()
                 del self.buttonListaProv
+        #LIMPIEZA EN AJUSTES
         if 'CONF1001' in permisos:
             self.buttonSettings.pack_forget()
         if 'CONF1002' in permisos:
@@ -337,15 +337,14 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonPermisos.pack_forget()
                 del self.buttonPermisos
 
-        
-
-        if 'ALMA1002' in permisos:
+        #INICIALIZACION SUBMENU ALMACEN
+        if 'ALMA1002' in permisos:  
             if hasattr(self, "buttonDepositos"):
                 self.buttonDepositos.pack_forget()
                 del self.buttonDepositos
             else:
-                self.buttonDepositos = tk.Button(self.menu_lateral, text="Depositos", font=("Roboto", 12), image=self.depositos_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
+                self.buttonDepositos = tk.Button(self.menu_lateral, text="Ajuste en\nDepositos", font=("Roboto", 12), image=self.adjustdepot_icon, highlightthickness=20, width=ANCHO_MENU,
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_adjustDepot(permisos))
                 self.buttonDepositos.pack()
                 self.binding_hover_submenu_event(self.buttonDepositos)
 
@@ -354,7 +353,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonGrupos.pack_forget()
                 del self.buttonGrupos
             else:
-                self.buttonGrupos = tk.Button(self.menu_lateral, text="Grupos de \nArticulos", font=("Roboto", 12), image=self.depositos_icon, highlightthickness=20, width=ANCHO_MENU,
+                self.buttonGrupos = tk.Button(self.menu_lateral, text="Grupos de \nArticulos", font=("Roboto", 12),image=self.adjustdepot_icon, highlightthickness=20, width=ANCHO_MENU,
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
                 self.buttonGrupos.pack()
                 self.binding_hover_submenu_event(self.buttonGrupos)
@@ -364,7 +363,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonSubGrupos.pack_forget()
                 del self.buttonSubGrupos
             else:
-                self.buttonSubGrupos = tk.Button(self.menu_lateral, text="SubGrupos de \nArticulos", font=("Roboto", 12), image=self.depositos_icon, highlightthickness=20, width=ANCHO_MENU,
+                self.buttonSubGrupos = tk.Button(self.menu_lateral, text="SubGrupos de \nArticulos", font=("Roboto", 12),image=self.adjustdepot_icon, highlightthickness=20, width=ANCHO_MENU,
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
                 self.buttonSubGrupos.pack()
                 self.binding_hover_submenu_event(self.buttonSubGrupos)
@@ -428,7 +427,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.buttonSettings.pack()
         else:
             pass
-     
+    
     def submenu_config(self, permisos):
         #lIMPIEZA DE SUBMENU ALMACEN
         if 'ALMA1002' in permisos:
@@ -490,7 +489,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonPermisos.pack()
             
                 self.binding_hover_submenu_event(self.buttonPermisos)
-   
+
     def obtener_idrol(self, idrol):
         conexion = ConexionDB()
         sql = f"SELECT codpermiso FROM asigperm WHERE idrol = '{idrol}'"
@@ -521,13 +520,13 @@ class FormularioMaestroDesign(customtkinter.CTk):
     
         return width_screen, height_screen
     
-    def abrir_registros_clientes(self):
-        self.limpiar_panel(self.cuerpo_principal)
-        width_screen, height_screen = self.check_size()
-        if width_screen > 1440 and height_screen > 900:
-            FormularioRegistrosDesign(self.cuerpo_principal, width_screen, height_screen).call_resize(width_screen, height_screen)
-        elif width_screen <= 1440 and height_screen <= 900:
-            FormularioRegistrosDesign(self.cuerpo_principal,width_screen, height_screen)
+    #def abrir_registros_clientes(self):
+    #    self.limpiar_panel(self.cuerpo_principal)
+    #    width_screen, height_screen = self.check_size()
+    #    if width_screen > 1440 and height_screen > 900:
+    #        FormularioRegistrosDesign(self.cuerpo_principal, width_screen, height_screen).call_resize(width_screen, height_screen)
+    #    elif width_screen <= 1440 and height_screen <= 900:
+    #        FormularioRegistrosDesign(self.cuerpo_principal,width_screen, height_screen)
 
     def abrir_usuarios(self, permisos):
         self.limpiar_panel(self.cuerpo_principal)
@@ -551,7 +550,10 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
     def abrir_adjustProfile(self, permisos):   
         self.limpiar_panel(self.cuerpo_principal)
-        FormPerfiles(self.cuerpo_principal, permisos) 
+        FormPerfiles(self.cuerpo_principal, permisos)
+    def abrir_adjustDepot(self, permisos):   
+        self.limpiar_panel(self.cuerpo_principal)
+        FormAdjustDepot(self.cuerpo_principal, permisos)  
         
     def limpiar_panel(self, panel):
     # Función para limpiar el contenido del panel
