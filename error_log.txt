@@ -741,3 +741,29 @@ Error en ActualizarPermisos, form_Perfiles: 'FormPerfiles' object has no attribu
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AttributeError: 'FormPerfiles' object has no attribute 'controles_menu_lateral'
 
+Error en EditDepot, AdjustDepotsDao: near "', date_update = '": syntax error
+Error en EditDepot, AdjustDepotsDao: near "', date_update = '": syntax error
+Error en InformacionDeposito, AdjustDepotsDao: no such column: deposito_id
+Error en InformacionDeposito, AdjustDepotsDao: no such column: deposito_id
+Error en InformacionDeposito, AdjustDepotsDao: no such column: deposito_id
+Error en InformacionDeposito, AdjustDepotsDao: no such column: deposito_id
+Error en InformacionDeposito, AdjustDepotsDao: no such column: deposito_id
+Error en InformacionDeposito, AdjustDepotsDao: no such column: deposito_id
+Error en InformacionGrupo, AdjustDepotsDao: near "1": syntax error
+Error en InformacionGrupo, AdjustDepotsDao: near "2": syntax error
+Error en InformacionGrupo, AdjustDepotsDao: near "3": syntax error
+Error en InformacionGrupo, AdjustDepotsDao: near "2": syntax error
+Error en InformacionGrupo, AdjustDepotsDao: near "1": syntax error
+Error en InformacionDeposito, AdjustDepotsDao: no such column: Principales
+Error en InformacionDeposito, AdjustDepotsDao: no such column: Principales
+Error en InformacionDeposito, AdjustDepotsDao: no such column: Principales
+Error en InformacionGrupo, AdjustDepotsDao: incomplete input
+Error en InformacionGrupo, AdjustDepotsDao: incomplete input
+Error en InformacionGrupo, AdjustDepotsDao: incomplete input
+Error en InformacionGrupo, AdjustDepotsDao: incomplete input
+Error en InformacionGrupo, AdjustDepotsDao: incomplete input
+Error en InformacionGrupo, AdjustDepotsDao: incomplete input
+Error en InformacionGrupo, AdjustDepotsDao: incomplete input
+Error en InformacionGrupo, AdjustDepotsDao: incomplete input
+Error en InformacionGrupo, AdjustDepotsDao: incomplete input
+Error en InformacionGrupo, AdjustDepotsDao: incomplete input

@@ -339,7 +339,8 @@ class FormUsers():
         try:
             # Otener el contenido del Entry
             coduser = buscarCorrelativo('usuario')
-            actualizarCorrelativo('usuario')
+            
+            coduser = coduser + 1
             fecha_actual = datetime.datetime.now()
             date_created = fecha_actual.strftime("%d/%m/%Y")
             date_update = fecha_actual.strftime("%d/%m/%y %H:%M:%S")
@@ -360,6 +361,7 @@ class FormUsers():
             )
             if self.id is None:
                 SaveUser(usuario)
+                actualizarCorrelativo('usuario')
                 self.topCreate.destroy()
             else:
                 EditUser(usuario, self.id)

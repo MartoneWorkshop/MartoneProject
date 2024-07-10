@@ -541,6 +541,8 @@ class FormProv():
         try:
             # Otener el contenido del Entry
             codprov = buscarCorrelativo('proveedor')
+            actualizarCorrelativo('proveedor')
+            codprov = codprov + 1
             fecha_actual = datetime.datetime.now()
             date_created = fecha_actual.strftime("%d/%m/%Y")
             date_update = fecha_actual.strftime("%d/%m/%y %H:%M:%S")
@@ -561,7 +563,7 @@ class FormProv():
             
             if self.id is None:
                 SaveProv(proveedor)
-                actualizarCorrelativo('proveedor')
+
                 self.topCreateProv.destroy()
             else:
                 EditProv(proveedor, self.id)
