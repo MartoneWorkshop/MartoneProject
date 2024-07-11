@@ -18,7 +18,7 @@ from formularios.form_modulos import FormModulos
 from formularios.form_permisos import FormPermisos
 from formularios.form_perfiles import FormPerfiles
 from formularios.form_proveedores import FormProv
-from formularios.form_adjustdepot import FormAdjustDepot
+from formularios.form_deposito import FormDepot
 
 
 class FormularioMaestroDesign(customtkinter.CTk):
@@ -307,8 +307,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.controles_menu_lateral(permisos)
         else:
             return None
-        
-
+    
     def submenu_almacen(self, permisos):
         #LIMPIEZA PROVEEDORES
         if 'PROV1001' in permisos:
@@ -344,7 +343,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 del self.buttonDepositos
             else:
                 self.buttonDepositos = tk.Button(self.menu_lateral, text="Ajuste en\nDepositos", font=("Roboto", 12), image=self.adjustdepot_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_adjustDepot(permisos))
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_Depots(permisos))
                 self.buttonDepositos.pack()
                 self.binding_hover_submenu_event(self.buttonDepositos)
 
@@ -531,35 +530,28 @@ class FormularioMaestroDesign(customtkinter.CTk):
     def abrir_usuarios(self, permisos):
         self.limpiar_panel(self.cuerpo_principal)
         FormUsers(self.cuerpo_principal, permisos)
-
     def abrir_proveedores(self, permisos):
         self.limpiar_panel(self.cuerpo_principal)
-        FormProv(self.cuerpo_principal, permisos)
-        
+        FormProv(self.cuerpo_principal, permisos)       
     def abrir_modulos(self, permisos):
         self.limpiar_panel(self.cuerpo_principal)
         FormModulos(self.cuerpo_principal, permisos)
-
     def abrir_permisos(self, permisos):
         self.limpiar_panel(self.cuerpo_principal)
         FormPermisos(self.cuerpo_principal, permisos)
-
     def abrir_home(self):   
         self.limpiar_panel(self.cuerpo_principal)
         FormularioHomeDesign(self.cuerpo_principal) 
-
     def abrir_adjustProfile(self, permisos):   
         self.limpiar_panel(self.cuerpo_principal)
         FormPerfiles(self.cuerpo_principal, permisos)
-    def abrir_adjustDepot(self, permisos):   
+    def abrir_Depots(self, permisos):   
         self.limpiar_panel(self.cuerpo_principal)
-        FormAdjustDepot(self.cuerpo_principal, permisos)  
-        
+        FormDepot(self.cuerpo_principal, permisos)  
     def limpiar_panel(self, panel):
     # Función para limpiar el contenido del panel
         for widget in panel.winfo_children():
             widget.destroy()
-
     def binding_hover_event(self, button):
         button.bind("<Enter>", lambda event: self.on_enter(event, button))
         button.bind("<Leave>", lambda event: self.on_leave(event, button))

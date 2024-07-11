@@ -767,3 +767,4 @@ Error en InformacionGrupo, AdjustDepotsDao: incomplete input
 Error en InformacionGrupo, AdjustDepotsDao: incomplete input
 Error en InformacionGrupo, AdjustDepotsDao: incomplete input
 Error en InformacionGrupo, AdjustDepotsDao: incomplete input
+Error en desactivarDeposito, form_adjustdepot: list indices must be integers or slices, not str
