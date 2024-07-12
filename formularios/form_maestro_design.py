@@ -19,6 +19,7 @@ from formularios.form_permisos import FormPermisos
 from formularios.form_perfiles import FormPerfiles
 from formularios.form_proveedores import FormProv
 from formularios.form_deposito import FormDepot
+from formularios.form_articulos import FormArticulos
 
 
 class FormularioMaestroDesign(customtkinter.CTk):
@@ -59,7 +60,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
     def set_window_icon(self):
         icon_path = "imagenes/icons/logo_ico.ico"  # Ruta del archivo de icono
-        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("PECA-GesInv")  # Cambia "myappid" por un identificador único para tu aplicación
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("PECA")  # Cambia "myappid" por un identificador único para tu aplicación
         self.iconbitmap(icon_path)
 
     def controles_barra_superior(self):
@@ -147,6 +148,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.binding_hover_event(self.buttonAlmacen)
         else:
             pass
+
         if 'PROV1001' in permisos:
             self.buttonProveedores = tk.Button(self.menu_lateral, text="Proveedores", font=("Roboto", 16), image=self.prov_icon, highlightthickness=20, width=ANCHO_MENU,
                 height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_proveedores(permisos))
@@ -162,7 +164,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.binding_hover_event(self.buttonInformes)
         else:
             pass
-        #Home1001 visualizar modulo configuracion
+
         if 'CONF1001' in permisos:
             self.buttonSettings = tk.Button(self.menu_lateral, text="Ajustes",  font=("Roboto", 16),image=self.settings_icon, highlightthickness=20, width=ANCHO_MENU,
                 height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_config(permisos))
@@ -335,28 +337,25 @@ class FormularioMaestroDesign(customtkinter.CTk):
             if hasattr(self, "buttonPermisos"):
                 self.buttonPermisos.pack_forget()
                 del self.buttonPermisos
-
         #INICIALIZACION SUBMENU ALMACEN
         if 'ALMA1002' in permisos:  
             if hasattr(self, "buttonDepositos"):
                 self.buttonDepositos.pack_forget()
                 del self.buttonDepositos
             else:
-                self.buttonDepositos = tk.Button(self.menu_lateral, text="Ajuste en\nDepositos", font=("Roboto", 12), image=self.adjustdepot_icon, highlightthickness=20, width=ANCHO_MENU,
+                self.buttonDepositos = tk.Button(self.menu_lateral, text="Depositos", font=("Roboto", 12), image=self.adjustdepot_icon, highlightthickness=20, width=ANCHO_MENU,
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_Depots(permisos))
                 self.buttonDepositos.pack()
                 self.binding_hover_submenu_event(self.buttonDepositos)
-
         if 'ALMA1003' in permisos:
-            if hasattr(self, "buttonGrupos"):
-                self.buttonGrupos.pack_forget()
-                del self.buttonGrupos
+            if hasattr(self, "buttonArticulos"):
+                self.buttonArticulos.pack_forget()
+                del self.buttonArticulos
             else:
-                self.buttonGrupos = tk.Button(self.menu_lateral, text="Grupos de \nArticulos", font=("Roboto", 12),image=self.adjustdepot_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
-                self.buttonGrupos.pack()
-                self.binding_hover_submenu_event(self.buttonGrupos)
-
+                self.buttonArticulos = tk.Button(self.menu_lateral, text="Articulos", font=("Roboto", 12),image=self.adjustdepot_icon, highlightthickness=20, width=ANCHO_MENU,
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_Articulos(permisos))
+                self.buttonArticulos.pack()
+                self.binding_hover_submenu_event(self.buttonArticulos)
         if 'ALMA1004' in permisos:
             if hasattr(self, "buttonSubGrupos"):
                 self.buttonSubGrupos.pack_forget()
@@ -366,7 +365,6 @@ class FormularioMaestroDesign(customtkinter.CTk):
                     bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
                 self.buttonSubGrupos.pack()
                 self.binding_hover_submenu_event(self.buttonSubGrupos)
-
         if 'PROV1001' in permisos:
             self.buttonProveedores.pack()
         if 'CONF1001' in permisos:
@@ -380,9 +378,9 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonDepositos.pack_forget()
                 del self.buttonDepositos
         if 'ALMA1003' in permisos:
-            if hasattr(self, "buttonGrupos"):
-                self.buttonGrupos.pack_forget()
-                del self.buttonGrupos
+            if hasattr(self, "buttonArticulos"):
+                self.buttonArticulos.pack_forget()
+                del self.buttonArticulos
         if 'ALMA1004' in permisos:
             if hasattr(self, "buttonSubGrupos"):
                 self.buttonSubGrupos.pack_forget()
@@ -434,9 +432,9 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonDepositos.pack_forget()
                 del self.buttonDepositos
         if 'ALMA1003' in permisos:
-            if hasattr(self, "buttonGrupos"):
-                self.buttonGrupos.pack_forget()
-                del self.buttonGrupos
+            if hasattr(self, "buttonArticulos"):
+                self.buttonArticulos.pack_forget()
+                del self.buttonArticulos
         if 'ALMA1004' in permisos:
             if hasattr(self, "buttonSubGrupos"):
                 self.buttonSubGrupos.pack_forget()
@@ -547,7 +545,10 @@ class FormularioMaestroDesign(customtkinter.CTk):
         FormPerfiles(self.cuerpo_principal, permisos)
     def abrir_Depots(self, permisos):   
         self.limpiar_panel(self.cuerpo_principal)
-        FormDepot(self.cuerpo_principal, permisos)  
+        FormDepot(self.cuerpo_principal, permisos)
+    def abrir_Articulos(self, permisos):   
+        self.limpiar_panel(self.cuerpo_principal)
+        FormArticulos(self.cuerpo_principal, permisos)   
     def limpiar_panel(self, panel):
     # Función para limpiar el contenido del panel
         for widget in panel.winfo_children():
