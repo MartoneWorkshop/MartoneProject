@@ -54,15 +54,15 @@ class FormArticulos():
 
         set_opacity(self.marco_articulos, 0.8)
         ##################################################### BOTONES DE LA TABLA ##################################################
-        self.buttonCreateArt = tk.Button(self.marco_articulos, text="Crear\n Proveedor", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+        self.buttonCreateArt = tk.Button(self.marco_articulos, text="Crear\n Articulo", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.crear_articulo(permisos))
         self.buttonCreateArt.place(x=140, y=50)
 
-        self.buttonEditArt = tk.Button(self.marco_articulos, text="Editar\n Proveedor", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+        self.buttonEditArt = tk.Button(self.marco_articulos, text="Editar\n Articulo", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.editar_Articulos(permisos, self.tablaArticulos.item(self.tablaArticulos.selection())['values']))
         self.buttonEditArt.place(x=265, y=50)
 
-        self.buttonDeleteArt = tk.Button(self.marco_articulos, text="Desactivar\n Proveedor", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+        self.buttonDeleteArt = tk.Button(self.marco_articulos, text="Desactivar\n Articulo", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                             command=lambda: self.desactivarArticulos(permisos))
         self.buttonDeleteArt.place(x=390, y=50)
 
@@ -148,11 +148,61 @@ class FormArticulos():
         self.topCreateArt.lift()
         self.topCreateArt.grab_set()
         self.topCreateArt.transient()
-        selected_item = self.tablaArticulos.focus()
-        values = self.tablaArticulos.item(selected_item)['values']
         #Datos para el proveedor
         marco_creararticulos = customtkinter.CTkFrame(self.topCreateArt, width=750,height=550, bg_color="white", fg_color="white")
         marco_creararticulos.place(relx=0.5, rely=0.5, anchor="center")
         set_opacity(marco_creararticulos, 0.8)
         self.lblinfo = customtkinter.CTkLabel(marco_creararticulos, text="Creacion de nuevo articulo", font=("Roboto",14))
-        self.lblinfo.place(relx=0.4, rely=0.05)
+        self.lblinfo.place(relx=0.4, rely=0.04)
+
+        #Codigo del Producto
+        self.lblcodProducto = customtkinter.CTkLabel(marco_creararticulos, text='Codigo Producto', font=("Roboto", 13))
+        self.lblcodProducto.place(x=85, y=50)
+
+        self.svcodProducto = customtkinter.StringVar()
+        self.entrycodProducto = ttk.Entry(marco_creararticulos, style='Modern.TEntry', textvariable=self.svcodProducto)
+        self.entrycodProducto.place(x=70, y=80)
+        self.entrycodProducto.configure(style='Entry.TEntry')
+
+        #Nombre del producto
+        self.lblnombProducto = customtkinter.CTkLabel(marco_creararticulos, text='Nombre del Producto', font=("Roboto", 13))
+        self.lblnombProducto.place(x=230, y=50)
+
+        self.svnombProducto = customtkinter.StringVar()
+        self.entrynombProducto = ttk.Entry(marco_creararticulos, style='Modern.TEntry', textvariable=self.svnombProducto)
+        self.entrynombProducto.place(x=230, y=80)
+        self.entrynombProducto.configure(style='Entry.TEntry')
+
+        #Marca del producto
+        self.lblmarcaProducto = customtkinter.CTkLabel(marco_creararticulos, text='Marca Producto', font=("Roboto", 13))
+        self.lblmarcaProducto.place(x=405, y=50)
+
+        self.svmarcaProducto = customtkinter.StringVar()
+        self.entrymarcaProducto = ttk.Entry(marco_creararticulos, style='Modern.TEntry', textvariable=self.svmarcaProducto)
+        self.entrymarcaProducto.place(x=390, y=80)
+        self.entrymarcaProducto.configure(style='Entry.TEntry')
+
+        #Modelo del producto
+        self.lblmodeloProducto = customtkinter.CTkLabel(marco_creararticulos, text='Modelo Producto', font=("Roboto", 13))
+        self.lblmodeloProducto.place(x=565, y=50)
+
+        self.svmodeloProducto = customtkinter.StringVar()
+        self.entrymodeloProducto = ttk.Entry(marco_creararticulos, style='Modern.TEntry', textvariable=self.svmodeloProducto)
+        self.entrymodeloProducto.place(x=550, y=80)
+        self.entrymodeloProducto.configure(style='Entry.TEntry')
+        ###
+        #Serial del producto
+        self.lblserialProducto = customtkinter.CTkLabel(marco_creararticulos, text='Serial Producto', font=("Roboto", 13))
+        self.lblserialProducto.place(x=85, y=120)
+
+        self.svserialProducto = customtkinter.StringVar()
+        self.entryserialProducto = ttk.Entry(marco_creararticulos, style='Modern.TEntry', textvariable=self.svserialProducto)
+        self.entryserialProducto.place(x=70, y=150)
+        self.entryserialProducto.configure(style='Entry.TEntry')
+        
+        
+
+
+
+
+
