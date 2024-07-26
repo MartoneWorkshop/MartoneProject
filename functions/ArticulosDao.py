@@ -1,6 +1,21 @@
 from .conexion import ConexionDB
 from tkinter import messagebox
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
+def ObtenerDepositos():
+        try:
+                conexion = ConexionDB()
+                sql = f"""SELECT id, name_dep FROM deposito WHERE activo = 1"""
+                conexion.ejecutar_consulta(sql)
+                resultados = conexion.obtener_resultados()
+                
+                depositos = resultados
+                conexion.cerrarConexion()
+                return depositos
+        except Exception as e:
+                error_advice()
+                mensaje = f'Error en ObtenerDepositos, ArticulosDao: {str(e)}'
+                with open('error_log.txt', 'a') as file:
+                        file.write(mensaje + '\n') 
 
 def EditArt(articulos, id):
     conexion = ConexionDB()

@@ -6,7 +6,7 @@ from PIL import Image, ImageTk
 from tkinter import ttk
 from util.util_alerts import set_opacity, save_advice, error_advice, edit_advice, delete_advice
 from util.util_functions import buscarCorrelativo, actualizarCorrelativo
-from functions.ArticulosDao import consulArt, listarArticulos
+from functions.ArticulosDao import consulArt, listarArticulos, ObtenerDepositos
 from config import  COLOR_FONDO, WIDTH_LOGO, HEIGHT_LOGO, COLOR_MENU_LATERAL, ANCHO_MENU, ALTO_MENU
 import datetime
 from tkinter import messagebox
@@ -199,7 +199,31 @@ class FormArticulos():
         self.entryserialProducto = ttk.Entry(marco_creararticulos, style='Modern.TEntry', textvariable=self.svserialProducto)
         self.entryserialProducto.place(x=70, y=150)
         self.entryserialProducto.configure(style='Entry.TEntry')
-        
+
+        #Lote del producto
+        self.lblloteProducto = customtkinter.CTkLabel(marco_creararticulos, text='Lote Producto', font=("Roboto", 13))
+        self.lblloteProducto.place(x=250, y=120)
+
+        self.svloteProducto = customtkinter.StringVar()
+        self.entryloteProducto = ttk.Entry(marco_creararticulos, style='Modern.TEntry', textvariable=self.svloteProducto)
+        self.entryloteProducto.place(x=230, y=150)
+        self.entryloteProducto.configure(style='Entry.TEntry')
+
+        #Fecha V del producto
+        self.lblfecha_vencimiento = customtkinter.CTkLabel(marco_creararticulos, text='Fecha Vencimiento', font=("Roboto", 13))
+        self.lblfecha_vencimiento.place(x=395, y=120)
+
+        self.svfecha_vencimiento = customtkinter.StringVar()
+        self.entryfecha_vencimiento = ttk.Entry(marco_creararticulos, style='Modern.TEntry', textvariable=self.svfecha_vencimiento)
+        self.entryfecha_vencimiento.place(x=390, y=150)
+        self.entryfecha_vencimiento.configure(style='Entry.TEntry')
+
+        #Seleccion de Deposito
+        depositos = ObtenerDepositos()
+        self.svdepositos_var = customtkinter.StringVar(value="Depositos")
+        self.multioption = customtkinter.CTkOptionMenu(marco_creararticulos, values=[deposito[1] for deposito in depositos], variable=self.svdepositos_var)
+        self.multioption.place(x=550, y=145)
+
         
 
 
