@@ -265,7 +265,6 @@ class FormUsers():
 
             self.topEdit = customtkinter.CTkToplevel()
             self.topEdit.title("Editar Usuario")
-            self.topEdit.iconbitmap("imagenes/logo_ico.ico")
             self.topEdit.w = 600
             self.topEdit.h = 400
             self.topEdit.geometry(f"{self.topEdit.w}x{self.topEdit.h}")
@@ -286,11 +285,11 @@ class FormUsers():
             self.topEdit.transient()
 
             # Conversion de ico
-            user_ico = Image.open("imagenes/user.png")
+            user_ico = Image.open("imagenes/icons/user.png")
             user_ico = user_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
             user_img = ImageTk.PhotoImage(user_ico)
 
-            pass_ico = Image.open("imagenes/pass.png")
+            pass_ico = Image.open("imagenes/icons/pass.png")
             pass_ico = pass_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
             pass_img = ImageTk.PhotoImage(pass_ico)
             # Datos para el usuario

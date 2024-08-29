@@ -768,3 +768,28 @@ Error en InformacionGrupo, AdjustDepotsDao: incomplete input
 Error en InformacionGrupo, AdjustDepotsDao: incomplete input
 Error en InformacionGrupo, AdjustDepotsDao: incomplete input
 Error en desactivarDeposito, form_adjustdepot: list indices must be integers or slices, not str
+Error en EditDepot, AdjustDepotsDao: date/time field value out of range: "27/08/24 23:54:28"
+LINE 1: ...osito SET name_dep = 'Principales', date_update = '27/08/24 ...
+                                                             ^
+HINT:  Perhaps you need a different "datestyle" setting.
+
+Error en EditClient, UsersDao: date/time field value out of range: "28/08/24 00:01:31"
+LINE 2:     idrol = '1', date_update = '28/08/24 00:01:31', activo =...
+                                       ^
+HINT:  Perhaps you need a different "datestyle" setting.
+
+Error en EditClient, UsersDao: date/time field value out of range: "28/08/24 00:04:28"
+LINE 2:     idrol = '1', date_update = '28/08/24 00:04:28', activo =...
+                                       ^
+HINT:  Perhaps you need a different "datestyle" setting.
+
+Error en EditClient, UsersDao: date/time field value out of range: "28/08/24 00:09:14"
+LINE 2:     idrol = '1', date_update = '28/08/24 00:09:14', activo =...
+                                       ^
+HINT:  Perhaps you need a different "datestyle" setting.
+
+Error en EditClient, UsersDao: date/time field value out of range: "28/08/24 00:11:14"
+LINE 2:     idrol = '2', date_update = '28/08/24 00:11:14', activo =...
+                                       ^
+HINT:  Perhaps you need a different "datestyle" setting.
+
