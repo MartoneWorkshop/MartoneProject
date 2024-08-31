@@ -51,7 +51,7 @@ class FormProv():
         set_opacity(self.marco_prov, 0.8)
         ##################################################### BOTONES DE LA TABLA ##################################################
         self.buttonCreateProv = tk.Button(self.marco_prov, text="Crear\n Proveedor", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                        command=lambda: self.crear_proveedor(permisos, bg))
+                                        command=lambda: self.crear_proveedor(permisos))
         self.buttonCreateProv.place(x=140, y=50)
 
         self.buttonEditProv = tk.Button(self.marco_prov, text="Editar\n Proveedor", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
@@ -195,7 +195,7 @@ class FormProv():
             self.tablaProveedores.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9]))
         conexion.cerrarConexion()
 
-    def crear_proveedor(self, permisos, bg):
+    def crear_proveedor(self, permisos):
         self.id = None
         #Creacion del top level
         self.topCreateProv = customtkinter.CTkToplevel()
