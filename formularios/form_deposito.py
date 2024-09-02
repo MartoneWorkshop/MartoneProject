@@ -6,7 +6,7 @@ from PIL import Image, ImageTk
 from tkinter import ttk
 from util.util_alerts import set_opacity, save_advice, error_advice, edit_advice, delete_advice
 from util.util_functions import buscarCorrelativo, actualizarCorrelativo
-from functions.AdjustDepotsDao import Deposito, Grupo, SubGrupo, AsignarDeposito, SaveGroup, EditGroup, InformacionDeposito, ListarDepositos, InformacionGrupos, ListarGrupos, obtener_depositos, obtener_grupos, obtener_subgrupos, SaveDepot, EditDepot, DepotDisable
+from functions.DepositosDao import Deposito, InformacionDeposito, ListarDepositos, obtener_depositos,  SaveDepot, EditDepot, DepotDisable
 from config import COLOR_MENU_LATERAL
 import datetime
 from tkinter import messagebox

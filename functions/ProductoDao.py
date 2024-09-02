@@ -14,13 +14,13 @@ def ObtenerProveedores():
         return depositos
     except Exception as e:
             error_advice()
-            mensaje = f'Error en ObtenerProveedores, ArticulosDao: {str(e)}'
+            mensaje = f'Error en ObtenerProveedores, ProductosDao: {str(e)}'
             with open('error_log.txt', 'a') as file:
                     file.write(mensaje + '\n') 
 def ObtenerGrupos():
     try:
         conexion = ConexionDB()
-        sql = f"""SELECT id, codgrupo, codDep, name_group FROM grupo WHERE activo = 1"""
+        sql = f"""SELECT id, codgrupo, name_group FROM grupo WHERE activo = 1"""
         conexion.ejecutar_consulta(sql)
         resultados = conexion.obtener_resultados()
         
@@ -29,7 +29,7 @@ def ObtenerGrupos():
         return depositos
     except Exception as e:
             error_advice()
-            mensaje = f'Error en ObtenerGrupos, ArticulosDao: {str(e)}'
+            mensaje = f'Error en ObtenerGrupos, ProductosDao: {str(e)}'
             with open('error_log.txt', 'a') as file:
                     file.write(mensaje + '\n')     
 def ObtenerDepositos():
@@ -44,16 +44,16 @@ def ObtenerDepositos():
                 return depositos
         except Exception as e:
                 error_advice()
-                mensaje = f'Error en ObtenerDepositos, ArticulosDao: {str(e)}'
+                mensaje = f'Error en ObtenerDepositos, ProductosDao: {str(e)}'
                 with open('error_log.txt', 'a') as file:
                         file.write(mensaje + '\n') 
 
-def EditArt(articulos, id):
+def EditArt(productos, id):
     conexion = ConexionDB()
-    sql = f"""UPDATE articulo SET codProducto = '{articulos.codProducto}', codDep = '{articulos.codDep}',
-    codgrupo = '{articulos.codgrupo}', codProv = '{articulos.codProv}', nombre_producto = '{articulos.nombre_producto}',
-    marca = '{articulos.marca}', modelo = '{articulos.modelo}', serial = '{articulos.serial}', costo = '{articulos.modelo}',
-    descripcion = '{articulos.descripcion}', date_update = '{articulos.date_update}', activo = 1 WHERE id = {id}"""
+    sql = f"""UPDATE articulo SET codProducto = '{productos.codProducto}', codDep = '{productos.codDep}',
+    codgrupo = '{productos.codgrupo}', codProv = '{productos.codProv}', nombre_producto = '{productos.nombre_producto}',
+    marca = '{productos.marca}', modelo = '{productos.modelo}', serial = '{productos.serial}', costo = '{productos.modelo}',
+    descripcion = '{productos.descripcion}', date_update = '{productos.date_update}', activo = 1 WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()
@@ -61,18 +61,18 @@ def EditArt(articulos, id):
     except Exception as e:
         conexion.cerrarConexion()
         error_advice()
-        mensaje = f'Error en EditArt, ArticulosDao: {str(e)}'
+        mensaje = f'Error en EditArt, ProductosDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
 
-def SaveArt(articulos):
+def SaveArt(productos):
     conexion = ConexionDB()
     sql = f"""INSERT INTO articulo (codProducto, codDep, codgrupo, codProv, nombre_producto,
     marca, modelo, serial, costo, descripcion, date_created, date_update, activo)
-    VALUES('{articulos.codProducto}','{articulos.codDep}','{articulos.codgrupo}',
-    '{articulos.codProv}','{articulos.nombre_producto}','{articulos.marca}',
-    '{articulos.modelo}','{articulos.serial}','{articulos.costo}','{articulos.descripcion}','{articulos.date_created}','{articulos.date_update}',1)"""
+    VALUES('{productos.codProducto}','{productos.codDep}','{productos.codgrupo}',
+    '{productos.codProv}','{productos.nombre_producto}','{productos.marca}',
+    '{productos.modelo}','{productos.serial}','{productos.costo}','{productos.descripcion}','{productos.date_created}','{productos.date_update}',1)"""
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()
@@ -81,57 +81,57 @@ def SaveArt(articulos):
     except Exception as e:
         conexion.cerrarConexion()
         error_advice()
-        mensaje = f'Error en SaveArt, ArticulosDao: {str(e)}'
+        mensaje = f'Error en SaveArt, ProductosDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
-def listarArticulos():
+def listarProductos():
     conexion = ConexionDB()
-    listaArticulos = []
+    listaProductos = []
     sql = 'SELECT * FROM articulo WHERE activo = 1'
 
     try:
         conexion.cursor.execute(sql)
-        listaArticulos = conexion.cursor.fetchall()
+        listaProductos = conexion.cursor.fetchall()
         conexion.cerrarConexion()
     except Exception as e:
         conexion.cerrarConexion()
         error_advice()
-        mensaje = f'Error en listarArticulos, ProvsDao: {str(e)}'
+        mensaje = f'Error en listarProductos, ProvsDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
-    return listaArticulos
+    return listaProductos
 
-def articulosDesactivados():
+def productosDesactivados():
     conexion = ConexionDB()
-    listaarticulos = []
+    listaproductos = []
     sql = f'SELECT * FROM articulo WHERE activo = 0'
     try:
         conexion.cursor.execute(sql)
-        listaarticulos = conexion.cursor.fetchall()
+        listaproductos = conexion.cursor.fetchall()
         conexion.cerrarConexion()
     except Exception as e:
         conexion.cerrarConexion()
         error_advice()
-        mensaje = f'Error en articulosDesactivados, ArticulosDao: {str(e)}'
+        mensaje = f'Error en productosDesactivados, ProductosDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
-    return listaarticulos    
+    return listaproductos    
 
 def consulArt(where):
     conexion = ConexionDB()
-    listarArticulo = []
+    listarProducto = []
     sql = f'SELECT * FROM articulo {where}'
     try:
         conexion.cursor.execute(sql)
-        listarArticulo = conexion.cursor.fetchall()
+        listarProducto = conexion.cursor.fetchall()
         conexion.cerrarConexion()
     except Exception as e:
         error_advice()
-        mensaje = f'Error en consulArt, ArticulosDao: {str(e)}'
+        mensaje = f'Error en consulArt, ProductosDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
-    return listarArticulo
+    return listarProducto
 
 def ArtDisable(id):
     conexion = ConexionDB()
@@ -144,13 +144,13 @@ def ArtDisable(id):
     except Exception as e:
         error_advice()
         conexion.cerrarConexion()
-        mensaje = f'Error en ArtDisable, en ArticulosDao: {str(e)}'
+        mensaje = f'Error en ArtDisable, en ProductosDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
 
 
-class Articulo:
+class Producto:
     def __init__(self, codProducto, codDep, codgrupo, codProv, nombre_producto, 
                 marca, modelo, serial, costo, descripcion, date_created, date_update):
         
@@ -169,4 +169,4 @@ class Articulo:
         self.date_update = date_update
 
     def __str__(self):
-        return f'Articulo[{self.codProducto}, {self.codDep}, {self.codgrupo}, {self.codProv}, {self.nombre_producto}, {self.marca}, {self.modelo}, {self.serial}, {self.costo}, {self.descripcion}, {self.date_created}, {self.date_update}]'
+        return f'Producto[{self.codProducto}, {self.codDep}, {self.codgrupo}, {self.codProv}, {self.nombre_producto}, {self.marca}, {self.modelo}, {self.serial}, {self.costo}, {self.descripcion}, {self.date_created}, {self.date_update}]'

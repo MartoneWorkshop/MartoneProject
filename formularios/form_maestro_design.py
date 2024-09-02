@@ -19,7 +19,7 @@ from formularios.form_permisos import FormPermisos
 from formularios.form_perfiles import FormPerfiles
 from formularios.form_proveedores import FormProv
 from formularios.form_deposito import FormDepot
-from formularios.form_articulos import FormArticulos
+from formularios.form_products import FormProducts
 from formularios.form_category import FormCategoria
 
 
@@ -94,6 +94,8 @@ class FormularioMaestroDesign(customtkinter.CTk):
         #informes_image = Image.open("imagenes/reporte.png")
         settings_image = Image.open("imagenes/icons/settings.png")
         adjustdepot_image = Image.open("imagenes/icons/adjustdepot.png")
+        products_image = Image.open("imagenes/icons/product.png")
+        category_image = Image.open("imagenes/icons/product_cat.png")
         adjustUser_image = Image.open("imagenes/icons/user_adjust.png")
         userProfiles_image = Image.open("imagenes/icons/user_profiles.png") 
         permises_image = Image.open("imagenes/icons/permise.png")
@@ -107,8 +109,6 @@ class FormularioMaestroDesign(customtkinter.CTk):
         listProv_resized = listProv_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         #equipos_resized = equipos_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         #historia_resized = historia_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        #database_resized = database_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        #informes_resized = informes_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         settings_resized = settings_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         adjustUser_resized = adjustUser_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         userProfiles_resized = userProfiles_image.resize((WIDTH_LOGO, HEIGHT_LOGO)) 
@@ -116,6 +116,8 @@ class FormularioMaestroDesign(customtkinter.CTk):
         adjustModul_resized = adjustModul_image.resize((WIDTH_LOGO, HEIGHT_LOGO)) 
         almacen_resized = almacen_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         adjustdepot_resized = adjustdepot_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        products_resized = products_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        category_resized = category_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
 
         #IMAGENES FINALES
         self.home_icon = ImageTk.PhotoImage(home_resized)
@@ -132,7 +134,8 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.permises_icon = ImageTk.PhotoImage(permises_resized)
         self.adjustModul_icon = ImageTk.PhotoImage(adjustModul_resized)
         self.almacen_icon = ImageTk.PhotoImage(almacen_resized)
-        
+        self.products_icon = ImageTk.PhotoImage(products_resized)
+        self.category_icon = ImageTk.PhotoImage(category_resized)
         #BOTONES DEL MENU
         #Home1001 visualizar modulo home
         if 'HOME1001' in permisos:
@@ -349,21 +352,21 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonDepositos.pack()
                 self.binding_hover_submenu_event(self.buttonDepositos)
         if 'ALMA1003' in permisos:
-            if hasattr(self, "buttonArticulos"):
-                self.buttonArticulos.pack_forget()
-                del self.buttonArticulos
+            if hasattr(self, "buttonProductos"):
+                self.buttonProductos.pack_forget()
+                del self.buttonProductos
             else:
-                self.buttonArticulos = tk.Button(self.menu_lateral, text="Articulos", font=("Roboto", 12),image=self.adjustdepot_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_Articulos(permisos))
-                self.buttonArticulos.pack()
-                self.binding_hover_submenu_event(self.buttonArticulos)
+                self.buttonProductos = tk.Button(self.menu_lateral, text="Productos", font=("Roboto", 12),image=self.products_icon, highlightthickness=20, width=ANCHO_MENU,
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_Productos(permisos))
+                self.buttonProductos.pack()
+                self.binding_hover_submenu_event(self.buttonProductos)
         if 'ALMA1004' in permisos:
-            if hasattr(self, "button"):
+            if hasattr(self, "buttonCatArt"):
                 self.buttonCatArt.pack_forget()
                 del self.buttonCatArt
             else:
-                self.buttonCatArt = tk.Button(self.menu_lateral, text="Categoria de \nArticulos", font=("Roboto", 12),image=self.adjustdepot_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_categorias(permisos))
+                self.buttonCatArt = tk.Button(self.menu_lateral, text="Categoria de\nProductos", font=("Roboto", 12),image=self.category_icon, highlightthickness=20, width=ANCHO_MENU,
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_categoria(permisos))
                 
                 self.buttonCatArt.pack()
                 self.binding_hover_submenu_event(self.buttonCatArt)
@@ -380,9 +383,9 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonDepositos.pack_forget()
                 del self.buttonDepositos
         if 'ALMA1003' in permisos:
-            if hasattr(self, "buttonArticulos"):
-                self.buttonArticulos.pack_forget()
-                del self.buttonArticulos
+            if hasattr(self, "buttonProductos"):
+                self.buttonProductos.pack_forget()
+                del self.buttonProductos
         if 'ALMA1004' in permisos:
             if hasattr(self, "buttonCatArt"):
                 self.buttonCatArt.pack_forget()
@@ -434,9 +437,9 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonDepositos.pack_forget()
                 del self.buttonDepositos
         if 'ALMA1003' in permisos:
-            if hasattr(self, "buttonArticulos"):
-                self.buttonArticulos.pack_forget()
-                del self.buttonArticulos
+            if hasattr(self, "buttonProductos"):
+                self.buttonProductos.pack_forget()
+                del self.buttonProductos
         if 'ALMA1004' in permisos:
             if hasattr(self, "buttonCatArt"):
                 self.buttonCatArt.pack_forget()
@@ -541,7 +544,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         FormPermisos(self.cuerpo_principal, permisos)
     def abrir_categoria(self, permisos):
         self.limpiar_panel(self.cuerpo_principal)
-        FormCategoria(self.cuerpo_principal)
+        FormCategoria(self.cuerpo_principal, permisos)
     def abrir_home(self):   
         self.limpiar_panel(self.cuerpo_principal)
         FormularioHomeDesign(self.cuerpo_principal) 
@@ -551,9 +554,9 @@ class FormularioMaestroDesign(customtkinter.CTk):
     def abrir_Depots(self, permisos):   
         self.limpiar_panel(self.cuerpo_principal)
         FormDepot(self.cuerpo_principal, permisos)
-    def abrir_Articulos(self, permisos):   
+    def abrir_Productos(self, permisos):   
         self.limpiar_panel(self.cuerpo_principal)
-        FormArticulos(self.cuerpo_principal, permisos)   
+        FormProducts(self.cuerpo_principal, permisos)   
     def limpiar_panel(self, panel):
     # Función para limpiar el contenido del panel
         for widget in panel.winfo_children():

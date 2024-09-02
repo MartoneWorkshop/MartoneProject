@@ -801,3 +801,4 @@ Error en GuardarArticulo, form_articulos: Articulo.__init__() missing 1 required
 Error en SaveArt, ArticulosDao: 13 values for 14 columns
 Error en GuardarArticulo, form_articulos: Articulo.__init__() missing 1 required positional argument: 'date_update'
 Error en GuardarArticulo, form_articulos: 'Articulo' object has no attribute 'codGrupo'
+Error en GroupDisable, en GruposDao: no such table: grupos

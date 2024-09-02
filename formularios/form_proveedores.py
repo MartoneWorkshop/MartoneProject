@@ -96,8 +96,8 @@ class FormProv():
             self.ListaProveedores = listarProveedores()
             self.ListaProveedores.reverse()
 
-        self.tablaProveedores = ttk.Treeview(self.marco_prov, column=('codprov','nom_fiscal','rif_prov','nit_prov','tipo_per','email_prov','telf_prov','dir_fiscal','dias_credito'), height=25)
-        self.tablaProveedores.place(x=22, y=200)
+        self.tablaProveedores = ttk.Treeview(self.marco_prov, column=('codprov','nom_fiscal','rif_prov','tipo_per','email_prov','telf_prov','dir_fiscal','dias_credito'), height=25)
+        self.tablaProveedores.place(x=70, y=200)
 
         self.scroll = ttk.Scrollbar(self.marco_prov, orient='vertical', command=self.tablaProveedores.yview)
         self.scroll.place(x=1104, y=200, height=526)
@@ -109,26 +109,24 @@ class FormProv():
         self.tablaProveedores.heading('#1',text="CodProv")
         self.tablaProveedores.heading('#2',text="N Fiscal")
         self.tablaProveedores.heading('#3',text="RIF")
-        self.tablaProveedores.heading('#4',text="NIT")
-        self.tablaProveedores.heading('#5',text="Tipo P")
-        self.tablaProveedores.heading('#6',text="Email")
-        self.tablaProveedores.heading('#7',text="Telefono")
-        self.tablaProveedores.heading('#8',text="Dir-Fiscal")
-        self.tablaProveedores.heading('#9',text="Dias Credito")
+        self.tablaProveedores.heading('#4',text="Tipo P")
+        self.tablaProveedores.heading('#5',text="Email")
+        self.tablaProveedores.heading('#6',text="Telefono")
+        self.tablaProveedores.heading('#7',text="Dir-Fiscal")
+        self.tablaProveedores.heading('#8',text="Dias Credito")
 
         self.tablaProveedores.column("#0", width=50, stretch=False, anchor='w')#HAY QUE CENTRARLO
         self.tablaProveedores.column("#1", width=50, stretch=False)
         self.tablaProveedores.column("#2", width=150, stretch=False)
         self.tablaProveedores.column("#3", width=100, stretch=False)
         self.tablaProveedores.column("#4", width=100, stretch=False)
-        self.tablaProveedores.column("#5", width=100, stretch=False)
-        self.tablaProveedores.column("#6", width=150, stretch=False)
-        self.tablaProveedores.column("#7", width=100, stretch=False)
-        self.tablaProveedores.column("#8", width=200, stretch=False)
-        self.tablaProveedores.column("#9", width=80, stretch=False)
+        self.tablaProveedores.column("#5", width=150, stretch=False)
+        self.tablaProveedores.column("#6", width=100, stretch=False)
+        self.tablaProveedores.column("#7", width=250, stretch=False)
+        self.tablaProveedores.column("#8", width=80, stretch=False)
 
         for p in self.ListaProveedores:
-            self.tablaProveedores.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6],p[7],p[8],p[9]))
+            self.tablaProveedores.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6],p[7],p[8]))
 
         self.tablaProveedores.bind('<Double-1>', lambda event: self.editar_proveedor(event, self.tablaProveedores.item(self.tablaProveedores.selection())['values']))
     
@@ -144,16 +142,16 @@ class FormProv():
         # Borrar los elementos existentes en la tabla de permisos
         self.tablaProveedores.delete(*self.tablaProveedores.get_children())
         # Obtener la lista de permisos activos
-        permisos_activos = listarProveedores()
+        proveedores_activos = listarProveedores()
         # Insertar los permisos activos en la tabla
-        for p in permisos_activos:
-            self.tablaProveedores.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5],p[6]))
+        for p in proveedores_activos:
+            self.tablaProveedores.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5],p[6],p[7],p[8]))
 
     def mostrarProveedoresDesactivados(self):
         self.tablaProveedores.delete(*self.tablaProveedores.get_children())
-        permisos_desactivados = ProveedoresDesactivados()
-        for p in permisos_desactivados:
-            self.tablaProveedores.insert('',0, text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6]))
+        proveedores_desactivados = ProveedoresDesactivados()
+        for p in proveedores_desactivados:
+            self.tablaProveedores.insert('',0, text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6],p[7],p[8]))
 
     def update_prov_content(self, event=None):
         conexion = ConexionDB()
@@ -165,7 +163,6 @@ class FormProv():
                 codprov LIKE ? OR 
                 nom_fiscal LIKE ? OR 
                 rif_prov LIKE ? OR 
-                nit_prov LIKE ? OR
                 tipo_per LIKE ? OR 
                 email_prov LIKE ? OR 
                 telf_prov LIKE ? OR 
@@ -177,7 +174,6 @@ class FormProv():
                 '%' + self.content.strip() + '%',
                 '%' + self.content.strip() + '%',
                 '%' + self.content.strip() + '%',
-                '%' + self.content.strip() + '%',
                 '%' + self.content.strip() + '%', 
                 '%' + self.content.strip() + '%')
         conexion.ejecutar_consulta_parametros(sql, parametros)
@@ -185,14 +181,14 @@ class FormProv():
     # Filtrar los registros según el contenido ingresado
         filtered_results = []
         for p in self.ListaProveedores:
-            if self.content.lower() in str(p[0]).lower() or self.content.lower() in str(p[1]).lower() or self.content.lower() in str(p[2]).lower() or self.content.lower() in str(p[3]).lower() or self.content.lower() in str(p[4]).lower() or self.content.lower() in str(p[5]).lower() or self.content.lower() in str(p[6]).lower() or self.content.lower() in str(p[7]).lower() or self.content.lower() in str(p[8]).lower() or self.content.lower() in str(p[9]).lower()  or self.content.lower():              
+            if self.content.lower() in str(p[0]).lower() or self.content.lower() in str(p[1]).lower() or self.content.lower() in str(p[2]).lower() or self.content.lower() in str(p[3]).lower() or self.content.lower() in str(p[4]).lower() or self.content.lower() in str(p[5]).lower() or self.content.lower() in str(p[6]).lower() or self.content.lower() in str(p[7]).lower() or self.content.lower() in str(p[8]).lower() or self.content.lower():              
                 filtered_results.append(p)
 
     # Borrar los elementos existentes en la tablaEquipos
         self.tablaProveedores.delete(*self.tablaProveedores.get_children())
     # Insertar los nuevos resultados en la tablaEquipos
         for p in filtered_results:
-            self.tablaProveedores.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9]))
+            self.tablaProveedores.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8]))
         conexion.cerrarConexion()
 
     def crear_proveedor(self, permisos):
@@ -285,15 +281,15 @@ class FormProv():
             self.svrif_prov.set(f"{prefix}{rif_value}")
         self.svtipo_per.trace("w", update_rif_prefix)
 
-        #NIT
-        self.lblnit_prov = customtkinter.CTkLabel(marco_crearproveedor, text='NIT', font=("Roboto", 13))
-        self.lblnit_prov.place(x=75, y=180)
+        #Dias de Credito
+        self.lbldias_credito = customtkinter.CTkLabel(marco_crearproveedor, text='Dias de Credito', font=("Roboto", 13))
+        self.lbldias_credito.place(x=75, y=180)
 
-        self.svnit_prov = customtkinter.StringVar()
-        self.entrynit_prov = ttk.Entry(marco_crearproveedor, style='Modern.TEntry', textvariable=self.svnit_prov)
-        self.entrynit_prov.place(x=65, y=210)
-        self.entrynit_prov.configure(style='Entry.TEntry')
-        
+        self.svdias_credito = customtkinter.StringVar()
+        self.entrydias_credito = ttk.Entry(marco_crearproveedor, style='Modern.TEntry', textvariable=self.svdias_credito)
+        self.entrydias_credito.place(x=65, y=210)
+        self.entrydias_credito.configure(style='Entry.TEntry')
+
         #Email
         self.lblemail_prov = customtkinter.CTkLabel(marco_crearproveedor, text='Email', font=("Roboto", 13))
         self.lblemail_prov.place(x=275, y=180)
@@ -336,25 +332,18 @@ class FormProv():
         self.lbldir_fiscal = customtkinter.CTkLabel(marco_crearproveedor, text='Direccion Fiscal', font=("Roboto", 13))
         self.lbldir_fiscal.place(x=75, y=270)
 
-        self.dir_fiscal = customtkinter.CTkTextbox(marco_crearproveedor, width=410, height=55, border_width=1)
+
+        self.dir_fiscal = customtkinter.CTkTextbox(marco_crearproveedor, width=607, height=55, border_width=1)
         self.dir_fiscal.place(x=65, y=300)
 
         character_count_label = customtkinter.CTkLabel(marco_crearproveedor, text="")
-        character_count_label.place(x=440, y=360)
+        character_count_label.place(x=600, y=360)
 
         def on_text_change(event):
             validate_text(self.dir_fiscal.get("1.0", "end-1c"))
 
         self.dir_fiscal.bind("<KeyRelease>", on_text_change)
-        
-        #Dias de Credito
-        self.lbldias_credito = customtkinter.CTkLabel(marco_crearproveedor, text='Dias de Credito', font=("Roboto", 13))
-        self.lbldias_credito.place(x=550, y=270)
-
-        self.svdias_credito = customtkinter.StringVar()
-        self.entrydias_credito = ttk.Entry(marco_crearproveedor, style='Modern.TEntry', textvariable=self.svdias_credito)
-        self.entrydias_credito.place(x=540, y=300)
-        self.entrydias_credito.configure(style='Entry.TEntry')
+    
 
         self.buttonGuardarProv = tk.Button(marco_crearproveedor, text="Guardar Proveedor", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", 
                                             compound=tk.LEFT, padx=10, command=self.GuardarProveedor)
@@ -366,12 +355,11 @@ class FormProv():
             self.id = self.tablaProveedores.item(self.tablaProveedores.selection())['text']
             self.nom_fiscal = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][1]
             self.rif_prov = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][2]
-            self.nit_prov = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][3]
-            self.tipo_per = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][4]
-            self.email_prov = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][5]
-            self.telf_prov = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][6]
-            self.Edir_fiscal = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][7]
-            self.dias_credito = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][8]
+            self.tipo_per = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][3]
+            self.email_prov = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][4]
+            self.telf_prov = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][5]
+            self.Edir_fiscal = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][6]
+            self.dias_credito = self.tablaProveedores.item(self.tablaProveedores.selection())['values'][7]
 
             self.topEditProv = customtkinter.CTkToplevel()
             self.topEditProv.title("Crear Proveedor")
@@ -459,14 +447,14 @@ class FormProv():
                 self.svrif_prov.set(f"{prefix}{rif_value}")
             self.svtipo_per.trace("w", update_rif_prefix)
 
-            #NIT
-            self.lblnit_prov = customtkinter.CTkLabel(marco_editarproveedor, text='NIT', font=("Roboto", 13))
-            self.lblnit_prov.place(x=75, y=180)
+            #Dias de Credito
+            self.lbldias_credito = customtkinter.CTkLabel(marco_editarproveedor, text='Dias de Credito', font=("Roboto", 13))
+            self.lbldias_credito.place(x=75, y=180)
 
-            self.svnit_prov = customtkinter.StringVar(value=self.nit_prov)
-            self.entrynit_prov = ttk.Entry(marco_editarproveedor, style='Modern.TEntry', textvariable=self.svnit_prov)
-            self.entrynit_prov.place(x=65, y=210)
-            self.entrynit_prov.configure(style='Entry.TEntry')
+            self.svdias_credito = customtkinter.StringVar(value=self.dias_credito)
+            self.entrydias_credito = ttk.Entry(marco_editarproveedor, style='Modern.TEntry', textvariable=self.svdias_credito)
+            self.entrydias_credito.place(x=65, y=210)
+            self.entrydias_credito.configure(style='Entry.TEntry')
 
             #Email
             self.lblemail_prov = customtkinter.CTkLabel(marco_editarproveedor, text='Email', font=("Roboto", 13))
@@ -510,26 +498,17 @@ class FormProv():
             self.lbldir_fiscal = customtkinter.CTkLabel(marco_editarproveedor, text='Direccion Fiscal', font=("Roboto", 13))
             self.lbldir_fiscal.place(x=75, y=270)
 
-            self.dir_fiscal = customtkinter.CTkTextbox(marco_editarproveedor, width=410, height=55, border_width=1)
+            self.dir_fiscal = customtkinter.CTkTextbox(marco_editarproveedor, width=607, height=55, border_width=1)
             self.dir_fiscal.place(x=65, y=300)
             self.dir_fiscal.insert("1.0", self.Edir_fiscal)
 
             character_count_label = customtkinter.CTkLabel(marco_editarproveedor, text="")
-            character_count_label.place(x=440, y=360)
+            character_count_label.place(x=600, y=360)
 
             def on_text_change(event):
                 validate_text(self.dir_fiscal.get("1.0", "end-1c"))
 
             self.dir_fiscal.bind("<KeyRelease>", on_text_change)
-
-            #Dias de Credito
-            self.lbldias_credito = customtkinter.CTkLabel(marco_editarproveedor, text='Dias de Credito', font=("Roboto", 13))
-            self.lbldias_credito.place(x=550, y=270)
-
-            self.svdias_credito = customtkinter.StringVar(value=self.dias_credito)
-            self.entrydias_credito = ttk.Entry(marco_editarproveedor, style='Modern.TEntry', textvariable=self.svdias_credito)
-            self.entrydias_credito.place(x=540, y=300)
-            self.entrydias_credito.configure(style='Entry.TEntry')
 
             self.buttonGuardarProv = tk.Button(marco_editarproveedor, text="Guardar Proveedor", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", 
                                                 compound=tk.LEFT, padx=10, command=self.GuardarProveedor)
@@ -541,7 +520,6 @@ class FormProv():
         try:
             # Otener el contenido del Entry
             codprov = buscarCorrelativo('proveedor')
-            actualizarCorrelativo('proveedor')
             codprov = codprov + 1
             fecha_actual = datetime.datetime.now()
             date_created = fecha_actual.strftime("%d/%m/%Y")
@@ -551,7 +529,6 @@ class FormProv():
                 codprov,
                 self.svnom_fiscal.get(),
                 self.svrif_prov.get(),
-                self.svnit_prov.get(),
                 self.svtipo_per.get(),
                 self.svtelf_prov.get(),
                 self.dir_fiscal.get("1.0", "end-1c"),
@@ -563,7 +540,7 @@ class FormProv():
             
             if self.id is None:
                 SaveProv(proveedor)
-
+                actualizarCorrelativo('proveedor')
                 self.topCreateProv.destroy()
             else:
                 EditProv(proveedor, self.id)

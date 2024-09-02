@@ -19,22 +19,6 @@ def SaveDepot(deposito):
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
-def SaveGroup(grupo):
-    conexion = ConexionDB()
-    sql = f"""INSERT INTO grupo (codgrupo, codDep, name_group, date_created, date_update, activo)
-    VALUES('{grupo.codgrupo}','{grupo.codDep}','{grupo.name_group}','{grupo.date_created}','{grupo.date_update}',1)"""
-    try:
-        conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
-        save_advice()
-        
-    except Exception as e:
-        conexion.cerrarConexion()
-        error_advice()
-        mensaje = f'Error en SaveDepot, AdjustDepotsDao: {str(e)}'
-        with open('error_log.txt', 'a') as file:
-            file.write(mensaje + '\n')
-
 def ListarDepositos():
     conexion = ConexionDB()
     ListarDepositos = []
@@ -67,37 +51,6 @@ def InformacionDeposito(where):
             file.write(mensaje + '\n')
     return listarDeposito
 
-def ListarGrupos():
-    conexion = ConexionDB()
-    ListarGrupos = []
-    sql = 'SELECT * FROM grupo WHERE activo = 1'
-
-    try:
-        conexion.cursor.execute(sql)
-        ListarGrupos = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
-    except Exception as e:
-        conexion.cerrarConexion()
-        error_advice()
-        mensaje = f'Error en ListarGrupos, AdjustDepotsDao: {str(e)}'
-        with open('error_log.txt', 'a') as file:
-            file.write(mensaje + '\n')
-    return ListarGrupos
-
-def InformacionGrupos(where):
-    conexion = ConexionDB()
-    listarGrupo = []
-    sql = f'SELECT * FROM grupo {where}'
-    try:
-        conexion.cursor.execute(sql)
-        listarGrupo = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
-    except Exception as e:
-        error_advice()
-        mensaje = f'Error en InformacionGrupos, AdjustDepotsDao: {str(e)}'
-        with open('error_log.txt', 'a') as file:
-            file.write(mensaje + '\n')
-    return listarGrupo
 
 def DepotDisable(id):
     conexion = ConexionDB()
@@ -126,21 +79,6 @@ def EditDepot(deposito, id):
         conexion.cerrarConexion()
         error_advice()
         mensaje = f'Error en EditDepot, AdjustDepotsDao: {str(e)}'
-        with open('error_log.txt', 'a') as file:
-            file.write(mensaje + '\n')
-
-def EditGroup(grupo, id):
-    conexion = ConexionDB()
-    sql = f"""UPDATE grupo SET name_group = '{grupo.name_group}', date_update = '{grupo.date_update}', activo = 1 WHERE id = {id}"""
-    try:
-        conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
-        save_advice()
-        
-    except Exception as e:
-        conexion.cerrarConexion()
-        error_advice()
-        mensaje = f'Error en EditGroup, AdjustDepotsDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
@@ -177,42 +115,6 @@ def obtener_depositos():
 
     return depositos
 
-def obtener_grupos(codDep):
-    conexion = ConexionDB()
-    sql = "SELECT * FROM grupo WHERE codDep = ?"
-    groups = []
-
-    try:
-        conexion.cursor.execute(sql, (codDep,))
-        groups = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
-    except Exception as e:
-        conexion.cerrarConexion()
-        error_advice()
-        mensaje = f"Error en obtener_grupos, AdjustDepotsDao: {str(e)}"
-        with open("error_log.txt", "a") as file:
-            file.write(mensaje + "\n")
-
-    return groups
-
-def obtener_subgrupos(codgrupo):
-    conexion = ConexionDB()
-    sql = "SELECT * FROM subgrupo WHERE codgrupo = ?"
-    subgroups = []
-
-    try:
-        conexion.cursor.execute(sql, (codgrupo,))
-        subgroups = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
-    except Exception as e:
-        conexion.cerrarConexion()
-        error_advice()
-        mensaje = f"Error en obtener_subgrupos, AdjustDepotsDao: {str(e)}"
-        with open("error_log.txt", "a") as file:
-            file.write(mensaje + "\n")
-
-    return subgroups
-
 class Deposito:
     def __init__(self, codDep, name_dep, date_created, date_update):
         self.id = None
@@ -222,24 +124,3 @@ class Deposito:
         self.date_update = date_update
     def __str__(self):
         return f'Deposito[{self.codDep}, {self.name_dep}, {self.date_created}, {self.date_update}]'
-class Grupo:
-    def __init__(self, codgrupo, codDep, name_group, date_created, date_update):
-        self.id = None
-        self.codgrupo = codgrupo
-        self.codDep = codDep
-        self.name_group = name_group
-        self.date_created = date_created
-        self.date_update = date_update
-    def __str__(self):
-        return f'Grupo[{self.codgrupo},{self.codDep}, {self.name_group}, {self.date_created}, {self.date_update}]'
-
-class SubGrupo:
-    def __init__(self, codDep, name_dep, date_created, date_update):
-        self.id = None
-        self.codDep = codDep
-        self.name_dep = name_dep
-        self.date_created = date_created
-        self.date_update = date_update
-    def __str__(self):
-        return f'Deposito[{self.codDep}, {self.name_dep}, {self.date_created}, {self.date_update}]'
-
