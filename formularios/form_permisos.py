@@ -97,10 +97,10 @@ class FormPermisos():
         self.tablapermisos.configure(yscrollcommand=self.scroll.set)
         self.tablapermisos.tag_configure('evenrow')
 
-        self.tablapermisos.heading('#0',text="id")
-        self.tablapermisos.heading('#1',text="idmod")
-        self.tablapermisos.heading('#2',text="name")
-        self.tablapermisos.heading('#3',text="codperm")
+        self.tablapermisos.heading('#0',text="ID")
+        self.tablapermisos.heading('#1',text="Modulo")
+        self.tablapermisos.heading('#2',text="Nombre Perm")
+        self.tablapermisos.heading('#3',text="CodPermiso")
         self.tablapermisos.heading('#4',text="Date-C")
         self.tablapermisos.heading('#5',text="Date-U")
 

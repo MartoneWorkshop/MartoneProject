@@ -331,6 +331,7 @@ class FormModulos():
             self.buttonEditMod.place(x=240, y=290)
         else:
             messagebox.showerror("Error", "Debe seleccionar un modulo")
+            
         def actualizar_alias(*args):
             nombre = self.svnombre_mod.get()
             nombre = nombre.capitalize()  # Capitalizar la primera letra del nombre

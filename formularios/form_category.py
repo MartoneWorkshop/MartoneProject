@@ -6,13 +6,13 @@ from PIL import Image, ImageTk
 from tkinter import ttk
 from util.util_alerts import set_opacity, save_advice, error_advice, edit_advice, delete_advice
 from util.util_functions import buscarCorrelativo, actualizarCorrelativo
-from functions.AdjustDepotsDao import Deposito, Grupo, SubGrupo, AsignarDeposito, SaveGroup, EditGroup, InformacionDeposito, ListarDepositos, InformacionGrupos, ListarGrupos, obtener_depositos, obtener_grupos, obtener_subgrupos, SaveDepot, EditDepot, DepotDisable
+from functions.AdjustDepotsDao import Deposito, Grupo, AsignarDeposito, SaveGroup, EditGroup, InformacionDeposito, ListarDepositos, InformacionGrupos, ListarGrupos, obtener_depositos, obtener_grupos, obtener_CatArt, SaveDepot, EditDepot, DepotDisable
 from config import COLOR_MENU_LATERAL
 import datetime
 from tkinter import messagebox
 
 
-class FormAdjustDepot():
+class FormCategoria():
 
     def __init__(self, cuerpo_principal, permisos):
 
@@ -404,7 +404,7 @@ class FormAdjustDepot():
 
                 group_item = self.treeviewDepositos.insert(deposito_item, "end", text=group_name, values=(group_codDep, group_name), tags=("group", group_codDep, group_name))
 
-                subgroups = obtener_subgrupos(group_codgrupo)
+                subgroups = obtener_CatArt(group_codgrupo)
 
                 for subgroup in subgroups:
                     subgroup_id = subgroup[0]

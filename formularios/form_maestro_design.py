@@ -20,6 +20,7 @@ from formularios.form_perfiles import FormPerfiles
 from formularios.form_proveedores import FormProv
 from formularios.form_deposito import FormDepot
 from formularios.form_articulos import FormArticulos
+from formularios.form_category import FormCategoria
 
 
 class FormularioMaestroDesign(customtkinter.CTk):
@@ -357,14 +358,15 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonArticulos.pack()
                 self.binding_hover_submenu_event(self.buttonArticulos)
         if 'ALMA1004' in permisos:
-            if hasattr(self, "buttonSubGrupos"):
-                self.buttonSubGrupos.pack_forget()
-                del self.buttonSubGrupos
+            if hasattr(self, "button"):
+                self.buttonCatArt.pack_forget()
+                del self.buttonCatArt
             else:
-                self.buttonSubGrupos = tk.Button(self.menu_lateral, text="SubGrupos de \nArticulos", font=("Roboto", 12),image=self.adjustdepot_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10)
-                self.buttonSubGrupos.pack()
-                self.binding_hover_submenu_event(self.buttonSubGrupos)
+                self.buttonCatArt = tk.Button(self.menu_lateral, text="Categoria de \nArticulos", font=("Roboto", 12),image=self.adjustdepot_icon, highlightthickness=20, width=ANCHO_MENU,
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_categorias(permisos))
+                
+                self.buttonCatArt.pack()
+                self.binding_hover_submenu_event(self.buttonCatArt)
         if 'PROV1001' in permisos:
             self.buttonProveedores.pack()
         if 'CONF1001' in permisos:
@@ -382,9 +384,9 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonArticulos.pack_forget()
                 del self.buttonArticulos
         if 'ALMA1004' in permisos:
-            if hasattr(self, "buttonSubGrupos"):
-                self.buttonSubGrupos.pack_forget()
-                del self.buttonSubGrupos
+            if hasattr(self, "buttonCatArt"):
+                self.buttonCatArt.pack_forget()
+                del self.buttonCatArt
         #LIMPIEZA DE AJUSTES Y SUBMENU
         if 'CONF1001' in permisos:
             if hasattr(self, "buttonSettings"):
@@ -436,9 +438,9 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonArticulos.pack_forget()
                 del self.buttonArticulos
         if 'ALMA1004' in permisos:
-            if hasattr(self, "buttonSubGrupos"):
-                self.buttonSubGrupos.pack_forget()
-                del self.buttonSubGrupos
+            if hasattr(self, "buttonCatArt"):
+                self.buttonCatArt.pack_forget()
+                del self.buttonCatArt
         #LIMPIEZA SUBMENU PROVEEDORES
         if 'PROV1002' in permisos:
             if hasattr(self, "buttonListaProv"):
@@ -537,6 +539,9 @@ class FormularioMaestroDesign(customtkinter.CTk):
     def abrir_permisos(self, permisos):
         self.limpiar_panel(self.cuerpo_principal)
         FormPermisos(self.cuerpo_principal, permisos)
+    def abrir_categoria(self, permisos):
+        self.limpiar_panel(self.cuerpo_principal)
+        FormCategoria(self.cuerpo_principal)
     def abrir_home(self):   
         self.limpiar_panel(self.cuerpo_principal)
         FormularioHomeDesign(self.cuerpo_principal) 

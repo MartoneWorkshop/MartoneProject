@@ -793,3 +793,11 @@ LINE 2:     idrol = '2', date_update = '28/08/24 00:11:14', activo =...
                                        ^
 HINT:  Perhaps you need a different "datestyle" setting.
 
+Error en GuardarProveedor, form_proveedores: Articulo.__init__() missing 1 required positional argument: 'date_update'
+Error en GuardarArticulo, form_articulos: Articulo.__init__() missing 1 required positional argument: 'date_update'
+Error en GuardarArticulo, form_articulos: Articulo.__init__() missing 1 required positional argument: 'date_update'
+Error en GuardarArticulo, form_articulos: Articulo.__init__() missing 1 required positional argument: 'date_update'
+Error en GuardarArticulo, form_articulos: Articulo.__init__() missing 1 required positional argument: 'date_update'
+Error en SaveArt, ArticulosDao: 13 values for 14 columns
+Error en GuardarArticulo, form_articulos: Articulo.__init__() missing 1 required positional argument: 'date_update'
+Error en GuardarArticulo, form_articulos: 'Articulo' object has no attribute 'codGrupo'

@@ -1,10 +1,41 @@
 from .conexion import ConexionDB
 from tkinter import messagebox
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
+
+def ObtenerProveedores():
+    try:
+        conexion = ConexionDB()
+        sql = f"""SELECT id, codProv, nom_fiscal FROM proveedores WHERE activo = 1"""
+        conexion.ejecutar_consulta(sql)
+        resultados = conexion.obtener_resultados()
+        
+        depositos = resultados
+        conexion.cerrarConexion()
+        return depositos
+    except Exception as e:
+            error_advice()
+            mensaje = f'Error en ObtenerProveedores, ArticulosDao: {str(e)}'
+            with open('error_log.txt', 'a') as file:
+                    file.write(mensaje + '\n') 
+def ObtenerGrupos():
+    try:
+        conexion = ConexionDB()
+        sql = f"""SELECT id, codgrupo, codDep, name_group FROM grupo WHERE activo = 1"""
+        conexion.ejecutar_consulta(sql)
+        resultados = conexion.obtener_resultados()
+        
+        depositos = resultados
+        conexion.cerrarConexion()
+        return depositos
+    except Exception as e:
+            error_advice()
+            mensaje = f'Error en ObtenerGrupos, ArticulosDao: {str(e)}'
+            with open('error_log.txt', 'a') as file:
+                    file.write(mensaje + '\n')     
 def ObtenerDepositos():
         try:
                 conexion = ConexionDB()
-                sql = f"""SELECT id, name_dep FROM deposito WHERE activo = 1"""
+                sql = f"""SELECT id, codDep, name_dep FROM deposito WHERE activo = 1"""
                 conexion.ejecutar_consulta(sql)
                 resultados = conexion.obtener_resultados()
                 
@@ -19,10 +50,10 @@ def ObtenerDepositos():
 
 def EditArt(articulos, id):
     conexion = ConexionDB()
-    sql = f"""UPDATE articulo SET codDep = '{articulos.codDep}', codGrupo = '{articulos.codGrupo}',
-    codsubGrupo = '{articulos.codsubGrupo}', codProv = '{articulos.codProv}', nombre_producto = '{articulos.nombre_producto}',
-    descripcion = '{articulos.descripcion}', marca = '{articulos.marca}', modelo = '{articulos.modelo}', 
-    date_update = '{articulos.date_update}', activo = 1 WHERE id = {id}"""
+    sql = f"""UPDATE articulo SET codProducto = '{articulos.codProducto}', codDep = '{articulos.codDep}',
+    codgrupo = '{articulos.codgrupo}', codProv = '{articulos.codProv}', nombre_producto = '{articulos.nombre_producto}',
+    marca = '{articulos.marca}', modelo = '{articulos.modelo}', serial = '{articulos.serial}', costo = '{articulos.modelo}',
+    descripcion = '{articulos.descripcion}', date_update = '{articulos.date_update}', activo = 1 WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()
@@ -37,11 +68,11 @@ def EditArt(articulos, id):
 
 def SaveArt(articulos):
     conexion = ConexionDB()
-    sql = f"""INSERT INTO articulo (codProv, codDep, codGrupo, codsubGrupo, codProv, nombre_producto, descripcion, 
-    marca, modelo, date_created, date_update, activo)
-    VALUES('{articulos.codProv}','{articulos.codDep}','{articulos.codGrupo}','{articulos.codsubGrupo}',
-    '{articulos.codProv}','{articulos.nombre_producto}','{articulos.descripcion}','{articulos.marca}',
-    '{articulos.modelo}','{articulos.date_created}','{articulos.date_update}',1)"""
+    sql = f"""INSERT INTO articulo (codProducto, codDep, codgrupo, codProv, nombre_producto,
+    marca, modelo, serial, costo, descripcion, date_created, date_update, activo)
+    VALUES('{articulos.codProducto}','{articulos.codDep}','{articulos.codgrupo}',
+    '{articulos.codProv}','{articulos.nombre_producto}','{articulos.marca}',
+    '{articulos.modelo}','{articulos.serial}','{articulos.costo}','{articulos.descripcion}','{articulos.date_created}','{articulos.date_update}',1)"""
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()
@@ -50,7 +81,7 @@ def SaveArt(articulos):
     except Exception as e:
         conexion.cerrarConexion()
         error_advice()
-        mensaje = f'Error en SaveProv, ArticulosDao: {str(e)}'
+        mensaje = f'Error en SaveArt, ArticulosDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
@@ -60,7 +91,7 @@ def listarArticulos():
     sql = 'SELECT * FROM articulo WHERE activo = 1'
 
     try:
-        conexion.cursor.execute(sql )
+        conexion.cursor.execute(sql)
         listaArticulos = conexion.cursor.fetchall()
         conexion.cerrarConexion()
     except Exception as e:
@@ -102,7 +133,7 @@ def consulArt(where):
             file.write(mensaje + '\n')
     return listarArticulo
 
-def ProvDisable(id):
+def ArtDisable(id):
     conexion = ConexionDB()
     sql = f'UPDATE articulo SET activo = 0 WHERE id = {id}'
     try:
@@ -113,38 +144,29 @@ def ProvDisable(id):
     except Exception as e:
         error_advice()
         conexion.cerrarConexion()
-        mensaje = f'Error en ProvDelete, en ArticulosDao: {str(e)}'
+        mensaje = f'Error en ArtDisable, en ArticulosDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
 
 
-class Articulos:
-    def __init__(self, codProducto, codDep, codGrupo, codsubGrupo, codProv, nombre_producto, descripcion, 
-                marca, modelo, serial, existencia, lote, fecha_vencimiento, costo, descuento, iva,
-                estante, division, date_created, date_update):
+class Articulo:
+    def __init__(self, codProducto, codDep, codgrupo, codProv, nombre_producto, 
+                marca, modelo, serial, costo, descripcion, date_created, date_update):
         
         self.id = None
         self.codProducto = codProducto
         self.codDep = codDep
-        self.codGrupo = codGrupo
-        self.codsubGrupo = codsubGrupo
+        self.codgrupo = codgrupo
         self.codProv = codProv
         self.nombre_producto = nombre_producto
-        self.descripcion = descripcion
         self.marca = marca
         self.modelo = modelo
         self.serial = serial
-        self.existencia = existencia
-        self.lote = lote
-        self.fecha_vencimiento = fecha_vencimiento
         self.costo = costo
-        self.descuento = descuento
-        self.iva = iva
-        self.estante = estante
-        self.division = division
+        self.descripcion = descripcion
         self.date_created = date_created
         self.date_update = date_update
 
     def __str__(self):
-        return f'Articulos[{self.codProducto}, {self.codDep}, {self.codGrupo}, {self.codProv}, {self.codGrupo}, {self.codsubGrupo}, {self.codProv}, {self.nombre_producto}, {self.descripcion}, {self.marca}, {self.modelo}, {self.serial}, {self.existencia}, {self.lote}, {self.fecha_vencimiento}, {self.costo}, {self.descuento}, {self.iva}, {self.estante}, {self.division}, {self.date_created}, {self.date_update}]'
+        return f'Articulo[{self.codProducto}, {self.codDep}, {self.codgrupo}, {self.codProv}, {self.nombre_producto}, {self.marca}, {self.modelo}, {self.serial}, {self.costo}, {self.descripcion}, {self.date_created}, {self.date_update}]'
