@@ -3,7 +3,7 @@ import ctypes
 import tempfile
 import os
 from tkinter import ttk, messagebox, Tk, Label, Canvas, PhotoImage
-from formularios.form_maestro_design import FormularioMaestroDesign
+from formularios.form_maestro import FormularioMaestroDesign
 import time
 from PIL import ImageTk, Image, ImageFilter
 from functions.conexion import ConexionDB

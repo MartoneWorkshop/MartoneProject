@@ -2,9 +2,9 @@ from .conexion import ConexionDB
 from tkinter import messagebox
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 
-def EditClient(clients, id_client):
+def EditClient(client, id):
     conexion = ConexionDB()
-    sql = f"""UPDATE Clients SET client_firstname = '{clients.client_firstname}', client_lastname = '{clients.client_lastname}', client_ci = '{clients.client_ci}', client_phone = '{clients.client_phone}', client_address = '{clients.client_address}', client_mail = '{clients.client_mail}', activo = 1 WHERE id_client = {id_client}"""
+    sql = f"""UPDATE client SET cod_client = '{client.cod_client}', client_firstname = '{client.client_firstname}', client_lastname = '{client.client_lastname}', client_ci = '{client.client_ci}', client_phone = '{client.client_phone}', client_address = '{client.client_address}', client_email = '{client.client_email}','{client.updated_at}', activo = 1 WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()
@@ -16,10 +16,10 @@ def EditClient(clients, id_client):
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
-def SaveClient(clients):
+def SaveClient(client):
     conexion = ConexionDB()
-    sql = f"""INSERT INTO Clients (client_firstname, client_lastname, client_ci, client_phone, client_address, client_mail, activo)
-    VALUES('{clients.client_firstname}','{clients.client_lastname}','{clients.client_ci}','{clients.client_phone}','{clients.client_address}','{clients.client_mail}',1)"""
+    sql = f"""INSERT INTO client (cod_client, client_firstname, client_lastname, client_ci, client_phone, client_address, client_email, created_at, update_at, activo)
+    VALUES('{client.cod_client}','{client.client_firstname}','{client.client_lastname}','{client.client_ci}','{client.client_phone}','{client.client_address}','{client.client_email}','{client.created_at}','{client.updated_at}',1)"""
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()
@@ -35,7 +35,7 @@ def SaveClient(clients):
 def listarCliente():
     conexion = ConexionDB()
     listaCliente = []
-    sql = 'SELECT * FROM Clients WHERE activo = 1'
+    sql = 'SELECT * FROM client WHERE activo = 1'
     
     try:
         conexion.cursor.execute(sql)
@@ -49,10 +49,10 @@ def listarCliente():
             file.write(mensaje + '\n')
     return listaCliente
 
-def clientArchived():
+def clientesDesactivados():
     conexion = ConexionDB()
     listaCliente = []
-    sql = f'SELECT * FROM Clients WHERE activo = 0'
+    sql = f'SELECT * FROM client WHERE activo = 0'
     try:
         conexion.cursor.execute(sql)
         listaCliente = conexion.cursor.fetchall()
@@ -68,7 +68,7 @@ def clientArchived():
 def consulClient(where):
     conexion = ConexionDB()
     listaCliente = []
-    sql = f'SELECT * FROM Clients {where}'
+    sql = f'SELECT * FROM client {where}'
     try:
         conexion.cursor.execute(sql)
         listaCliente = conexion.cursor.fetchall()
@@ -80,9 +80,9 @@ def consulClient(where):
             file.write(mensaje + '\n')
     return listaCliente
 
-def client_Delete(id_client):
+def clientDelete(id):
     conexion = ConexionDB()
-    sql = f'UPDATE Clients SET activo = 0 WHERE id_client = {id_client}'
+    sql = f'UPDATE client SET activo = 0 WHERE id = {id}'
     try:
         conexion.cursor.execute(sql)
         conexion.cerrarConexion()
@@ -97,15 +97,16 @@ def client_Delete(id_client):
 
 
 
-class Clients:
-    def __init__(self, client_firstname, client_lastname, client_ci, client_phone, client_address, client_mail):
-        self.id_client = None
+class Client:
+    def __init__(self, cod_client, client_firstname, client_lastname, client_ci, client_phone, client_address, client_email):
+        self.id = None
+        self.cod_client = cod_client
         self.client_firstname = client_firstname
         self.client_lastname = client_lastname
         self.client_ci = client_ci
         self.client_phone = client_phone
         self.client_address = client_address
-        self.client_mail = client_mail
+        self.client_email = client_email
 
     def __str__(self):
-        return f'Clients[{self.client_firstname}, {self.client_lastname}, {self.client_ci}, {self.client_phone}, {self.client_address}, {self.client_mail}]'
+        return f'Client[{self.cod_client}, {self.client_firstname}, {self.client_lastname}, {self.client_ci}, {self.client_phone}, {self.client_address}, {self.client_email}]'

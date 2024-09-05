@@ -12,7 +12,8 @@ from ctypes import windll
 from functions.conexion import ConexionDB
 from tkinter import messagebox
 
-from formularios.form_home_design import FormularioHomeDesign
+from formularios.form_home import FormularioHomeDesign
+from formularios.form_clients import FormClient
 from formularios.form_users import FormUsers
 from formularios.form_modulos import FormModulos
 from formularios.form_permisos import FormPermisos
@@ -23,24 +24,21 @@ from formularios.form_products import FormProducts
 from formularios.form_category import FormCategoria
 
 
-class FormularioMaestroDesign(customtkinter.CTk):
+class FormularioMaestro(customtkinter.CTk):
     def __init__(self):
         super().__init__()
         self.config_window()
         self.paneles()
         self.controles_barra_superior()
         self.controles_cuerpo()
-        
-
     def controles_cuerpo(self):    
         self.seccion_login()
         self.barra_superior.pack_forget()
         self.menu_lateral.pack_forget()
-
     def config_window(self):
         # Configuración inicial de la ventana
         self.bg = util_img.leer_imagen("./imagenes/background.png", (1440, 900))
-        self.title("Policlinica de Especialidades")
+        self.title("H.A.S.T - Herramienta Administrativa para Soporte Tecnico")
         self.set_window_icon()
 
         #self.geometry(f"{self.w}x{self.h}")
@@ -58,12 +56,10 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
         self.cuerpo_principal = tk.Frame(self)
         self.cuerpo_principal.pack(side=tk.RIGHT, fill='both', expand=True)
-
     def set_window_icon(self):
         icon_path = "imagenes/icons/logo_ico.ico"  # Ruta del archivo de icono
-        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("PECA")  # Cambia "myappid" por un identificador único para tu aplicación
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("HAST")  # Cambia "myappid" por un identificador único para tu aplicación
         self.iconbitmap(icon_path)
-
     def controles_barra_superior(self):
         # Configuración de la barra superior
         font_awesome = customtkinter.CTkFont(family='Roboto', size=12)
@@ -78,64 +74,78 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.buttonMenuLateral = customtkinter.CTkButton(self.barra_superior, text="", image=self.menu_image,
                                         command=self.toggle_panel, bg_color='transparent', fg_color='transparent', hover=False, width=WIDTH_LOGO, height=HEIGHT_LOGO)
         self.buttonMenuLateral.pack(side=tk.LEFT, padx=20)
-        
     def controles_menu_lateral(self, permisos):
-        self.perfil = util_img.leer_imagen("./imagenes/icons/logo.png", (100, 100))
-        ## ESTO AUN NO ESTA DEFINIDO42
-        self.labelPerfil = tk.Label(self.menu_lateral, image=self.perfil, bg=COLOR_MENU_LATERAL)
-        self.labelPerfil.pack(side=tk.TOP, pady=15, padx=10)
+        self.logo = util_img.leer_imagen("./imagenes/icons/logo.png", (100, 100))
+        ## ESTO AUN NO ESTA DEFINIDO
+        self.labellogo = tk.Label(self.menu_lateral, image=self.logo, bg=COLOR_MENU_LATERAL)
+        self.labellogo.pack(side=tk.TOP, pady=15, padx=10)
+        
         #RUTAS DE LAS IMAGENES
-        home_image = Image.open("imagenes/icons/home.png") 
+        home_image = Image.open("imagenes/icons/home.png")
+        #Home Resized
+        home_resized = home_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        #Home Finals
+        self.home_icon = ImageTk.PhotoImage(home_resized)
+
+        #Proveedores 
         prov_image = Image.open("imagenes/icons/prov.png")
         listProv_image = Image.open("imagenes/icons/listprov.png")
-        #equipos_image = Image.open("imagenes/computer.png")
-        #historia_image = Image.open("imagenes/history.png")
-        #database_image = Image.open("imagenes/database.png")
-        #informes_image = Image.open("imagenes/reporte.png")
+        #Prov Resized
+        prov_resized = prov_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        listProv_resized = listProv_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        #Prov Final
+        self.prov_icon = ImageTk.PhotoImage(prov_resized)
+        self.listProv_icon = ImageTk.PhotoImage(listProv_resized)
+
+        #Clients
+        client_image = Image.open("imagenes/icons/clients.png")
+        regClient_image = Image.open("imagenes/icons/addclient.png")
+        #Clients Resized
+        client_resized = client_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        regClient_resized = regClient_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        #Clients Final
+        self.client_icon = ImageTk.PhotoImage(client_resized)
+        self.regClient_icon = ImageTk.PhotoImage(regClient_resized)
+
+        #Settings
         settings_image = Image.open("imagenes/icons/settings.png")
-        adjustdepot_image = Image.open("imagenes/icons/adjustdepot.png")
-        products_image = Image.open("imagenes/icons/product.png")
-        category_image = Image.open("imagenes/icons/product_cat.png")
         adjustUser_image = Image.open("imagenes/icons/user_adjust.png")
         userProfiles_image = Image.open("imagenes/icons/user_profiles.png") 
         permises_image = Image.open("imagenes/icons/permise.png")
         adjustModul_image = Image.open("imagenes/icons/module.png")
-        almacen_image = Image.open("imagenes/icons/almacen.png")
-
-
-        #IMAGENES RENDERIZADAS
-        home_resized = home_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        prov_resized = prov_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        listProv_resized = listProv_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        #equipos_resized = equipos_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        #historia_resized = historia_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        #Settings Resized
         settings_resized = settings_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         adjustUser_resized = adjustUser_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         userProfiles_resized = userProfiles_image.resize((WIDTH_LOGO, HEIGHT_LOGO)) 
         permises_resized = permises_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        adjustModul_resized = adjustModul_image.resize((WIDTH_LOGO, HEIGHT_LOGO)) 
-        almacen_resized = almacen_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        adjustdepot_resized = adjustdepot_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        products_resized = products_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        category_resized = category_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-
-        #IMAGENES FINALES
-        self.home_icon = ImageTk.PhotoImage(home_resized)
-        self.prov_icon = ImageTk.PhotoImage(prov_resized)
-        self.listProv_icon = ImageTk.PhotoImage(listProv_resized)
-        #self.equipos_icon = ImageTk. PhotoImage(equipos_resized)
-        #self.historia_icon = ImageTk.PhotoImage(historia_resized)
-        #self.database_icon = ImageTk.PhotoImage(database_resized)
-        #self.informes_icon = ImageTk.PhotoImage(informes_resized)
+        adjustModul_resized = adjustModul_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        #Settings Finals
         self.settings_icon = ImageTk.PhotoImage(settings_resized)
-        self.adjustdepot_icon = ImageTk.PhotoImage(adjustdepot_resized)
         self.adjustUser_icon = ImageTk.PhotoImage(adjustUser_resized)
         self.userProfiles_icon = ImageTk.PhotoImage(userProfiles_resized)
         self.permises_icon = ImageTk.PhotoImage(permises_resized)
         self.adjustModul_icon = ImageTk.PhotoImage(adjustModul_resized)
-        self.almacen_icon = ImageTk.PhotoImage(almacen_resized)
+        
+        #Products
+        products_image = Image.open("imagenes/icons/product.png")
+        category_image = Image.open("imagenes/icons/product_cat.png")
+        #Products Resized
+        products_resized = products_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        category_resized = category_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        #Products Finals
         self.products_icon = ImageTk.PhotoImage(products_resized)
         self.category_icon = ImageTk.PhotoImage(category_resized)
+
+        #Almacen
+        almacen_image = Image.open("imagenes/icons/almacen.png")
+        adjustdepot_image = Image.open("imagenes/icons/adjustdepot.png")
+        #Almacen Resized
+        almacen_resized = almacen_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        adjustdepot_resized = adjustdepot_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        #Almacen Finals
+        self.adjustdepot_icon = ImageTk.PhotoImage(adjustdepot_resized)
+        self.almacen_icon = ImageTk.PhotoImage(almacen_resized)
+
         #BOTONES DEL MENU
         #Home1001 visualizar modulo home
         if 'HOME1001' in permisos:
@@ -161,11 +171,11 @@ class FormularioMaestroDesign(customtkinter.CTk):
         else:
             pass
 
-        if 'REP1000' in permisos:
-            self.buttonInformes = tk.Button(self.menu_lateral, text="Informes",  font=("Roboto", 16), highlightthickness=20, width=ANCHO_MENU,
-                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10)        
-            self.buttonInformes.pack()
-            self.binding_hover_event(self.buttonInformes)
+        if 'CLIE1001' in permisos:
+            self.buttonClient = tk.Button(self.menu_lateral, text="Clientes",  font=("Roboto", 16),  image=self.client_icon, highlightthickness=20, width=ANCHO_MENU,
+                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_clientes(permisos))        
+            self.buttonClient.pack()
+            self.binding_hover_event(self.buttonClient)
         else:
             pass
 
@@ -176,8 +186,6 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.binding_hover_event(self.buttonSettings)
         else:
             pass
-            
-
     def seccion_login(self):
         self.w, self.h = 800, 600
         self.geometry(f"{self.w}x{self.h}")
@@ -296,7 +304,6 @@ class FormularioMaestroDesign(customtkinter.CTk):
         stylebutton.configure("Custom.TButton")
         btnLogIn = ttk.Button(marco_login, text="Iniciar Sesion", command=validarDatos, width=14, style="Custom.TButton")
         btnLogIn.place(x=120, y=180)
-
     def obtener_idrol(self, idrol):
         self
         conexion = ConexionDB()
@@ -313,7 +320,6 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.controles_menu_lateral(permisos)
         else:
             return None
-    
     def submenu_almacen(self, permisos):
         #LIMPIEZA PROVEEDORES
         if 'PROV1001' in permisos:
@@ -322,6 +328,14 @@ class FormularioMaestroDesign(customtkinter.CTk):
             if hasattr(self, "buttonListaProv"):
                 self.buttonListaProv.pack_forget()
                 del self.buttonListaProv
+        #LIMPIEZA EN CLIENTES
+        if 'CLIE1001' in permisos:
+            self.buttonClient.pack_forget()
+        #LIMPIEZA CLIENTES
+        if 'CLIE1002' in permisos:
+            if hasattr(self, "buttonRegClient"):
+                self.buttonRegClient.pack_forget()
+                del self.buttonRegClient
         #LIMPIEZA EN AJUSTES
         if 'CONF1001' in permisos:
             self.buttonSettings.pack_forget()
@@ -372,9 +386,10 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.binding_hover_submenu_event(self.buttonCatArt)
         if 'PROV1001' in permisos:
             self.buttonProveedores.pack()
+        if 'CLIE1001' in permisos:
+            self.buttonClient.pack()
         if 'CONF1001' in permisos:
             self.buttonSettings.pack()
-
     def submenu_proveedores(self, permisos):
         #VERIFICAR LOS PERMISOS Y QUE BOTONES ESTAN DISPONIBLES  
         #LIMPIEZA DE ALMACEN Y SUBMENU      
@@ -390,6 +405,14 @@ class FormularioMaestroDesign(customtkinter.CTk):
             if hasattr(self, "buttonCatArt"):
                 self.buttonCatArt.pack_forget()
                 del self.buttonCatArt
+        #LIMPIEZA EN CLIENTES
+        if 'CLIE1001' in permisos:
+            self.buttonClient.pack_forget()
+        #LIMPIEZA CLIENTES
+        if 'CLIE1002' in permisos:
+            if hasattr(self, "buttonRegClient"):
+                self.buttonRegClient.pack_forget()
+                del self.buttonRegClient
         #LIMPIEZA DE AJUSTES Y SUBMENU
         if 'CONF1001' in permisos:
             if hasattr(self, "buttonSettings"):
@@ -425,11 +448,14 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.binding_hover_submenu_event(self.buttonListaProv)
         
             pass
+        #INICIALIZACION CLIENTES
+        if 'CLIE1001' in permisos:
+            self.buttonClient.pack()
+        #INICIALIZACION AJUSTES
         if 'CONF1001' in permisos:
             self.buttonSettings.pack()
         else:
-            pass
-    
+            pass   
     def submenu_config(self, permisos):
         #lIMPIEZA DE SUBMENU ALMACEN
         if 'ALMA1002' in permisos:
@@ -449,6 +475,14 @@ class FormularioMaestroDesign(customtkinter.CTk):
             if hasattr(self, "buttonListaProv"):
                 self.buttonListaProv.pack_forget()
                 del self.buttonListaProv
+        #LIMPIEZA CLIENTES
+        if 'CLIE1002' in permisos:
+            if hasattr(self, "buttonRegClient"):
+                self.buttonRegClient.pack_forget()
+                del self.buttonRegClient
+        #INICIALIZACION DE CLIENTES
+        if 'CLIE1001' in permisos:
+            self.buttonClient.pack()
         #INICIALIZACION DE SUBMENU DE AJUSTES
         if 'CONF1002' in permisos:
             if hasattr(self, "buttonAdjustUsers"):
@@ -491,7 +525,61 @@ class FormularioMaestroDesign(customtkinter.CTk):
                 self.buttonPermisos.pack()
             
                 self.binding_hover_submenu_event(self.buttonPermisos)
+    def submenu_clientes(self, permisos):
+        #lIMPIEZA DE SUBMENU ALMACEN
+        if 'ALMA1002' in permisos:
+            if hasattr(self, "buttonDepositos"):
+                self.buttonDepositos.pack_forget()
+                del self.buttonDepositos
+        if 'ALMA1003' in permisos:
+            if hasattr(self, "buttonProductos"):
+                self.buttonProductos.pack_forget()
+                del self.buttonProductos
+        if 'ALMA1004' in permisos:
+            if hasattr(self, "buttonCatArt"):
+                self.buttonCatArt.pack_forget()
+                del self.buttonCatArt
+        #LIMPIEZA SUBMENU PROVEEDORES
+        if 'PROV1002' in permisos:
+            if hasattr(self, "buttonListaProv"):
+                self.buttonListaProv.pack_forget()
+                del self.buttonListaProv
+        #LIMPIEZA DE AJUSTES Y SUBMENU
+        if 'CONF1001' in permisos:
+            if hasattr(self, "buttonSettings"):
+                self.buttonSettings.pack_forget()
+        if 'CONF1002' in permisos:
+            if hasattr(self, "buttonAdjustUsers"):
+                self.buttonAdjustUsers.pack_forget()
+                del self.buttonAdjustUsers
+        if 'CONF1003' in permisos:
+            if hasattr(self, "buttonAdjustProfiles"):
+                self.buttonAdjustProfiles.pack_forget()
+                del self.buttonAdjustProfiles
+        if 'CONF1004' in permisos:
+            if hasattr(self, "buttonModulos"):
+                self.buttonModulos.pack_forget()
+                del self.buttonModulos
+        if 'CONF1005' in permisos:
+            if hasattr(self, "buttonPermisos"):
+                self.buttonPermisos.pack_forget()
+                del self.buttonPermisos
 
+        #INICIALIZACION CLIENTES
+        if 'CLIE1002' in permisos:
+            if hasattr(self, "buttonRegClient"):
+                self.buttonRegClient.pack_forget()
+                del self.buttonRegClient
+            else:
+                self.buttonRegClient = tk.Button(self.menu_lateral, text="Registro\nde Clientes",  font=("Roboto", 15), image=self.regClient_icon, highlightthickness=20, width=ANCHO_MENU,
+                    height=ALTO_MENU, bg=COLOR_SUBMENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_regclientes(permisos))        
+                self.buttonRegClient.pack()
+
+                self.binding_hover_submenu_event(self.buttonRegClient)
+
+        #INICIALIZACION CONFIG
+        if 'CONF1001' in permisos:
+            self.buttonSettings.pack()
     def obtener_idrol(self, idrol):
         conexion = ConexionDB()
         sql = f"SELECT codpermiso FROM asigperm WHERE idrol = '{idrol}'"
@@ -508,14 +596,12 @@ class FormularioMaestroDesign(customtkinter.CTk):
             self.controles_menu_lateral(permisos)
         else:
             return None
-        
     def toggle_panel(self):
         # Alternar visibilidad del menú lateral
         if self.menu_lateral.winfo_ismapped():
             self.menu_lateral.pack_forget()
         else:
             self.menu_lateral.pack(side=tk.LEFT, fill='y')
-
     def check_size(self):
         width_screen = self.winfo_width()
         height_screen = self.winfo_height()
@@ -532,10 +618,13 @@ class FormularioMaestroDesign(customtkinter.CTk):
 
     def abrir_usuarios(self, permisos):
         self.limpiar_panel(self.cuerpo_principal)
-        FormUsers(self.cuerpo_principal, permisos)
+        FormUsers(self.cuerpo_principal, permisos) 
     def abrir_proveedores(self, permisos):
         self.limpiar_panel(self.cuerpo_principal)
-        FormProv(self.cuerpo_principal, permisos)       
+        FormProv(self.cuerpo_principal, permisos)
+    def abrir_regclientes(self, permisos):
+        self.limpiar_panel(self.cuerpo_principal)
+        FormClient(self.cuerpo_principal, permisos)       
     def abrir_modulos(self, permisos):
         self.limpiar_panel(self.cuerpo_principal)
         FormModulos(self.cuerpo_principal, permisos)
@@ -556,7 +645,8 @@ class FormularioMaestroDesign(customtkinter.CTk):
         FormDepot(self.cuerpo_principal, permisos)
     def abrir_Productos(self, permisos):   
         self.limpiar_panel(self.cuerpo_principal)
-        FormProducts(self.cuerpo_principal, permisos)   
+        FormProducts(self.cuerpo_principal, permisos)
+
     def limpiar_panel(self, panel):
     # Función para limpiar el contenido del panel
         for widget in panel.winfo_children():
