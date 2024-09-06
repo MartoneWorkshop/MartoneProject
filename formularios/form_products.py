@@ -7,7 +7,7 @@ from PIL import Image, ImageTk
 from tkinter import ttk
 from util.util_alerts import set_opacity, save_advice, error_advice, edit_advice, delete_advice
 from util.util_functions import buscarCorrelativo, actualizarCorrelativo
-from functions.ProductoDao import Producto, consulArt, listarProductos, ObtenerDepositos, ObtenerProveedores, ObtenerGrupos, SaveArt, EditArt, productosDesactivados, ArtDisable
+from functions.ProductoDao import Producto, searchProducts, listProduct, getDepots, getSupplier, getCategory, save_product, edit_product, product_inactive, productDisable
 from config import  COLOR_FONDO, WIDTH_LOGO, HEIGHT_LOGO, COLOR_MENU_LATERAL, ANCHO_MENU, ALTO_MENU
 import datetime
 from tkinter import messagebox
@@ -35,7 +35,7 @@ class FormProducts():
         label_fondo.place(x=0, y=0, relwidth=1, relheight=1)
         self.label_fondo = label_fondo
         # Configurar el Label para que se ajuste automáticamente al tamaño del frame
-        def ajustar_imagen(event):
+        def adjustImage(event):
             # Cambiar el tamaño de la imagen para que coincida con el tamaño del frame
             nueva_imagen = imagen.resize((event.width, event.height))
             nueva_imagen_tk = ImageTk.PhotoImage(nueva_imagen)
@@ -43,131 +43,131 @@ class FormProducts():
             # Actualizar la imagen en el Label de fondo
             label_fondo.config(image=nueva_imagen_tk)
         
-        self.barra_inferior.bind("<Configure>", ajustar_imagen)
+        self.barra_inferior.bind("<Configure>", adjustImage)
 
         # Segundo Label con la imagen
         self.label_imagen = tk.Label(self.barra_inferior, image=imagen_tk)
         self.label_imagen.place(x=0, y=0, relwidth=1, relheight=1)
         self.label_imagen.config(fg="#fff", font=("Roboto", 10), bg=COLOR_FONDO)
 
-        self.marco_productos = customtkinter.CTkFrame(cuerpo_principal, width=1120, height=800, bg_color="white", fg_color="white")
-        self.marco_productos.place(relx=0.5, rely=0.5, anchor="center")
+        self.frame_products = customtkinter.CTkFrame(cuerpo_principal, width=1120, height=800, bg_color="white", fg_color="white")
+        self.frame_products.place(relx=0.5, rely=0.5, anchor="center")
 
-        set_opacity(self.marco_productos, 0.8)
+        set_opacity(self.frame_products, 0.8)
         ##################################################### BOTONES DE LA TABLA ##################################################
-        self.buttonCreateArt = tk.Button(self.marco_productos, text="Crear\n Producto", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                        command=lambda: self.crear_producto(permisos))
+        self.buttonCreateArt = tk.Button(self.frame_products, text="Crear\n Producto", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                        command=lambda: self.FormCreateProduct(permisos))
         self.buttonCreateArt.place(x=140, y=50)
         if 'ALMA1005' in permisos:
-            self.buttonEditArt = tk.Button(self.marco_productos, text="Editar\n Producto", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                            command=lambda: self.editar_producto(permisos, self.tablaProductos.item(self.tablaProductos.selection())['values']))
+            self.buttonEditArt = tk.Button(self.frame_products, text="Editar\n Producto", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                            command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']))
             self.buttonEditArt.place(x=265, y=50)
         else:
-            self.buttonEditArt = tk.Button(self.marco_productos, text="Editar\n Producto", font=("Roboto", 12), state='disabled', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                            command=lambda: self.editar_producto(permisos, self.tablaProductos.item(self.tablaProductos.selection())['values']))
+            self.buttonEditArt = tk.Button(self.frame_products, text="Editar\n Producto", font=("Roboto", 12), state='disabled', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                            command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']))
             self.buttonEditArt.place(x=265, y=50)
             
         if 'ALMA1006' in permisos:
-            self.buttonDeleteArt = tk.Button(self.marco_productos, text="Desactivar\n Producto", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                                command=lambda: self.desactivarProducto(permisos))
+            self.buttonDeleteArt = tk.Button(self.frame_products, text="Desactivar\n Producto", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                                command=lambda: self.inactivateProduct(permisos))
             self.buttonDeleteArt.place(x=390, y=50)
         else:
-            self.buttonDeleteArt = tk.Button(self.marco_productos, text="Desactivar\n Producto", font=("Roboto", 12), state='disabled', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                            command=lambda: self.desactivarProducto(permisos))
+            self.buttonDeleteArt = tk.Button(self.frame_products, text="Desactivar\n Producto", font=("Roboto", 12), state='disabled', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                            command=lambda: self.inactivateProduct(permisos))
             self.buttonDeleteArt.place(x=390, y=50)
         
         if 'ALMA1007' in permisos:
             self.switchStatus = tk.BooleanVar(value=True)
-            self.switchArtStatus = customtkinter.CTkSwitch(self.marco_productos, variable=self.switchStatus, state='normal', text="Activos", font=("Roboto", 12), command=self.MostrarActivosInactivos)
-            self.switchArtStatus.place(x=900, y=157)
+            self.switchProStatus = customtkinter.CTkSwitch(self.frame_products, variable=self.switchStatus, state='normal', text="Activos", font=("Roboto", 12), command=self.showStatus)
+            self.switchProStatus.place(x=900, y=157)
         else:
             self.switchStatus = tk.BooleanVar(value=True)
-            self.switchArtStatus = customtkinter.CTkSwitch(self.marco_productos, variable=self.switchStatus, state='disabled', text="Activos", font=("Roboto", 12), command=self.MostrarActivosInactivos)
-            self.switchArtStatus.place(x=900, y=157)
+            self.switchProStatus = customtkinter.CTkSwitch(self.frame_products, variable=self.switchStatus, state='disabled', text="Activos", font=("Roboto", 12), command=self.showStatus)
+            self.switchProStatus.place(x=900, y=157)
             
 
         ###################################################### BUSCADOR DE LA TABLA #################################################
         search_image = Image.open("imagenes/icons/search.png")
         search_resized = search_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         self.search_icon = ImageTk.PhotoImage(search_resized)
-        self.lblsearch_productos = customtkinter.CTkLabel(self.marco_productos, text='', image=self.search_icon, font=("Roboto", 14))
+        self.lblsearch_productos = customtkinter.CTkLabel(self.frame_products, text='', image=self.search_icon, font=("Roboto", 14))
         self.lblsearch_productos.place(x=65, y=155)
 
         self.sventrysearch_productos = customtkinter.StringVar()
-        self.entrysearch_productos = ttk.Entry(self.marco_productos, textvariable=self.sventrysearch_productos, style='Modern.TEntry', width=30)
+        self.entrysearch_productos = ttk.Entry(self.frame_products, textvariable=self.sventrysearch_productos, style='Modern.TEntry', width=30)
         self.entrysearch_productos.place(x=100, y=157)
-        self.entrysearch_productos.bind('<KeyRelease>', self.update_art_content)
+        self.entrysearch_productos.bind('<KeyRelease>', self.updateSearch)
 
         #################################################### INFORMACION DE LA TABLA ####################################################
         where = ""
         if len(where) > 0:
-            self.ListaProductos = consulArt(where)
+            self.productList = searchProducts(where)
         else:
-            self.ListaProductos = listarProductos()
-            self.ListaProductos.reverse()
+            self.productList = listProduct()
+            self.productList.reverse()
 
-        self.tablaProductos = ttk.Treeview(self.marco_productos, column=('codProducto','codDep','codgrupo','codProv','nombre_producto','marca','modelo','serial','costo','descripcion'), height=25)
-        self.tablaProductos.place(x=32, y=200)
+        self.productTable = ttk.Treeview(self.frame_products, column=('codProducto','codDep','codgrupo','codProv','nombre_producto','marca','modelo','serial','costo','descripcion'), height=25)
+        self.productTable.place(x=32, y=200)
 
-        self.scroll = ttk.Scrollbar(self.marco_productos, orient='vertical', command=self.tablaProductos.yview)
+        self.scroll = ttk.Scrollbar(self.frame_products, orient='vertical', command=self.productTable.yview)
         self.scroll.place(x=1084, y=200, height=526)
 
-        self.tablaProductos.configure(yscrollcommand=self.scroll.set)
-        self.tablaProductos.tag_configure('evenrow')
+        self.productTable.configure(yscrollcommand=self.scroll.set)
+        self.productTable.tag_configure('evenrow')
 
-        self.tablaProductos.heading('#0',text="ID" )
-        self.tablaProductos.heading('#1',text="CodProducto")
-        self.tablaProductos.heading('#2',text="Deposito")
-        self.tablaProductos.heading('#3',text="Categoria")
-        self.tablaProductos.heading('#4',text="Proveedor")
-        self.tablaProductos.heading('#5',text="Nomb Producto")
-        self.tablaProductos.heading('#6',text="Marca")
-        self.tablaProductos.heading('#7',text="Modelo")
-        self.tablaProductos.heading('#8',text="Serial")
-        self.tablaProductos.heading('#9',text="Costo")
-        self.tablaProductos.heading('#10',text="Descripcion")
+        self.productTable.heading('#0',text="ID" )
+        self.productTable.heading('#1',text="CodProducto")
+        self.productTable.heading('#2',text="Deposito")
+        self.productTable.heading('#3',text="Categoria")
+        self.productTable.heading('#4',text="Proveedor")
+        self.productTable.heading('#5',text="Nomb Producto")
+        self.productTable.heading('#6',text="Marca")
+        self.productTable.heading('#7',text="Modelo")
+        self.productTable.heading('#8',text="Serial")
+        self.productTable.heading('#9',text="Costo")
+        self.productTable.heading('#10',text="Descripcion")
 
-        self.tablaProductos.column("#0", width=50, stretch=True, anchor='w')
-        self.tablaProductos.column("#1", width=100, stretch=True)
-        self.tablaProductos.column("#2", width=100, stretch=True)
-        self.tablaProductos.column("#3", width=100, stretch=True)
-        self.tablaProductos.column("#4", width=100, stretch=True)
-        self.tablaProductos.column("#5", width=100, stretch=True)
-        self.tablaProductos.column("#6", width=100, stretch=True)
-        self.tablaProductos.column("#7", width=100, stretch=True)
-        self.tablaProductos.column("#8", width=100, stretch=True)
-        self.tablaProductos.column("#9", width=100, stretch=True)
-        self.tablaProductos.column("#10", width=100, stretch=True)
+        self.productTable.column("#0", width=50, stretch=True, anchor='w')
+        self.productTable.column("#1", width=100, stretch=True)
+        self.productTable.column("#2", width=100, stretch=True)
+        self.productTable.column("#3", width=100, stretch=True)
+        self.productTable.column("#4", width=100, stretch=True)
+        self.productTable.column("#5", width=100, stretch=True)
+        self.productTable.column("#6", width=100, stretch=True)
+        self.productTable.column("#7", width=100, stretch=True)
+        self.productTable.column("#8", width=100, stretch=True)
+        self.productTable.column("#9", width=100, stretch=True)
+        self.productTable.column("#10", width=100, stretch=True)
 
-        for p in self.ListaProductos:
-            self.tablaProductos.insert('','end',iid=p[0], text=p[0],values=(p[1],p[2],p[3],p[4],p[5],p[6],p[7],p[8],p[9],p[10]))
+        for p in self.productList:
+            self.productTable.insert('','end',iid=p[0], text=p[0],values=(p[1],p[2],p[3],p[4],p[5],p[6],p[7],p[8],p[9],p[10]))
 
-        self.tablaProductos.bind('<Double-1>', lambda event: self.editar_producto(event, self.tablaProductos.item(self.tablaProductos.selection())['values']))
+        self.productTable.bind('<Double-1>', lambda event: self.FormEditProduct(event, self.productTable.item(self.productTable.selection())['values']))
 
-    def MostrarActivosInactivos(self):
+    def showStatus(self):
         if self.switchStatus.get():
-            self.switchArtStatus.configure(text="Activos")
-            self.mostrarArtActivos()
+            self.switchProStatus.configure(text="Activos")
+            self.showActive()
         else:
-            self.switchArtStatus.configure(text="Inactivos")
-            self.mostrarArtDesactivados()
+            self.switchProStatus.configure(text="Inactivos")
+            self.showInactive()
      
-    def mostrarArtActivos(self):
+    def showActive(self):
         # Borrar los elementos existentes en la tabla de permisos
-        self.tablaProductos.delete(*self.tablaProductos.get_children())
+        self.productTable.delete(*self.productTable.get_children())
         # Obtener la lista de permisos activos
-        permisos_activos = listarProductos()
+        permisos_activos = listProduct()
         # Insertar los permisos activos en la tabla
         for p in permisos_activos:
-            self.tablaProductos.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5],p[6],p[7],p[8],p[9],p[10]))
+            self.productTable.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5],p[6],p[7],p[8],p[9],p[10]))
 
-    def mostrarArtDesactivados(self):
-        self.tablaProductos.delete(*self.tablaProductos.get_children())
-        permisos_desactivados = productosDesactivados()
+    def showInactive(self):
+        self.productTable.delete(*self.productTable.get_children())
+        permisos_desactivados = product_inactive()
         for p in permisos_desactivados:
-            self.tablaProductos.insert('',0, text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6],p[7],p[8],p[9],p[10]))
+            self.productTable.insert('',0, text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6],p[7],p[8],p[9],p[10]))
 
-    def update_art_content(self, event=None):
+    def updateSearch(self, event=None):
     # Conectar a la base de datos
         self.connection = sqlite3.connect('database/database.db')
         self.cursor = self.connection.cursor()
@@ -190,20 +190,20 @@ class FormProducts():
         self.result = self.cursor.fetchall()
     # Filtrar los registros según el contenido ingresado
         filtered_results = []
-        for p in self.ListaProductos:
+        for p in self.productList:
             if self.content.lower() in str(p[0]).lower() or self.content.lower() in str(p[1]).lower() or self.content.lower() in str(p[2]).lower() or self.content.lower() in str(p[3]).lower() or self.content.lower() in str(p[4]).lower() or self.content.lower() in str(p[5]).lower():              
                 filtered_results.append(p)
 
     # Borrar los elementos existentes en la tablaEquipos
-        self.tablaProductos.delete(*self.tablaProductos.get_children())
+        self.productTable.delete(*self.productTable.get_children())
 
     # Insertar los nuevos resultados en la tablaEquipos
         for p in filtered_results:
-            self.tablaProductos.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5]))
+            self.productTable.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5]))
         self.cursor.close()
         self.connection.close()
         
-    def crear_producto(self, permisos):
+    def FormCreateProduct(self, permisos):
         self.id = None
         #Creacion del top level
         self.topCreateArt = customtkinter.CTkToplevel()
@@ -252,7 +252,7 @@ class FormProducts():
         self.lblmodeloProducto = customtkinter.CTkLabel(marco_crearproductos, text='Proveedor', font=("Roboto", 13))
         self.lblmodeloProducto.place(x=365, y=60)
         
-        proveedores = ObtenerProveedores()
+        proveedores = getSupplier()
         self.svproveedor_var = customtkinter.StringVar(value="Proveedor")
         self.multioption = customtkinter.CTkOptionMenu(marco_crearproductos, values=[proveedor[2] for proveedor in proveedores], variable=self.svproveedor_var)
         self.multioption.place(x=360, y=85)
@@ -301,7 +301,7 @@ class FormProducts():
         self.lblcategoriaProducto = customtkinter.CTkLabel(marco_crearproductos, text='Categoria', font=("Roboto", 13))
         self.lblcategoriaProducto.place(x=205, y=200)
         
-        categoria = ObtenerGrupos() 
+        categoria = getCategory() 
         self.svcategoria_var = customtkinter.StringVar(value="Categoria")
         self.multioption = customtkinter.CTkOptionMenu(marco_crearproductos, values=[categoria[2] for categoria in categoria], variable=self.svcategoria_var)
         self.multioption.place(x=200, y=230)
@@ -310,7 +310,7 @@ class FormProducts():
         self.lblDepositoProducto = customtkinter.CTkLabel(marco_crearproductos, text='Deposito', font=("Roboto", 13))
         self.lblDepositoProducto.place(x=365, y=200)
     
-        depositos = ObtenerDepositos()
+        depositos = getDepots()
         self.svdepositos_var = customtkinter.StringVar(value="Depositos")
         self.multioption = customtkinter.CTkOptionMenu(marco_crearproductos, values=[deposito[2] for deposito in depositos], variable=self.svdepositos_var)
         
@@ -382,55 +382,55 @@ class FormProducts():
             )
             
             if self.id is None:
-                SaveArt(productos)
+                save_product(productos)
                 actualizarCorrelativo('producto')
 
                 self.topCreateArt.destroy()
             else:
-                EditArt(productos, self.id)
+                edit_product(productos, self.id)
                 self.topEditArt.destroy()
 
-            self.listarProductosEnTabla()
+            self.updateTable()
             
         except Exception as e:
             error_advice()
-            mensaje = f'Error en GuardarProducto, form_productos: {str(e)}'
+            mensaje = f'Error en GuardarProducto, form_products: {str(e)}'
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')
                 
-    def listarProductosEnTabla(self, where=None):
+    def updateTable(self, where=None):
         try:
         # Limpiar la tabla existente
-            self.tablaProductos.delete(*self.tablaProductos.get_children())
+            self.productTable.delete(*self.productTable.get_children())
 
             if where is not None and len(where) > 0:
-                self.ListaProducto = consulArt(where)
+                self.ListaProducto = searchProducts(where)
             else:
-                self.ListaProducto = listarProductos()
+                self.ListaProducto = listProduct()
                 self.ListaProducto.reverse()
 
             for p in self.ListaProducto:
-                self.tablaProductos.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10]))
+                self.productTable.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10]))
         except Exception as e:
             error_advice()
             mensaje = f'Error en listarProductosEnTabla, form_users: {str(e)}'
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')
             
-    def editar_producto(self, permisos, values):
+    def FormEditProduct(self, permisos, values):
         #Creacion del top level
         if values:
-            self.id = self.tablaProductos.item(self.tablaProductos.selection())['text']
-            self.editarcodProducto = self.tablaProductos.item(self.tablaProductos.selection())['values'][0]
-            self.editarnombProducto = self.tablaProductos.item(self.tablaProductos.selection())['values'][4]
-            self.editarproveedor = self.tablaProductos.item(self.tablaProductos.selection())['values'][3]
-            self.editarmarcaProducto = self.tablaProductos.item(self.tablaProductos.selection())['values'][5]
-            self.editarmodeloProducto = self.tablaProductos.item(self.tablaProductos.selection())['values'][6]
-            self.editarserialProducto = self.tablaProductos.item(self.tablaProductos.selection())['values'][7]
-            self.editarcostoProducto = self.tablaProductos.item(self.tablaProductos.selection())['values'][8]
-            self.editarcategoria_var = self.tablaProductos.item(self.tablaProductos.selection())['values'][2]
-            self.editardepositos_var = self.tablaProductos.item(self.tablaProductos.selection())['values'][1]
-            self.editardescripcionProd = self.tablaProductos.item(self.tablaProductos.selection())['values'][9]
+            self.id = self.productTable.item(self.productTable.selection())['text']
+            self.editarcodProducto = self.productTable.item(self.productTable.selection())['values'][0]
+            self.editarnombProducto = self.productTable.item(self.productTable.selection())['values'][4]
+            self.editarproveedor = self.productTable.item(self.productTable.selection())['values'][3]
+            self.editarmarcaProducto = self.productTable.item(self.productTable.selection())['values'][5]
+            self.editarmodeloProducto = self.productTable.item(self.productTable.selection())['values'][6]
+            self.editarserialProducto = self.productTable.item(self.productTable.selection())['values'][7]
+            self.editarcostoProducto = self.productTable.item(self.productTable.selection())['values'][8]
+            self.editarcategoria_var = self.productTable.item(self.productTable.selection())['values'][2]
+            self.editardepositos_var = self.productTable.item(self.productTable.selection())['values'][1]
+            self.editardescripcionProd = self.productTable.item(self.productTable.selection())['values'][9]
             
             
             self.topEditArt = customtkinter.CTkToplevel()
@@ -479,7 +479,7 @@ class FormProducts():
             self.lblprovProducto = customtkinter.CTkLabel(marco_editarproductos, text='Proveedor', font=("Roboto", 13))
             self.lblprovProducto.place(x=365, y=60)
 
-            proveedores = ObtenerProveedores()
+            proveedores = getSupplier()
             self.svproveedor_var = customtkinter.StringVar(value=self.editarproveedor)
             self.multioption = customtkinter.CTkOptionMenu(marco_editarproductos, values=[proveedor[2] for proveedor in proveedores], variable=self.svproveedor_var)
             self.multioption.place(x=360, y=85)
@@ -528,7 +528,7 @@ class FormProducts():
             self.lblcategoriaProducto = customtkinter.CTkLabel(marco_editarproductos, text='Categoria', font=("Roboto", 13))
             self.lblcategoriaProducto.place(x=205, y=200)
 
-            categoria = ObtenerGrupos() 
+            categoria = getCategory() 
             self.svcategoria_var = customtkinter.StringVar(value=self.editarcategoria_var)
             self.multioption = customtkinter.CTkOptionMenu(marco_editarproductos, values=[categoria[3] for categoria in categoria], variable=self.svcategoria_var)
             self.multioption.place(x=200, y=230)
@@ -537,7 +537,7 @@ class FormProducts():
             self.lblDepositoProducto = customtkinter.CTkLabel(marco_editarproductos, text='Deposito', font=("Roboto", 13))
             self.lblDepositoProducto.place(x=365, y=200)
 
-            depositos = ObtenerDepositos()
+            depositos = getDepots()
             self.svdepositos_var = customtkinter.StringVar(value=self.editardepositos_var)
             self.multioption = customtkinter.CTkOptionMenu(marco_editarproductos, values=[deposito[2] for deposito in depositos], variable=self.svdepositos_var)
 
@@ -588,16 +588,16 @@ class FormProducts():
         else:
             messagebox.showerror("Error", "Debe seleccionar un modulo")
 
-    def desactivarProducto(self, permisos):
+    def inactivateProduct(self, permisos):
         try:
-            self.id = self.tablaProductos.item(self.tablaProductos.selection())['text']
+            self.id = self.productTable.item(self.productTable.selection())['text']
             confirmar = messagebox.askyesno("Confirmar", "¿Estás seguro de que deseas desactivar este producto?")
             if confirmar:
-                ArtDisable(self.id)
-                self.listarProductosEnTabla()
+                productDisable(self.id)
+                self.updateTable()
         except Exception as e:
             error_advice()
-            mensaje = f'Error en desactivarProducto, form_productos: {str(e)}'
+            mensaje = f'Error en inactivateProduct, form_products: {str(e)}'
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')
 

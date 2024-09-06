@@ -5,7 +5,7 @@ from PIL import Image, ImageTk
 
 
 
-class FormularioHomeDesign():
+class formDashboard():
 
     def __init__(self, cuerpo_principal):
 
@@ -27,7 +27,7 @@ class FormularioHomeDesign():
         label_fondo.place(x=0, y=0, relwidth=1, relheight=1)
         self.label_fondo = label_fondo
         # Configurar el Label para que se ajuste automáticamente al tamaño del frame
-        def ajustar_imagen(event):
+        def adjustImage(event):
             # Cambiar el tamaño de la imagen para que coincida con el tamaño del frame
             nueva_imagen = imagen.resize((event.width, event.height))
             nueva_imagen_tk = ImageTk.PhotoImage(nueva_imagen)
@@ -35,7 +35,7 @@ class FormularioHomeDesign():
             # Actualizar la imagen en el Label de fondo
             label_fondo.config(image=nueva_imagen_tk)
         
-        self.barra_inferior.bind("<Configure>", ajustar_imagen)
+        self.barra_inferior.bind("<Configure>", adjustImage)
 
         # Segundo Label con la imagen
         self.label_imagen = tk.Label(self.barra_inferior, image=imagen_tk)

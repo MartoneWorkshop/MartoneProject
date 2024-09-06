@@ -2,65 +2,60 @@ import tkinter as tk
 import util.util_ventana as util_ventana
 import util.util_imagenes as util_img
 import customtkinter
-import ctypes
 from tkinter import font, ttk
 from config import COLOR_BARRA_SUPERIOR, COLOR_MENU_LATERAL, COLOR_FONDO, COLOR_MENU_CURSOR_ENCIMA, COLOR_SUBMENU_LATERAL, COLOR_SUBMENU_CURSOR_ENCIMA, ANCHO_MENU, MITAD_MENU, ALTO_MENU, WIDTH_LOGO, HEIGHT_LOGO
 from PIL import Image, ImageTk, ImageColor
 from util.util_alerts import edit_advice, error_advice, save_advice, delete_advice, login_correct_advice, login_wrong_advice
 from customtkinter import *
-from ctypes import windll
 from functions.conexion import ConexionDB
 from tkinter import messagebox
 
-from formularios.form_home import FormularioHomeDesign
+from formularios.form_dashboard import formDashboard
 from formularios.form_clients import FormClient
 from formularios.form_users import FormUsers
-from formularios.form_modulos import FormModulos
-from formularios.form_permisos import FormPermisos
-from formularios.form_perfiles import FormPerfiles
-from formularios.form_proveedores import FormProv
-from formularios.form_deposito import FormDepot
+from formularios.form_modules import FormModules
+from formularios.form_permiss import FormPermissions
+from formularios.form_profiles import FormProfiles
+from formularios.form_suppliers import FormSuppliers
+from formularios.form_depots import FormDepot
 from formularios.form_products import FormProducts
-from formularios.form_category import FormCategoria
+from formularios.form_category import FormCategory
+from util.util_ventana import set_window_icon, set_opacity, binding_hover_event, binding_hover_submenu_event, cleanPanel
 
-
-class FormularioMaestro(customtkinter.CTk):
+class FormMain(customtkinter.CTk):
     def __init__(self):
         super().__init__()
         self.config_window()
-        self.paneles()
-        self.controles_barra_superior()
-        self.controles_cuerpo()
-    def controles_cuerpo(self):    
-        self.seccion_login()
+        self.createPanels()
+        self.topBarControls()
+        self.bodyControls()
+    def bodyControls(self):    
+        self.loginSection()
         self.barra_superior.pack_forget()
         self.menu_lateral.pack_forget()
     def config_window(self):
         # Configuración inicial de la ventana
         self.bg = util_img.leer_imagen("./imagenes/background.png", (1440, 900))
         self.title("H.A.S.T - Herramienta Administrativa para Soporte Tecnico")
-        self.set_window_icon()
+        set_window_icon(self)
 
         #self.geometry(f"{self.w}x{self.h}")
         self.resizable(False, False)
         self.iconbitmap("./imagenes/icons/logo_ico.ico")
         #util_ventana.centrar_ventana(self, self.w, self.h)
-    def paneles(self):        
-        # Crear paneles: barra superior, menú lateral y cuerpo principal
+    def createPanels(self):        
+        # Crear createPanels:
+        #Barra Superior
         self.barra_superior = tk.Frame(
             self, bg=COLOR_BARRA_SUPERIOR, height=50)
         self.barra_superior.pack(side=tk.TOP, fill='both')
-
+        #Menu Lateral
         self.menu_lateral = tk.Frame(self, bg=COLOR_MENU_LATERAL, width=150)
         self.menu_lateral.pack(side=tk.LEFT, fill='both', expand=False) 
-
+        #Cuerpo Principal
         self.cuerpo_principal = tk.Frame(self)
         self.cuerpo_principal.pack(side=tk.RIGHT, fill='both', expand=True)
-    def set_window_icon(self):
-        icon_path = "imagenes/icons/logo_ico.ico"  # Ruta del archivo de icono
-        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("HAST")  # Cambia "myappid" por un identificador único para tu aplicación
-        self.iconbitmap(icon_path)
-    def controles_barra_superior(self):
+    def topBarControls(self):
         # Configuración de la barra superior
         font_awesome = customtkinter.CTkFont(family='Roboto', size=12)
         # Etiqueta de título
@@ -74,7 +69,7 @@ class FormularioMaestro(customtkinter.CTk):
         self.buttonMenuLateral = customtkinter.CTkButton(self.barra_superior, text="", image=self.menu_image,
                                         command=self.toggle_panel, bg_color='transparent', fg_color='transparent', hover=False, width=WIDTH_LOGO, height=HEIGHT_LOGO)
         self.buttonMenuLateral.pack(side=tk.LEFT, padx=20)
-    def controles_menu_lateral(self, permisos):
+    def menuControls(self, permisos):
         self.logo = util_img.leer_imagen("./imagenes/icons/logo.png", (100, 100))
         ## ESTO AUN NO ESTA DEFINIDO
         self.labellogo = tk.Label(self.menu_lateral, image=self.logo, bg=COLOR_MENU_LATERAL)
@@ -150,43 +145,43 @@ class FormularioMaestro(customtkinter.CTk):
         #Home1001 visualizar modulo home
         if 'HOME1001' in permisos:
             self.buttonHome = tk.Button(self.menu_lateral, text="Inicio", font=("Roboto", 16), image=self.home_icon, highlightthickness=20, width=ANCHO_MENU,
-                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.abrir_home)
+                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.openFormDashboard)
             self.buttonHome.pack()
-            self.binding_hover_event(self.buttonHome)
+            binding_hover_event(self.buttonHome)
         else:
             pass
         if 'ALMA1001' in permisos:
             self.buttonAlmacen = tk.Button(self.menu_lateral, text="Almacen",  font=("Roboto", 16), image=self.almacen_icon, highlightthickness=20, width=ANCHO_MENU,
-                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_almacen(permisos))
+                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenuStore(permisos))
             self.buttonAlmacen.pack()
-            self.binding_hover_event(self.buttonAlmacen)
+            binding_hover_event(self.buttonAlmacen)
         else:
             pass
 
         if 'PROV1001' in permisos:
             self.buttonProveedores = tk.Button(self.menu_lateral, text="Proveedores", font=("Roboto", 16), image=self.prov_icon, highlightthickness=20, width=ANCHO_MENU,
-                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_proveedores(permisos))
+                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenuSuppliers(permisos))
             self.buttonProveedores.pack()
-            self.binding_hover_event(self.buttonProveedores) 
+            binding_hover_event(self.buttonProveedores) 
         else:
             pass
 
         if 'CLIE1001' in permisos:
             self.buttonClient = tk.Button(self.menu_lateral, text="Clientes",  font=("Roboto", 16),  image=self.client_icon, highlightthickness=20, width=ANCHO_MENU,
-                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_clientes(permisos))        
+                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenuClients(permisos))        
             self.buttonClient.pack()
-            self.binding_hover_event(self.buttonClient)
+            binding_hover_event(self.buttonClient)
         else:
             pass
 
         if 'CONF1001' in permisos:
             self.buttonSettings = tk.Button(self.menu_lateral, text="Ajustes",  font=("Roboto", 16),image=self.settings_icon, highlightthickness=20, width=ANCHO_MENU,
-                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenu_config(permisos))
+                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenuConfig(permisos))
             self.buttonSettings.pack()
-            self.binding_hover_event(self.buttonSettings)
+            binding_hover_event(self.buttonSettings)
         else:
             pass
-    def seccion_login(self):
+    def loginSection(self):
         self.w, self.h = 800, 600
         self.geometry(f"{self.w}x{self.h}")
         util_ventana.centrar_ventana(self, self.w, self.h)
@@ -201,7 +196,7 @@ class FormularioMaestro(customtkinter.CTk):
         label_fondo.place(x=0, y=0, relwidth=1, relheight=1)
         self.label_fondo = label_fondo
         # Configurar el Label para que se ajuste automáticamente al tamaño del frame
-        def ajustar_imagen(event):
+        def adjustImage(event):
             # Cambiar el tamaño de la imagen para que coincida con el tamaño del frame
             nueva_imagen = imagen.resize((event.width, event.height))
             nueva_imagen_tk = ImageTk.PhotoImage(nueva_imagen)
@@ -209,17 +204,17 @@ class FormularioMaestro(customtkinter.CTk):
             # Actualizar la imagen en el Label de fondo
             label_fondo.config(image=nueva_imagen_tk)
         
-        self.cuerpo_principal.bind("<Configure>", ajustar_imagen)
+        self.cuerpo_principal.bind("<Configure>", adjustImage)
 
-        def validarDatos():
+        def validateLogin():
             conexion = ConexionDB()
             
             username = sv_datauser.get()
             password = sv_datapass.get()
 
             sql = f"SELECT * FROM usuarios WHERE username = '{username}' AND password = '{password}'"
-            conexion.ejecutar_consulta(sql)
-            resultado = conexion.obtener_resultado()
+            conexion.execute_consult(sql)
+            resultado = conexion.get_result()
             
 
             if resultado:
@@ -238,7 +233,7 @@ class FormularioMaestro(customtkinter.CTk):
                     'activo': activo
                 } 
 
-                self.obtener_idrol(idrol)
+                self.get_idrol(idrol)
                 self.barra_superior.pack(side=tk.TOP, fill='both')
                 self.menu_lateral.pack(side=tk.LEFT, fill='both', expand=False)
                 self.cuerpo_principal.destroy()
@@ -248,17 +243,9 @@ class FormularioMaestro(customtkinter.CTk):
                 self.geometry(f"{self.w}x{self.h}")
                 self.resizable(True, True)
                 util_ventana.centrar_ventana(self, self.w, self.h)
-                self.abrir_home()
+                self.openFormDashboard()
             else:
                 login_wrong_advice()
-
-        def set_opacity(widget, value: float):
-            widget = widget.winfo_id()
-            value = int(255*value) # value from 0 to 1
-            wnd_exstyle = windll.user32.GetWindowLongA(widget, -20)
-            new_exstyle = wnd_exstyle | 0x00080000  
-            windll.user32.SetWindowLongA(widget, -20, new_exstyle)  
-            windll.user32.SetLayeredWindowAttributes(widget, 0, value, 2)
 
         marco_login = customtkinter.CTkFrame(self.cuerpo_principal, fg_color="white", width=300, height=250)
         marco_login.place(relx=0.5, rely=0.5, anchor="center")
@@ -297,19 +284,19 @@ class FormularioMaestro(customtkinter.CTk):
         #entrypass = customtkinter.CTkEntry(self.cuerpo_principal, textvariable=sv_datapass, show="*", width=150)
         entrypass = ttk.Entry(marco_login, textvariable=sv_datapass, width=14, font=("Arial", 13), style="Custom.TEntry", show="*", justify="center")
         entrypass.place(x=105, y=126)
-        entrypass.bind("<Return>", lambda event: validarDatos())
+        entrypass.bind("<Return>", lambda event: validateLogin())
         
         #LOGIN BOTON
         stylebutton = ttk.Style()
         stylebutton.configure("Custom.TButton")
-        btnLogIn = ttk.Button(marco_login, text="Iniciar Sesion", command=validarDatos, width=14, style="Custom.TButton")
+        btnLogIn = ttk.Button(marco_login, text="Iniciar Sesion", command=validateLogin, width=14, style="Custom.TButton")
         btnLogIn.place(x=120, y=180)
-    def obtener_idrol(self, idrol):
+    def get_idrol(self, idrol):
         self
         conexion = ConexionDB()
         sql = f"SELECT codpermiso FROM asigperm WHERE idrol = '{idrol}'"
-        conexion.ejecutar_consulta(sql)
-        resultados = conexion.obtener_resultados()
+        conexion.execute_consult(sql)
+        resultados = conexion.get_results()
         permisos = []
         for resultado in resultados:
             permisos.append(resultado[0])
@@ -317,10 +304,10 @@ class FormularioMaestro(customtkinter.CTk):
         self.permisos_actualizados = permisos
         if permisos:
             #self.prueba_menu_lateral(permisos)
-            self.controles_menu_lateral(permisos)
+            self.menuControls(permisos)
         else:
             return None
-    def submenu_almacen(self, permisos):
+    def submenuStore(self, permisos):
         #LIMPIEZA PROVEEDORES
         if 'PROV1001' in permisos:
             self.buttonProveedores.pack_forget()
@@ -362,35 +349,35 @@ class FormularioMaestro(customtkinter.CTk):
                 del self.buttonDepositos
             else:
                 self.buttonDepositos = tk.Button(self.menu_lateral, text="Depositos", font=("Roboto", 12), image=self.adjustdepot_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_Depots(permisos))
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.openFormDepots(permisos))
                 self.buttonDepositos.pack()
-                self.binding_hover_submenu_event(self.buttonDepositos)
+                binding_hover_submenu_event(self.buttonDepositos)
         if 'ALMA1003' in permisos:
             if hasattr(self, "buttonProductos"):
                 self.buttonProductos.pack_forget()
                 del self.buttonProductos
             else:
                 self.buttonProductos = tk.Button(self.menu_lateral, text="Productos", font=("Roboto", 12),image=self.products_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_Productos(permisos))
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.openFormProducts(permisos))
                 self.buttonProductos.pack()
-                self.binding_hover_submenu_event(self.buttonProductos)
+                binding_hover_submenu_event(self.buttonProductos)
         if 'ALMA1004' in permisos:
             if hasattr(self, "buttonCatArt"):
                 self.buttonCatArt.pack_forget()
                 del self.buttonCatArt
             else:
                 self.buttonCatArt = tk.Button(self.menu_lateral, text="Categoria de\nProductos", font=("Roboto", 12),image=self.category_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_categoria(permisos))
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.openFormCategory(permisos))
                 
                 self.buttonCatArt.pack()
-                self.binding_hover_submenu_event(self.buttonCatArt)
+                binding_hover_submenu_event(self.buttonCatArt)
         if 'PROV1001' in permisos:
             self.buttonProveedores.pack()
         if 'CLIE1001' in permisos:
             self.buttonClient.pack()
         if 'CONF1001' in permisos:
             self.buttonSettings.pack()
-    def submenu_proveedores(self, permisos):
+    def submenuSuppliers(self, permisos):
         #VERIFICAR LOS PERMISOS Y QUE BOTONES ESTAN DISPONIBLES  
         #LIMPIEZA DE ALMACEN Y SUBMENU      
         if 'ALMA1002' in permisos:
@@ -443,9 +430,9 @@ class FormularioMaestro(customtkinter.CTk):
                 del self.buttonListaProv
             else:
                 self.buttonListaProv = tk.Button(self.menu_lateral, text="Listado de\n Proveedores", font=("Roboto", 12), image=self.listProv_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_proveedores(permisos))
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.openFormSuppliers(permisos))
                 self.buttonListaProv.pack()
-                self.binding_hover_submenu_event(self.buttonListaProv)
+                binding_hover_submenu_event(self.buttonListaProv)
         
             pass
         #INICIALIZACION CLIENTES
@@ -456,7 +443,7 @@ class FormularioMaestro(customtkinter.CTk):
             self.buttonSettings.pack()
         else:
             pass   
-    def submenu_config(self, permisos):
+    def submenuConfig(self, permisos):
         #lIMPIEZA DE SUBMENU ALMACEN
         if 'ALMA1002' in permisos:
             if hasattr(self, "buttonDepositos"):
@@ -490,30 +477,30 @@ class FormularioMaestro(customtkinter.CTk):
                 del self.buttonAdjustUsers
             else:
                 self.buttonAdjustUsers = tk.Button(self.menu_lateral, text="Ajuste de Usuario", font=("Roboto", 12), image=self.adjustUser_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_usuarios(permisos))
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.openFormUser(permisos))
                 self.buttonAdjustUsers.pack()
 
-                self.binding_hover_submenu_event(self.buttonAdjustUsers)
+                binding_hover_submenu_event(self.buttonAdjustUsers)
         if 'CONF1003' in permisos:
             if hasattr(self, "buttonAdjustProfiles"):
                 self.buttonAdjustProfiles.pack_forget()
                 del self.buttonAdjustProfiles
             else:
                 self.buttonAdjustProfiles = tk.Button(self.menu_lateral, text="Ajuste de Perfiles", font=("Roboto", 12), image=self.userProfiles_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_adjustProfile(permisos))
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.openFormAdjustProfile(permisos))
                 self.buttonAdjustProfiles.pack()
 
-                self.binding_hover_submenu_event(self.buttonAdjustProfiles)
+                binding_hover_submenu_event(self.buttonAdjustProfiles)
         if 'CONF1004' in permisos:
             if hasattr(self, "buttonModulos"):
                 self.buttonModulos.pack_forget()
                 del self.buttonModulos
             else:
                 self.buttonModulos = tk.Button(self.menu_lateral, text="Ajuste de Modulo", font=("Roboto", 12), image=self.adjustModul_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_modulos(permisos))
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.openFormModules(permisos))
                 self.buttonModulos.pack()
 
-                self.binding_hover_submenu_event(self.buttonModulos)
+                binding_hover_submenu_event(self.buttonModulos)
 
         if 'CONF1005' in permisos:
             if hasattr(self, "buttonPermisos"):
@@ -521,11 +508,11 @@ class FormularioMaestro(customtkinter.CTk):
                 del self.buttonPermisos
             else:
                 self.buttonPermisos = tk.Button(self.menu_lateral, text="Permisos", font=("Roboto", 12), image=self.permises_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_permisos(permisos))
+                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.openFormPermission(permisos))
                 self.buttonPermisos.pack()
             
-                self.binding_hover_submenu_event(self.buttonPermisos)
-    def submenu_clientes(self, permisos):
+                binding_hover_submenu_event(self.buttonPermisos)
+    def submenuClients(self, permisos):
         #lIMPIEZA DE SUBMENU ALMACEN
         if 'ALMA1002' in permisos:
             if hasattr(self, "buttonDepositos"):
@@ -572,19 +559,19 @@ class FormularioMaestro(customtkinter.CTk):
                 del self.buttonRegClient
             else:
                 self.buttonRegClient = tk.Button(self.menu_lateral, text="Registro\nde Clientes",  font=("Roboto", 15), image=self.regClient_icon, highlightthickness=20, width=ANCHO_MENU,
-                    height=ALTO_MENU, bg=COLOR_SUBMENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.abrir_regclientes(permisos))        
+                    height=ALTO_MENU, bg=COLOR_SUBMENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.openFormRegClient(permisos))        
                 self.buttonRegClient.pack()
 
-                self.binding_hover_submenu_event(self.buttonRegClient)
+                binding_hover_submenu_event(self.buttonRegClient)
 
         #INICIALIZACION CONFIG
         if 'CONF1001' in permisos:
             self.buttonSettings.pack()
-    def obtener_idrol(self, idrol):
+    def get_idrol(self, idrol):
         conexion = ConexionDB()
         sql = f"SELECT codpermiso FROM asigperm WHERE idrol = '{idrol}'"
-        conexion.ejecutar_consulta(sql)
-        resultados = conexion.obtener_resultados()
+        conexion.execute_consult(sql)
+        resultados = conexion.get_results()
         permisos = []
         for resultado in resultados:
             permisos.append(resultado[0])
@@ -593,7 +580,7 @@ class FormularioMaestro(customtkinter.CTk):
 
         if permisos:
             #self.prueba_menu_lateral(permisos)
-            self.controles_menu_lateral(permisos)
+            self.menuControls(permisos)
         else:
             return None
     def toggle_panel(self):
@@ -607,66 +594,34 @@ class FormularioMaestro(customtkinter.CTk):
         height_screen = self.winfo_height()
     
         return width_screen, height_screen
-    
-    #def abrir_registros_clientes(self):
-    #    self.limpiar_panel(self.cuerpo_principal)
-    #    width_screen, height_screen = self.check_size()
-    #    if width_screen > 1440 and height_screen > 900:
-    #        FormularioRegistrosDesign(self.cuerpo_principal, width_screen, height_screen).call_resize(width_screen, height_screen)
-    #    elif width_screen <= 1440 and height_screen <= 900:
-    #        FormularioRegistrosDesign(self.cuerpo_principal,width_screen, height_screen)
-
-    def abrir_usuarios(self, permisos):
-        self.limpiar_panel(self.cuerpo_principal)
+    def openFormUser(self, permisos):
+        cleanPanel(self.cuerpo_principal)
         FormUsers(self.cuerpo_principal, permisos) 
-    def abrir_proveedores(self, permisos):
-        self.limpiar_panel(self.cuerpo_principal)
-        FormProv(self.cuerpo_principal, permisos)
-    def abrir_regclientes(self, permisos):
-        self.limpiar_panel(self.cuerpo_principal)
+    def openFormSuppliers(self, permisos):
+        cleanPanel(self.cuerpo_principal)
+        FormSuppliers(self.cuerpo_principal, permisos)
+    def openFormRegClient(self, permisos):
+        cleanPanel(self.cuerpo_principal)
         FormClient(self.cuerpo_principal, permisos)       
-    def abrir_modulos(self, permisos):
-        self.limpiar_panel(self.cuerpo_principal)
-        FormModulos(self.cuerpo_principal, permisos)
-    def abrir_permisos(self, permisos):
-        self.limpiar_panel(self.cuerpo_principal)
-        FormPermisos(self.cuerpo_principal, permisos)
-    def abrir_categoria(self, permisos):
-        self.limpiar_panel(self.cuerpo_principal)
-        FormCategoria(self.cuerpo_principal, permisos)
-    def abrir_home(self):   
-        self.limpiar_panel(self.cuerpo_principal)
-        FormularioHomeDesign(self.cuerpo_principal) 
-    def abrir_adjustProfile(self, permisos):   
-        self.limpiar_panel(self.cuerpo_principal)
-        FormPerfiles(self.cuerpo_principal, permisos)
-    def abrir_Depots(self, permisos):   
-        self.limpiar_panel(self.cuerpo_principal)
+    def openFormModules(self, permisos):
+        cleanPanel(self.cuerpo_principal)
+        FormModules(self.cuerpo_principal, permisos)
+    def openFormPermission(self, permisos):
+        cleanPanel(self.cuerpo_principal)
+        FormPermissions(self.cuerpo_principal, permisos)
+    def openFormCategory(self, permisos):
+        cleanPanel(self.cuerpo_principal)
+        FormCategory(self.cuerpo_principal, permisos)
+    def openFormDashboard(self):   
+        cleanPanel(self.cuerpo_principal)
+        formDashboard(self.cuerpo_principal) 
+    def openFormAdjustProfile(self, permisos):   
+        cleanPanel(self.cuerpo_principal)
+        FormProfiles(self.cuerpo_principal, permisos)
+    def openFormDepots(self, permisos):   
+        cleanPanel(self.cuerpo_principal)
         FormDepot(self.cuerpo_principal, permisos)
-    def abrir_Productos(self, permisos):   
-        self.limpiar_panel(self.cuerpo_principal)
+    def openFormProducts(self, permisos):   
+        cleanPanel(self.cuerpo_principal)
         FormProducts(self.cuerpo_principal, permisos)
 
-    def limpiar_panel(self, panel):
-    # Función para limpiar el contenido del panel
-        for widget in panel.winfo_children():
-            widget.destroy()
-    def binding_hover_event(self, button):
-        button.bind("<Enter>", lambda event: self.on_enter(event, button))
-        button.bind("<Leave>", lambda event: self.on_leave(event, button))
-
-    def on_enter(self, event, button):
-        button.config(bg=COLOR_MENU_CURSOR_ENCIMA, fg='white', anchor="w")
-
-    def on_leave(self, event, button):
-        button.config(bg=COLOR_MENU_LATERAL, fg='white', anchor="w")
-
-    def binding_hover_submenu_event(self, button):
-        button.bind("<Enter>", lambda event: self.submenu_on_enter(event, button))
-        button.bind("<Leave>", lambda event: self.submenu_on_leave(event, button))
-
-    def submenu_on_enter(self, event, button):
-        button.config(bg=COLOR_SUBMENU_CURSOR_ENCIMA, fg='white', anchor="w", height=ALTO_MENU)
-
-    def submenu_on_leave(self, event, button):
-        button.config(bg=COLOR_SUBMENU_LATERAL, fg='white', anchor="w", height=MITAD_MENU)

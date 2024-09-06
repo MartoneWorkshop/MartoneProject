@@ -7,7 +7,7 @@ from PIL import Image, ImageTk
 from tkinter import ttk
 from util.util_alerts import set_opacity, save_advice, error_advice, edit_advice, delete_advice
 from util.util_functions import buscarCorrelativo, actualizarCorrelativo
-from functions.ClientsDao import Client, SaveClient, consulClient, clientDelete, clientesDesactivados, listarCliente, EditClient 
+from functions.ClientsDao import Client, save_client, searchClients, clientDelete, clientesDesactivados, listClient, edit_client 
 from config import  COLOR_FONDO, WIDTH_LOGO, HEIGHT_LOGO, COLOR_MENU_LATERAL, ANCHO_MENU, ALTO_MENU
 import datetime
 from tkinter import messagebox
@@ -35,7 +35,7 @@ class FormClient():
         label_fondo.place(x=0, y=0, relwidth=1, relheight=1)
         self.label_fondo = label_fondo
         # Configurar el Label para que se ajuste automáticamente al tamaño del frame
-        def ajustar_imagen(event):
+        def adjustImage(event):
             # Cambiar el tamaño de la imagen para que coincida con el tamaño del frame
             nueva_imagen = imagen.resize((event.width, event.height))
             nueva_imagen_tk = ImageTk.PhotoImage(nueva_imagen)
@@ -43,117 +43,113 @@ class FormClient():
             # Actualizar la imagen en el Label de fondo
             label_fondo.config(image=nueva_imagen_tk)
         
-        self.barra_inferior.bind("<Configure>", ajustar_imagen)
+        self.barra_inferior.bind("<Configure>", adjustImage)
 
         # Segundo Label con la imagen
         self.label_imagen = tk.Label(self.barra_inferior, image=imagen_tk)
         self.label_imagen.place(x=0, y=0, relwidth=1, relheight=1)
         self.label_imagen.config(fg="#fff", font=("Roboto", 10), bg=COLOR_FONDO)
 
-        self.marco_clients = customtkinter.CTkFrame(cuerpo_principal, width=1120, height=800, bg_color="white", fg_color="white")
-        self.marco_clients.place(relx=0.5, rely=0.5, anchor="center")
+        self.frame_clients = customtkinter.CTkFrame(cuerpo_principal, width=1120, height=800, bg_color="white", fg_color="white")
+        self.frame_clients.place(relx=0.5, rely=0.5, anchor="center")
 
-        set_opacity(self.marco_clients, 0.8)
+        set_opacity(self.frame_clients, 0.8)
         ##################################################### BOTONES DE LA TABLA ##################################################
-        self.buttonCreateArt = tk.Button(self.marco_clients, text="Crear\n Client", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                        command=lambda: self.crear_cliente(permisos))
-        self.buttonCreateArt.place(x=140, y=50)
+        self.buttonCreateClient = tk.Button(self.frame_clients, text="Crear\n Client", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                        command=lambda: self.FormCreateClient(permisos))
+        self.buttonCreateClient.place(x=140, y=50)
 
-        self.buttonEditArt = tk.Button(self.marco_clients, text="Editar\n Client", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                            command=lambda: self.editar_cliente(permisos, self.tablaClients.item(self.tablaClients.selection())['values']))
-        self.buttonEditArt.place(x=265, y=50)
+        self.buttonEditClient = tk.Button(self.frame_clients, text="Editar\n Client", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                            command=lambda: self.FormEditClient(permisos, self.clientsTable.item(self.clientsTable.selection())['values']))
+        self.buttonEditClient.place(x=265, y=50)
             
-        self.buttonDeleteArt = tk.Button(self.marco_clients, text="Desactivar\n Client", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                                command=lambda: self.desactivarClient(permisos))
-        self.buttonDeleteArt.place(x=390, y=50)
+        self.buttonDeleteClient = tk.Button(self.frame_clients, text="Desactivar\n Client", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                                command=lambda: self.inactivateClient(permisos))
+        self.buttonDeleteClient.place(x=390, y=50)
 
         #Switch de activos/inactivos
         self.switchStatus = tk.BooleanVar(value=True)
-        self.switchArtStatus = customtkinter.CTkSwitch(self.marco_clients, variable=self.switchStatus, state='normal', text="Activos", font=("Roboto", 12), command=self.MostrarActivosInactivos)
-        self.switchArtStatus.place(x=900, y=157)
+        self.switchClientStatus = customtkinter.CTkSwitch(self.frame_clients, variable=self.switchStatus, state='normal', text="Activos", font=("Roboto", 12), command=self.showStatus)
+        self.switchClientStatus.place(x=900, y=157)
 
         ###################################################### BUSCADOR DE LA TABLA #################################################
         search_image = Image.open("imagenes/icons/search.png")
         search_resized = search_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         self.search_icon = ImageTk.PhotoImage(search_resized)
-        self.lblsearch_clients = customtkinter.CTkLabel(self.marco_clients, text='', image=self.search_icon, font=("Roboto", 14))
+        self.lblsearch_clients = customtkinter.CTkLabel(self.frame_clients, text='', image=self.search_icon, font=("Roboto", 14))
         self.lblsearch_clients.place(x=65, y=155)
 
         self.sventrysearch_clients = customtkinter.StringVar()
-        self.entrysearch_clients = ttk.Entry(self.marco_clients, textvariable=self.sventrysearch_clients, style='Modern.TEntry', width=30)
+        self.entrysearch_clients = ttk.Entry(self.frame_clients, textvariable=self.sventrysearch_clients, style='Modern.TEntry', width=30)
         self.entrysearch_clients.place(x=100, y=157)
-        self.entrysearch_clients.bind('<KeyRelease>', self.update_art_content)
+        self.entrysearch_clients.bind('<KeyRelease>', self.updateSearch)
 
         #################################################### INFORMACION DE LA TABLA ####################################################
         where = ""
         if len(where) > 0:
-            self.ListaClient = consulClient(where)
+            self.clientList = searchClients(where)
         else:            
-            self.ListaClient = listarCliente()
-            self.ListaClient.reverse()
+            self.clientList = listClient()
+            self.clientList.reverse()
 
-        self.tablaClients = ttk.Treeview(self.marco_clients, column=('codClient','codDep','codgrupo','codProv','nombre_cliente','marca','modelo','serial','costo','descripcion'), height=25)
-        self.tablaClients.place(x=32, y=200)
+        self.clientsTable = ttk.Treeview(self.frame_clients, column=('client_firstname','client_lastname','client_ci',
+                                                                     'client_phone','client_address','client_email','created_at'), height=25)
+        self.clientsTable.place(x=32, y=200)
 
-        self.scroll = ttk.Scrollbar(self.marco_clients, orient='vertical', command=self.tablaClients.yview)
+        self.scroll = ttk.Scrollbar(self.frame_clients, orient='vertical', command=self.clientsTable.yview)
         self.scroll.place(x=1084, y=200, height=526)
 
-        self.tablaClients.configure(yscrollcommand=self.scroll.set)
-        self.tablaClients.tag_configure('evenrow')
+        self.clientsTable.configure(yscrollcommand=self.scroll.set)
+        self.clientsTable.tag_configure('evenrow')
 
-        self.tablaClients.heading('#0',text="ID" )
-        self.tablaClients.heading('#1',text="CodClient")
-        self.tablaClients.heading('#2',text="Deposito")
-        self.tablaClients.heading('#3',text="Categoria")
-        self.tablaClients.heading('#4',text="Proveedor")
-        self.tablaClients.heading('#5',text="Nomb Client")
-        self.tablaClients.heading('#6',text="Marca")
-        self.tablaClients.heading('#7',text="Modelo")
-        self.tablaClients.heading('#8',text="Serial")
-        self.tablaClients.heading('#9',text="Costo")
-        self.tablaClients.heading('#10',text="Descripcion")
+        self.clientsTable.heading('#0',text="ID" )
+        self.clientsTable.heading('#1',text="Nombre")
+        self.clientsTable.heading('#2',text="Apellido")
+        self.clientsTable.heading('#3',text="Documento")
+        self.clientsTable.heading('#4',text="Telefono")
+        self.clientsTable.heading('#5',text="Direccion")
+        self.clientsTable.heading('#6',text="Correo")
+        self.clientsTable.heading('#7',text="Creado en")
 
-        self.tablaClients.column("#0", width=50, stretch=True, anchor='w')
-        self.tablaClients.column("#1", width=100, stretch=True)
-        self.tablaClients.column("#2", width=100, stretch=True)
-        self.tablaClients.column("#3", width=100, stretch=True)
-        self.tablaClients.column("#4", width=100, stretch=True)
-        self.tablaClients.column("#5", width=100, stretch=True)
-        self.tablaClients.column("#6", width=100, stretch=True)
-        self.tablaClients.column("#7", width=100, stretch=True)
-        self.tablaClients.column("#8", width=100, stretch=True)
-        self.tablaClients.column("#9", width=100, stretch=True)
-        self.tablaClients.column("#10", width=100, stretch=True)
+        self.clientsTable.column("#0", width=50, stretch=True, anchor='w')
+        self.clientsTable.column("#1", width=100, stretch=True)
+        self.clientsTable.column("#2", width=100, stretch=True)
+        self.clientsTable.column("#3", width=100, stretch=True)
+        self.clientsTable.column("#4", width=100, stretch=True)
+        self.clientsTable.column("#5", width=100, stretch=True)
+        self.clientsTable.column("#6", width=100, stretch=True)
+        self.clientsTable.column("#7", width=100, stretch=True)
 
-        for p in self.ListaClient:
-            self.tablaClients.insert('','end',iid=p[0], text=p[0],values=(p[1],p[2],p[3],p[4],p[5],p[6],p[7],p[8],p[9],p[10]))
 
-        self.tablaClients.bind('<Double-1>', lambda event: self.editar_cliente(event, self.tablaClients.item(self.tablaClients.selection())['values']))
+        for p in self.clientList:
+            self.clientsTable.insert('','end',iid=p[0], text=p[0],values=(p[1],p[2],p[3],p[4],p[5],p[6],p[7]))
 
-    def MostrarActivosInactivos(self):
+        self.clientsTable.bind('<Double-1>', lambda event: self.FormEditClient(event, self.clientsTable.item(self.clientsTable.selection())['values']))
+
+    def showStatus(self):
         if self.switchStatus.get():
-            self.switchArtStatus.configure(text="Activos")
-            self.mostrarArtActivos()
+            self.switchClientStatus.configure(text="Activos")
+            self.showActive()
         else:
-            self.switchArtStatus.configure(text="Inactivos")
-            self.mostrarArtDesactivados()
+            self.switchClientStatus.configure(text="Inactivos")
+            self.showInactive()
      
-    def mostrarArtActivos(self):
+    def showActive(self):
         # Borrar los elementos existentes en la tabla de permisos
-        self.tablaClients.delete(*self.tablaClients.get_children())
+        self.clientsTable.delete(*self.clientsTable.get_children())
         # Obtener la lista de permisos activos
-        permisos_activos = listarCliente()
+        clientes_activos = listClient()
         # Insertar los permisos activos en la tabla
-        for p in permisos_activos:
-            self.tablaClients.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5],p[6],p[7],p[8],p[9],p[10]))
+        for p in clientes_activos:
+            self.clientsTable.insert('', 0, text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6],p[7]))
 
-    def mostrarArtDesactivados(self):
-        self.tablaClients.delete(*self.tablaClients.get_children())
+    def showInactive(self):
+        self.clientsTable.delete(*self.clientsTable.get_children())
         permisos_desactivados = clientesDesactivados()
         for p in permisos_desactivados:
-            self.tablaClients.insert('',0, text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6],p[7],p[8],p[9],p[10]))
+            self.clientsTable.insert('',0, text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6],p[7]))
 
-    def update_art_content(self, event=None):
+    def updateSearch(self, event=None):
     # Conectar a la base de datos
         self.connection = sqlite3.connect('database/database.db')
         self.cursor = self.connection.cursor()
@@ -176,20 +172,20 @@ class FormClient():
         self.result = self.cursor.fetchall()
     # Filtrar los registros según el contenido ingresado
         filtered_results = []
-        for p in self.ListaClient:
+        for p in self.clientList:
             if self.content.lower() in str(p[0]).lower() or self.content.lower() in str(p[1]).lower() or self.content.lower() in str(p[2]).lower() or self.content.lower() in str(p[3]).lower() or self.content.lower() in str(p[4]).lower() or self.content.lower() in str(p[5]).lower():              
                 filtered_results.append(p)
 
     # Borrar los elementos existentes en la tablaEquipos
-        self.tablaClients.delete(*self.tablaClients.get_children())
+        self.clientsTable.delete(*self.clientsTable.get_children())
 
     # Insertar los nuevos resultados en la tablaEquipos
         for p in filtered_results:
-            self.tablaClients.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5]))
+            self.clientsTable.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5]))
         self.cursor.close()
         self.connection.close()
         
-    def crear_cliente(self, permisos):
+    def FormCreateClient(self, permisos):
         self.id = None
         #Creacion del top level
         self.topCreateArt = customtkinter.CTkToplevel()
@@ -210,36 +206,36 @@ class FormClient():
         self.topCreateArt.grab_set()
         self.topCreateArt.transient()
         #Datos para el proveedor
-        marco_crearclients = customtkinter.CTkFrame(self.topCreateArt, width=550,height=550, bg_color="white", fg_color="white")
-        marco_crearclients.place(relx=0.5, rely=0.5, anchor="center")
-        set_opacity(marco_crearclients, 0.8)
-        self.lblinfo = customtkinter.CTkLabel(marco_crearclients, text="Registro de Client", font=("Roboto",14))
+        frame_createClient = customtkinter.CTkFrame(self.topCreateArt, width=550,height=550, bg_color="white", fg_color="white")
+        frame_createClient.place(relx=0.5, rely=0.5, anchor="center")
+        set_opacity(frame_createClient, 0.8)
+        self.lblinfo = customtkinter.CTkLabel(frame_createClient, text="Registro de Client", font=("Roboto",14))
         self.lblinfo.place(relx=0.36, rely=0.04)
         #LINEA 1
         #Codigo del Client 1.1
-        self.lblcodClient = customtkinter.CTkLabel(marco_crearclients, text='Codigo Client', font=("Roboto", 13))
+        self.lblcodClient = customtkinter.CTkLabel(frame_createClient, text='Codigo Client', font=("Roboto", 13))
         self.lblcodClient.place(x=55, y=60)
 
         self.svcodClient = customtkinter.StringVar()
-        self.entrycodClient = ttk.Entry(marco_crearclients, style='Modern.TEntry', textvariable=self.svcodClient)
+        self.entrycodClient = ttk.Entry(frame_createClient, style='Modern.TEntry', textvariable=self.svcodClient)
         self.entrycodClient.place(x=45, y=90)
         self.entrycodClient.configure(style='Entry.TEntry')
 
         #Nombre del cliente 1.2
-        self.lblnombClient = customtkinter.CTkLabel(marco_crearclients, text='Nombre del Client', font=("Roboto", 13))
+        self.lblnombClient = customtkinter.CTkLabel(frame_createClient, text='Nombre del Client', font=("Roboto", 13))
         self.lblnombClient.place(x=202, y=60)
 
         self.svnombClient = customtkinter.StringVar()
-        self.entrynombClient = ttk.Entry(marco_crearclients, style='Modern.TEntry', textvariable=self.svnombClient)
+        self.entrynombClient = ttk.Entry(frame_createClient, style='Modern.TEntry', textvariable=self.svnombClient)
         self.entrynombClient.place(x=200, y=90)
         self.entrynombClient.configure(style='Entry.TEntry')
 
         
-        self.buttonGuardarArt = tk.Button(marco_crearclients, text="Guardar Client", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                            command=lambda: self.GuardarClient())
+        self.buttonGuardarArt = tk.Button(frame_createClient, text="Guardar Client", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                            command=lambda: self.SaveClient())
         self.buttonGuardarArt.place(x=200, y=450)
 
-    def GuardarClient(self):
+    def SaveClient(self):
         try:
             # Otener el contenido del Entry
             codart = buscarCorrelativo('cliente')
@@ -264,15 +260,15 @@ class FormClient():
             )
             
             if self.id is None:
-                SaveClient(clients)
+                save_client(clients)
                 actualizarCorrelativo('cliente')
 
                 self.topCreateArt.destroy()
             else:
-                EditClient(clients, self.id)
+                edit_client(clients, self.id)
                 self.topEditArt.destroy()
 
-            self.listarClientsEnTabla()
+            self.updateTable()
             
         except Exception as e:
             error_advice()
@@ -280,39 +276,39 @@ class FormClient():
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')
                 
-    def listarClientsEnTabla(self, where=None):
+    def updateTable(self, where=None):
         try:
         # Limpiar la tabla existente
-            self.tablaClients.delete(*self.tablaClients.get_children())
+            self.clientsTable.delete(*self.clientsTable.get_children())
 
             if where is not None and len(where) > 0:
-                self.ListaClient = consulClient(where)
+                self.clientList = searchClients(where)
             else:
-                self.ListaClient = listarCliente()
-                self.ListaClient.reverse()
+                self.clientList = listClient()
+                self.clientList.reverse()
 
-            for p in self.ListaClient:
-                self.tablaClients.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10]))
+            for p in self.clientList:
+                self.clientsTable.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10]))
         except Exception as e:
             error_advice()
-            mensaje = f'Error en listarClientsEnTabla, form_users: {str(e)}'
+            mensaje = f'Error en updateTable, form_users: {str(e)}'
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')
             
-    def editar_cliente(self, permisos, values):
+    def FormEditClient(self, permisos, values):
         #Creacion del top level
         if values:
-            self.id = self.tablaClients.item(self.tablaClients.selection())['text']
-            self.editarcodClient = self.tablaClients.item(self.tablaClients.selection())['values'][0]
-            self.editarnombClient = self.tablaClients.item(self.tablaClients.selection())['values'][4]
-            self.editarproveedor = self.tablaClients.item(self.tablaClients.selection())['values'][3]
-            self.editarmarcaClient = self.tablaClients.item(self.tablaClients.selection())['values'][5]
-            self.editarmodeloClient = self.tablaClients.item(self.tablaClients.selection())['values'][6]
-            self.editarserialClient = self.tablaClients.item(self.tablaClients.selection())['values'][7]
-            self.editarcostoClient = self.tablaClients.item(self.tablaClients.selection())['values'][8]
-            self.editarcategoria_var = self.tablaClients.item(self.tablaClients.selection())['values'][2]
-            self.editardepositos_var = self.tablaClients.item(self.tablaClients.selection())['values'][1]
-            self.editardescripcionProd = self.tablaClients.item(self.tablaClients.selection())['values'][9]
+            self.id = self.clientsTable.item(self.clientsTable.selection())['text']
+            self.editarcodClient = self.clientsTable.item(self.clientsTable.selection())['values'][0]
+            self.editarnombClient = self.clientsTable.item(self.clientsTable.selection())['values'][4]
+            self.editarproveedor = self.clientsTable.item(self.clientsTable.selection())['values'][3]
+            self.editarmarcaClient = self.clientsTable.item(self.clientsTable.selection())['values'][5]
+            self.editarmodeloClient = self.clientsTable.item(self.clientsTable.selection())['values'][6]
+            self.editarserialClient = self.clientsTable.item(self.clientsTable.selection())['values'][7]
+            self.editarcostoClient = self.clientsTable.item(self.clientsTable.selection())['values'][8]
+            self.editarcategoria_var = self.clientsTable.item(self.clientsTable.selection())['values'][2]
+            self.editardepositos_var = self.clientsTable.item(self.clientsTable.selection())['values'][1]
+            self.editardescripcionProd = self.clientsTable.item(self.clientsTable.selection())['values'][9]
             
             
             self.topEditArt = customtkinter.CTkToplevel()
@@ -333,47 +329,47 @@ class FormClient():
             self.topEditArt.grab_set()
             self.topEditArt.transient()
             #Datos para el proveedor
-            marco_editarclients = customtkinter.CTkFrame(self.topEditArt, width=550,height=550, bg_color="white", fg_color="white")
-            marco_editarclients.place(relx=0.5, rely=0.5, anchor="center")
-            set_opacity(marco_editarclients, 0.8)
-            self.lblinfo = customtkinter.CTkLabel(marco_editarclients, text="Registro de Client", font=("Roboto",14))
+            frame_editClient = customtkinter.CTkFrame(self.topEditArt, width=550,height=550, bg_color="white", fg_color="white")
+            frame_editClient.place(relx=0.5, rely=0.5, anchor="center")
+            set_opacity(frame_editClient, 0.8)
+            self.lblinfo = customtkinter.CTkLabel(frame_editClient, text="Registro de Client", font=("Roboto",14))
             self.lblinfo.place(relx=0.36, rely=0.04)
             #LINEA 1
             #Codigo del Client 1.1
-            self.lblcodClient = customtkinter.CTkLabel(marco_editarclients, text='Codigo Client', font=("Roboto", 13))
+            self.lblcodClient = customtkinter.CTkLabel(frame_editClient, text='Codigo Client', font=("Roboto", 13))
             self.lblcodClient.place(x=55, y=60)
 
             self.svcodClient = customtkinter.StringVar(value=self.editarcodClient)
-            self.entrycodClient = ttk.Entry(marco_editarclients, style='Modern.TEntry', textvariable=self.svcodClient)
+            self.entrycodClient = ttk.Entry(frame_editClient, style='Modern.TEntry', textvariable=self.svcodClient)
             self.entrycodClient.place(x=45, y=90)
             self.entrycodClient.configure(style='Entry.TEntry')
 
             #Nombre del cliente 1.2
-            self.lblnombClient = customtkinter.CTkLabel(marco_editarclients, text='Nombre del Client', font=("Roboto", 13))
+            self.lblnombClient = customtkinter.CTkLabel(frame_editClient, text='Nombre del Client', font=("Roboto", 13))
             self.lblnombClient.place(x=202, y=60)
 
             self.svnombClient = customtkinter.StringVar(value=self.editarnombClient)
-            self.entrynombClient = ttk.Entry(marco_editarclients, style='Modern.TEntry', textvariable=self.svnombClient)
+            self.entrynombClient = ttk.Entry(frame_editClient, style='Modern.TEntry', textvariable=self.svnombClient)
             self.entrynombClient.place(x=200, y=90)
             self.entrynombClient.configure(style='Entry.TEntry')
 
-            self.buttonActualizarArt = tk.Button(marco_editarclients, text="Actualizar Client", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                                command=lambda: self.GuardarClient())
+            self.buttonActualizarArt = tk.Button(frame_editClient, text="Actualizar Client", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+                                                command=lambda: self.SaveClient())
             self.buttonActualizarArt.place(x=200, y=450)
 
         else:
             messagebox.showerror("Error", "Debe seleccionar un modulo")
 
-    def desactivarClient(self, permisos):
+    def inactivateClient(self, permisos):
         try:
-            self.id = self.tablaClients.item(self.tablaClients.selection())['text']
+            self.id = self.clientsTable.item(self.clientsTable.selection())['text']
             confirmar = messagebox.askyesno("Confirmar", "¿Estás seguro de que deseas desactivar este cliente?")
             if confirmar:
                 clientDelete(self.id)
-                self.listarClientsEnTabla()
+                self.updateTable()
         except Exception as e:
             error_advice()
-            mensaje = f'Error en desactivarClient, form_clients: {str(e)}'
+            mensaje = f'Error en inactivateClient, form_clients: {str(e)}'
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')
 

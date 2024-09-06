@@ -6,7 +6,7 @@ from PIL import Image, ImageTk
 from tkinter import ttk
 from util.util_alerts import set_opacity, save_advice, error_advice, edit_advice, delete_advice
 from util.util_functions import buscarCorrelativo, actualizarCorrelativo
-from functions.DepositosDao import Deposito, InformacionDeposito, ListarDepositos, obtener_depositos,  SaveDepot, EditDepot, DepotDisable
+from functions.DepotsDao import Deposito, searchDepots, listDepot, getDepots,  save_depot, edit_depot, depotDisable
 from config import COLOR_MENU_LATERAL
 import datetime
 from tkinter import messagebox
@@ -34,7 +34,7 @@ class FormDepot():
         label_fondo.place(x=0, y=0, relwidth=1, relheight=1)
         self.label_fondo = label_fondo
         # Configurar el Label para que se ajuste automáticamente al tamaño del frame
-        def ajustar_imagen(event):
+        def adjustImage(event):
             # Cambiar el tamaño de la imagen para que coincida con el tamaño del frame
             nueva_imagen = imagen.resize((event.width, event.height))
             nueva_imagen_tk = ImageTk.PhotoImage(nueva_imagen)
@@ -42,7 +42,7 @@ class FormDepot():
             # Actualizar la imagen en el Label de fondo
             label_fondo.config(image=nueva_imagen_tk)
         
-        self.barra_inferior.bind("<Configure>", ajustar_imagen)
+        self.barra_inferior.bind("<Configure>", adjustImage)
 
         # Segundo Label con la imagen
         self.label_imagen = tk.Label(self.barra_inferior, image=imagen_tk)
@@ -55,42 +55,42 @@ class FormDepot():
         set_opacity(self.marco_adjustdepot, 0.8)
         
         self.buttonCreateDepot = tk.Button(self.marco_adjustdepot, text="Crear\n Deposito", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                        command=lambda: self.crear_deposito(permisos))
+                                        command=lambda: self.FormCreateDepot(permisos))
         self.buttonCreateDepot.place(x=180, y=60)
 
         self.buttonEditDepot = tk.Button(self.marco_adjustdepot, text="Editar\n Deposito", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                        command=lambda: self.editar_deposito(permisos, self.tablaDeposito.item(self.tablaDeposito.selection())['values']))
+                                        command=lambda: self.FormEditDepot(permisos, self.depotsTable.item(self.depotsTable.selection())['values']))
         self.buttonEditDepot.place(x=290, y=60)
 
         self.buttonDisableDepot = tk.Button(self.marco_adjustdepot, text="Desactivar\n Deposito", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                        command=lambda: self.desactivarDeposito(permisos))
+                                        command=lambda: self.inactivateDepot(permisos))
         self.buttonDisableDepot.place(x=395, y=60)
 
         where = ""
         if len(where) > 0:
-            self.ListaDeposito = InformacionDeposito(where)
+            self.depositList = searchDepots(where)
         else:
-            self.ListaDeposito = ListarDepositos()
-            self.ListaDeposito.reverse()
-        self.tablaDeposito = ttk.Treeview(self.marco_adjustdepot, column=('codDep','name_dep','date_create','date_update'), height=25)
-        self.tablaDeposito.place(x=180, y=140)
+            self.depositList = listDepot()
+            self.depositList.reverse()
+        self.depotsTable = ttk.Treeview(self.marco_adjustdepot, column=('codDep','name_dep','date_create','date_update'), height=25)
+        self.depotsTable.place(x=180, y=140)
 
-        self.tablaDeposito.heading('#0',text="ID")
-        self.tablaDeposito.heading('#1',text="Cod Deposito")
-        self.tablaDeposito.heading('#2',text="Nombre Deposito")
-        self.tablaDeposito.heading('#3',text="DateCreated")
-        self.tablaDeposito.heading('#4',text="DateUpdate")
+        self.depotsTable.heading('#0',text="ID")
+        self.depotsTable.heading('#1',text="Cod Deposito")
+        self.depotsTable.heading('#2',text="Nombre Deposito")
+        self.depotsTable.heading('#3',text="DateCreated")
+        self.depotsTable.heading('#4',text="DateUpdate")
 
-        self.tablaDeposito.column("#0", width=100, stretch=False, anchor='w')#HAY QUE CENTRARLO
-        self.tablaDeposito.column("#1", width=150, stretch=False)
-        self.tablaDeposito.column("#2", width=150, stretch=False)
-        self.tablaDeposito.column("#3", width=150, stretch=False)
-        self.tablaDeposito.column("#4", width=150, stretch=False)
+        self.depotsTable.column("#0", width=100, stretch=False, anchor='w')#HAY QUE CENTRARLO
+        self.depotsTable.column("#1", width=150, stretch=False)
+        self.depotsTable.column("#2", width=150, stretch=False)
+        self.depotsTable.column("#3", width=150, stretch=False)
+        self.depotsTable.column("#4", width=150, stretch=False)
 
-        for p in self.ListaDeposito:
-            self.tablaDeposito.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4]))
+        for p in self.depositList:
+            self.depotsTable.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4]))
 
-    def crear_deposito(self, permisos):
+    def FormCreateDepot(self, permisos):
         self.id = None
         #Creacion del top level
         self.topCreateDepot = customtkinter.CTkToplevel()
@@ -113,32 +113,32 @@ class FormDepot():
         self.topCreateDepot.grab_set()
         self.topCreateDepot.transient()
 
-        marco_createDepot = customtkinter.CTkFrame(self.topCreateDepot, width=350,height=200, bg_color="white", fg_color="white")
-        marco_createDepot.place(relx=0.5, rely=0.5, anchor="center")
+        frame_createDepot = customtkinter.CTkFrame(self.topCreateDepot, width=350,height=200, bg_color="white", fg_color="white")
+        frame_createDepot.place(relx=0.5, rely=0.5, anchor="center")
         
-        set_opacity(marco_createDepot, 0.8)
+        set_opacity(frame_createDepot, 0.8)
 
-        self.lblinfo = customtkinter.CTkLabel(marco_createDepot, text="Crear Deposito", font=("Roboto",13))
+        self.lblinfo = customtkinter.CTkLabel(frame_createDepot, text="Crear Deposito", font=("Roboto",13))
         self.lblinfo.place(x=133, rely=0.1)
 
-        self.lblnombre_deposito = customtkinter.CTkLabel(marco_createDepot, text='Nombre del Deposito', font=("Roboto", 13))
+        self.lblnombre_deposito = customtkinter.CTkLabel(frame_createDepot, text='Nombre del Deposito', font=("Roboto", 13))
         self.lblnombre_deposito.place(x=120, y=60)
 
         self.svnombre_deposito = customtkinter.StringVar()
-        self.entrynombre_deposito = ttk.Entry(marco_createDepot, style='Modern.TEntry', textvariable=self.svnombre_deposito)
+        self.entrynombre_deposito = ttk.Entry(frame_createDepot, style='Modern.TEntry', textvariable=self.svnombre_deposito)
         self.entrynombre_deposito.place(x=120, y=90)
         self.entrynombre_deposito.configure(style='Entry.TEntry')
 
-        self.buttonCrearDeposito = tk.Button(marco_createDepot, text="Crear Deposito", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.GuardarDeposito)
+        self.buttonCrearDeposito = tk.Button(frame_createDepot, text="Crear Deposito", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.SaveDepot)
         self.buttonCrearDeposito.place(x=118, y=140)
 
-        self.tablaDeposito.bind('<Double-1>', lambda event: self.editar_deposito(event, self.tablaDeposito.item(self.tablaDeposito.selection())['values']))
+        self.depotsTable.bind('<Double-1>', lambda event: self.FormEditDepot(event, self.depotsTable.item(self.depotsTable.selection())['values']))
 
-    def editar_deposito(self, permisos, values):
+    def FormEditDepot(self, permisos, values):
         if values:
     # Creación del top level
-            self.id = self.tablaDeposito.item(self.tablaDeposito.selection())['text']
-            self.nombre_deposito = self.tablaDeposito.item(self.tablaDeposito.selection())['values'][1]
+            self.id = self.depotsTable.item(self.depotsTable.selection())['text']
+            self.nombre_deposito = self.depotsTable.item(self.depotsTable.selection())['values'][1]
             #Creacion del top level
             self.topEditDepot = customtkinter.CTkToplevel()
             self.topEditDepot.title("Crear Modulo")
@@ -160,44 +160,44 @@ class FormDepot():
             self.topEditDepot.grab_set()
             self.topEditDepot.transient()
 
-            marco_EditDepot = customtkinter.CTkFrame(self.topEditDepot, width=350,height=200, bg_color="white", fg_color="white")
-            marco_EditDepot.place(relx=0.5, rely=0.5, anchor="center")
+            frame_editDepot = customtkinter.CTkFrame(self.topEditDepot, width=350,height=200, bg_color="white", fg_color="white")
+            frame_editDepot.place(relx=0.5, rely=0.5, anchor="center")
 
-            set_opacity(marco_EditDepot, 0.8)
+            set_opacity(frame_editDepot, 0.8)
 
-            self.lblinfo = customtkinter.CTkLabel(marco_EditDepot, text="Editar Deposito", font=("Roboto",13))
+            self.lblinfo = customtkinter.CTkLabel(frame_editDepot, text="Editar Deposito", font=("Roboto",13))
             self.lblinfo.place(x=133, rely=0.1)
 
-            self.lblnombre_deposito = customtkinter.CTkLabel(marco_EditDepot, text='Nombre del Deposito', font=("Roboto", 13))
+            self.lblnombre_deposito = customtkinter.CTkLabel(frame_editDepot, text='Nombre del Deposito', font=("Roboto", 13))
             self.lblnombre_deposito.place(x=120, y=60)
 
             self.svnombre_deposito = customtkinter.StringVar(value=self.nombre_deposito)
-            self.entrynombre_deposito = ttk.Entry(marco_EditDepot, style='Modern.TEntry', textvariable=self.svnombre_deposito)
+            self.entrynombre_deposito = ttk.Entry(frame_editDepot, style='Modern.TEntry', textvariable=self.svnombre_deposito)
             self.entrynombre_deposito.place(x=120, y=90)
             self.entrynombre_deposito.configure(style='Entry.TEntry')
 
-            self.buttonEditarDeposito = tk.Button(marco_EditDepot, text="Editar Deposito", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.GuardarDeposito)
+            self.buttonEditarDeposito = tk.Button(frame_editDepot, text="Editar Deposito", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.SaveDepot)
             self.buttonEditarDeposito.place(x=118, y=140)
         else:
             messagebox.showerror("Error", "Debe seleccionar un usuario")
 
-    def desactivarDeposito(self, permisos):
+    def inactivateDepot(self, permisos):
         try:
-            self.id = self.tablaDeposito.item(self.tablaDeposito.selection())['text']
+            self.id = self.depotsTable.item(self.depotsTable.selection())['text']
             confirmar = messagebox.askyesno("Confirmar", "¿Estas seguro de que deseas desactivar este deposito?")
 
             if confirmar:
-                DepotDisable(self.id)
-                self.listarDepositoEnTabla()
+                depotDisable(self.id)
+                self.updateTable()
 
         except Exception as e:
             error_advice()
-            mensaje = f'Error en desactivarDeposito, form_adjustdepot: {str(e)}'
+            mensaje = f'Error en inactivateDepot, form_adjustdepot: {str(e)}'
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')
                 
 
-    def GuardarDeposito(self):
+    def SaveDepot(self):
         codDep = buscarCorrelativo('deposito')
         codDep = codDep + 1
 
@@ -212,29 +212,29 @@ class FormDepot():
             date_update
         )
         if self.id is None:
-            SaveDepot(deposito)
+            save_depot(deposito)
             actualizarCorrelativo('deposito')
             self.topCreateDepot.destroy()
         else:
-            EditDepot(deposito, self.id)
+            edit_depot(deposito, self.id)
             self.topEditDepot.destroy()
-        self.listarDepositoEnTabla()
+        self.updateTable()
         
-    def listarDepositoEnTabla(self, where=None):
+    def updateTable(self, where=None):
         try:
         # Limpiar la tabla existente
-            self.tablaDeposito.delete(*self.tablaDeposito.get_children())
+            self.depotsTable.delete(*self.depotsTable.get_children())
 
             if where is not None and len(where) > 0:
-                self.listaCliente = InformacionDeposito(where)
+                self.depotList = searchDepots(where)
             else:
-                self.listaCliente = ListarDepositos()
-                self.listaCliente.reverse()
+                self.depotList = listDepot()
+                self.depotList.reverse()
 
-            for p in self.listaCliente:
-                self.tablaDeposito.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4]))
+            for p in self.depotList:
+                self.depotsTable.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4]))
         except Exception as e:
             error_advice()
-            mensaje = f'Error en listarDepositoEnTabla, form_depot: {str(e)}'
+            mensaje = f'Error en updateTable, form_depot: {str(e)}'
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')

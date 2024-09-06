@@ -2,37 +2,37 @@ from .conexion import ConexionDB
 from tkinter import messagebox
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 
-def EditClient(client, id):
+def edit_client(client, id):
     conexion = ConexionDB()
     sql = f"""UPDATE client SET cod_client = '{client.cod_client}', client_firstname = '{client.client_firstname}', client_lastname = '{client.client_lastname}', client_ci = '{client.client_ci}', client_phone = '{client.client_phone}', client_address = '{client.client_address}', client_email = '{client.client_email}','{client.updated_at}', activo = 1 WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         edit_advice()
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
         mensaje = f'Error en EditClient, ClientsDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
-def SaveClient(client):
+def save_client(client):
     conexion = ConexionDB()
     sql = f"""INSERT INTO client (cod_client, client_firstname, client_lastname, client_ci, client_phone, client_address, client_email, created_at, update_at, activo)
     VALUES('{client.cod_client}','{client.client_firstname}','{client.client_lastname}','{client.client_ci}','{client.client_phone}','{client.client_address}','{client.client_email}','{client.created_at}','{client.updated_at}',1)"""
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         save_advice()
         
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
         mensaje = f'Error en SaveClient, ClientsDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
-def listarCliente():
+def listClient():
     conexion = ConexionDB()
     listaCliente = []
     sql = 'SELECT * FROM client WHERE activo = 1'
@@ -40,9 +40,9 @@ def listarCliente():
     try:
         conexion.cursor.execute(sql)
         listaCliente = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        conexion.closeConexion()
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
         mensaje = f'Error en listarCliente, ClientsDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
@@ -56,23 +56,23 @@ def clientesDesactivados():
     try:
         conexion.cursor.execute(sql)
         listaCliente = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        conexion.closeConexion()
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
         mensaje = f'Error en clientArchived, ClientsDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
     return listaCliente    
 
-def consulClient(where):
+def searchClients(where):
     conexion = ConexionDB()
     listaCliente = []
     sql = f'SELECT * FROM client {where}'
     try:
         conexion.cursor.execute(sql)
         listaCliente = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        conexion.closeConexion()
     except Exception as e:
         error_advice()
         mensaje = f'Error en consulClient, ClientsDao: {str(e)}'
@@ -85,12 +85,12 @@ def clientDelete(id):
     sql = f'UPDATE client SET activo = 0 WHERE id = {id}'
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         delete_advice()
 
     except Exception as e:
         error_advice()
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         mensaje = f'Error en client_Delete, ClientsDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')

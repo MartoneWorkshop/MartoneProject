@@ -2,80 +2,80 @@ from .conexion import ConexionDB
 from tkinter import messagebox
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 
-def EditPermiso(permisos, id):
+def edit_permission(permisos, id):
     conexion = ConexionDB()
     sql = f"""UPDATE permisos SET name = '{permisos.name}', date_update = '{permisos.date_update}' WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         edit_advice()
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en EditPermiso, EditPermiso: {str(e)}'
+        mensaje = f'Error en edit_permission, PermDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
-def SavePermiso(permisos):
+def save_permission(permisos):
     conexion = ConexionDB()
     sql = f"""INSERT INTO permisos (idmod, name, codperm, date_created, date_update)
     VALUES('{permisos.idmod}','{permisos.name}','{permisos.codperm}','{permisos.date_created}','{permisos.date_update}')"""
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         save_advice()
         
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en SavePermiso, permisosDao: {str(e)}'
+        mensaje = f'Error en save_permission, PermDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
-def listarPermisos():
+def listPermissions():
     conexion = ConexionDB()
-    listaPermisos = []
+    listPerm = []
     sql = 'SELECT * FROM permisos'
     try:
         conexion.cursor.execute(sql)
-        listaPermisos = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        listPerm = conexion.cursor.fetchall()
+        conexion.closeConexion()
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en listarPermisos, ModuDao: {str(e)}'
+        mensaje = f'Error en listPermissions, PermDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
-    return listaPermisos
+    return listPerm
 
 
-def consulPermisos(where):
+def searchPermiss(where):
     conexion = ConexionDB()
-    listarPermisos = []
+    permList = []
     sql = f'SELECT * FROM permisos {where}'
     try:
         conexion.cursor.execute(sql)
-        listarPermisos = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        permList = conexion.cursor.fetchall()
+        conexion.closeConexion()
     except Exception as e:
         error_advice()
-        mensaje = f'Error en consulPermisos, ModuDao: {str(e)}'
+        mensaje = f'Error en searchPermiss, PermDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
-    return listarPermisos
+    return permList
 
-def PermisoDelete(id):
+def PermissDelete(id):
     conexion = ConexionDB()
     sql = f'DELETE FROM permisos WHERE id = {id}'
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         delete_advice()
 
     except Exception as e:
         error_advice()
-        conexion.cerrarConexion()
-        mensaje = f'Error en PermisoDisable, en ModuDao: {str(e)}'
+        conexion.closeConexion()
+        mensaje = f'Error en PermissDelete, en PermDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 

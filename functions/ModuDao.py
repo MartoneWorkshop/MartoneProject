@@ -2,96 +2,96 @@ from .conexion import ConexionDB
 from tkinter import messagebox
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 
-def EditModulo(modulos, id):
+def edit_module(modulos, id):
     conexion = ConexionDB()
     sql = f"""UPDATE modulos SET name = '{modulos.name}', alias = '{modulos.alias}', codmod = '{modulos.codmod}',
     date_update = '{modulos.date_update}', activo = 1 WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         edit_advice()
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en EditClient, UsersDao: {str(e)}'
+        mensaje = f'Error en edit_module, ModuDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
-def SaveModulo(modulos):
+def save_module(modulos):
     conexion = ConexionDB()
     sql = f"""INSERT INTO modulos (name, alias, codmod, date_created, date_update, activo)
     VALUES('{modulos.name}','{modulos.alias}','{modulos.codmod}','{modulos.date_created}','{modulos.date_update}', 1)"""
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         save_advice()
         
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en SaveModulo, modulosDao: {str(e)}'
+        mensaje = f'Error en SaveModulo, ModuDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
-def listarModulos():
+def listModules():
     conexion = ConexionDB()
     listaModulos = []
     sql = 'SELECT * FROM modulos WHERE activo = 1'
     try:
         conexion.cursor.execute(sql)
         listaModulos = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        conexion.closeConexion()
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en listarModulos, ModuDao: {str(e)}'
+        mensaje = f'Error en listModules, ModuDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
     return listaModulos
 
-def ModulosInactivos():
+def inactive_modules():
     conexion = ConexionDB()
-    listarModulos = []
+    moduleList = []
     sql = f'SELECT * FROM modulos WHERE activo = 0'
     try:
         conexion.cursor.execute(sql)
-        listarModulos = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        moduleList = conexion.cursor.fetchall()
+        conexion.closeConexion()
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en ModulosInactivos, ModuDao: {str(e)}'
+        mensaje = f'Error en inactive_modules, ModuDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
-    return listarModulos    
+    return moduleList    
 
-def consulModulos(where):
+def searchModules(where):
     conexion = ConexionDB()
-    listarModulos = []
+    moduleList = []
     sql = f'SELECT * FROM modulos {where}'
     try:
         conexion.cursor.execute(sql)
-        listarModulos = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        moduleList = conexion.cursor.fetchall()
+        conexion.closeConexion()
     except Exception as e:
         error_advice()
-        mensaje = f'Error en consulModulos, ModuDao: {str(e)}'
+        mensaje = f'Error en searchModules, ModuDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
-    return listarModulos
+    return moduleList
 
-def ModuloDisable(id):
+def moduleDisable(id):
     conexion = ConexionDB()
     sql = f'UPDATE modulos SET activo = 0 WHERE id = {id}'
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         delete_advice()
 
     except Exception as e:
         error_advice()
-        conexion.cerrarConexion()
-        mensaje = f'Error en ModuloDisable, en ModuDao: {str(e)}'
+        conexion.closeConexion()
+        mensaje = f'Error en moduleDisable, en ModuDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 

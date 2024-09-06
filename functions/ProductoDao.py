@@ -2,53 +2,53 @@ from .conexion import ConexionDB
 from tkinter import messagebox
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 
-def ObtenerProveedores():
+def getSupplier():
     try:
         conexion = ConexionDB()
         sql = f"""SELECT id, codProv, nom_fiscal FROM proveedores WHERE activo = 1"""
-        conexion.ejecutar_consulta(sql)
-        resultados = conexion.obtener_resultados()
+        conexion.execute_consult(sql)
+        resultados = conexion.get_results()
         
         depositos = resultados
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         return depositos
     except Exception as e:
             error_advice()
-            mensaje = f'Error en ObtenerProveedores, ProductosDao: {str(e)}'
+            mensaje = f'Error en ObtenerProveedores, ProductDao: {str(e)}'
             with open('error_log.txt', 'a') as file:
                     file.write(mensaje + '\n') 
-def ObtenerGrupos():
+def getCategory():
     try:
         conexion = ConexionDB()
         sql = f"""SELECT id, codgrupo, name_group FROM grupo WHERE activo = 1"""
-        conexion.ejecutar_consulta(sql)
-        resultados = conexion.obtener_resultados()
+        conexion.execute_consult(sql)
+        resultados = conexion.get_results()
         
         depositos = resultados
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         return depositos
     except Exception as e:
             error_advice()
-            mensaje = f'Error en ObtenerGrupos, ProductosDao: {str(e)}'
+            mensaje = f'Error en ObtenerGrupos, ProductDao: {str(e)}'
             with open('error_log.txt', 'a') as file:
                     file.write(mensaje + '\n')     
-def ObtenerDepositos():
+def getDepots():
         try:
                 conexion = ConexionDB()
                 sql = f"""SELECT id, codDep, name_dep FROM deposito WHERE activo = 1"""
-                conexion.ejecutar_consulta(sql)
-                resultados = conexion.obtener_resultados()
+                conexion.execute_consult(sql)
+                resultados = conexion.get_results()
                 
                 depositos = resultados
-                conexion.cerrarConexion()
+                conexion.closeConexion()
                 return depositos
         except Exception as e:
                 error_advice()
-                mensaje = f'Error en ObtenerDepositos, ProductosDao: {str(e)}'
+                mensaje = f'Error en ObtenerDepositos, ProductDao: {str(e)}'
                 with open('error_log.txt', 'a') as file:
                         file.write(mensaje + '\n') 
 
-def EditArt(productos, id):
+def edit_product(productos, id):
     conexion = ConexionDB()
     sql = f"""UPDATE articulo SET codProducto = '{productos.codProducto}', codDep = '{productos.codDep}',
     codgrupo = '{productos.codgrupo}', codProv = '{productos.codProv}', nombre_producto = '{productos.nombre_producto}',
@@ -56,17 +56,17 @@ def EditArt(productos, id):
     descripcion = '{productos.descripcion}', date_update = '{productos.date_update}', activo = 1 WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         edit_advice()
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en EditArt, ProductosDao: {str(e)}'
+        mensaje = f'Error en EditArt, ProductDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
 
-def SaveArt(productos):
+def save_product(productos):
     conexion = ConexionDB()
     sql = f"""INSERT INTO articulo (codProducto, codDep, codgrupo, codProv, nombre_producto,
     marca, modelo, serial, costo, descripcion, date_created, date_update, activo)
@@ -75,17 +75,17 @@ def SaveArt(productos):
     '{productos.modelo}','{productos.serial}','{productos.costo}','{productos.descripcion}','{productos.date_created}','{productos.date_update}',1)"""
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         save_advice()
         
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en SaveArt, ProductosDao: {str(e)}'
+        mensaje = f'Error en save_product, ProductDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
-def listarProductos():
+def listProduct():
     conexion = ConexionDB()
     listaProductos = []
     sql = 'SELECT * FROM articulo WHERE activo = 1'
@@ -93,58 +93,58 @@ def listarProductos():
     try:
         conexion.cursor.execute(sql)
         listaProductos = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        conexion.closeConexion()
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en listarProductos, ProvsDao: {str(e)}'
+        mensaje = f'Error en listProduct, ProvsDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
     return listaProductos
 
-def productosDesactivados():
+def product_inactive():
     conexion = ConexionDB()
     listaproductos = []
     sql = f'SELECT * FROM articulo WHERE activo = 0'
     try:
         conexion.cursor.execute(sql)
         listaproductos = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        conexion.closeConexion()
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en productosDesactivados, ProductosDao: {str(e)}'
+        mensaje = f'Error en product_inactive, ProductDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
     return listaproductos    
 
-def consulArt(where):
+def searchProducts(where):
     conexion = ConexionDB()
     listarProducto = []
     sql = f'SELECT * FROM articulo {where}'
     try:
         conexion.cursor.execute(sql)
         listarProducto = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        conexion.closeConexion()
     except Exception as e:
         error_advice()
-        mensaje = f'Error en consulArt, ProductosDao: {str(e)}'
+        mensaje = f'Error en searchProducts, ProductDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
     return listarProducto
 
-def ArtDisable(id):
+def productDisable(id):
     conexion = ConexionDB()
     sql = f'UPDATE articulo SET activo = 0 WHERE id = {id}'
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         delete_advice()
 
     except Exception as e:
         error_advice()
-        conexion.cerrarConexion()
-        mensaje = f'Error en ArtDisable, en ProductosDao: {str(e)}'
+        conexion.closeConexion()
+        mensaje = f'Error en productDisable, en ProductDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 

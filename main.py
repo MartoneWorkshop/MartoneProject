@@ -1,5 +1,5 @@
-from formularios.form_maestro import FormularioMaestro
+from formularios.form_main import FormMain
 
 
-app = FormularioMaestro()
+app = FormMain()
 app.mainloop()

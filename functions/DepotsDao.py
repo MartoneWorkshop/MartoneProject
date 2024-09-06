@@ -3,101 +3,86 @@ from tkinter import messagebox
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 
 
-def SaveDepot(deposito):
+def save_depot(deposito):
     conexion = ConexionDB()
     sql = f"""INSERT INTO deposito (codDep, name_dep, date_created,date_update, activo)
     VALUES('{deposito.codDep}','{deposito.name_dep}','{deposito.date_created}','{deposito.date_update}',1)"""
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         save_advice()
         
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en SaveDepot, AdjustDepotsDao: {str(e)}'
+        mensaje = f'Error en save_depot, DepotsDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
-def ListarDepositos():
+def listDepot():
     conexion = ConexionDB()
-    ListarDepositos = []
+    listDepot = []
     sql = 'SELECT * FROM deposito WHERE activo = 1'
 
     try:
         conexion.cursor.execute(sql)
-        ListarDepositos = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        listDepot = conexion.cursor.fetchall()
+        conexion.closeConexion()
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en ListarDepositos, AdjustDepotsDao: {str(e)}'
+        mensaje = f'Error en listDepot, DepotsDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
-    return ListarDepositos
+    return listDepot
 
-def InformacionDeposito(where):
+def searchDepots(where):
     conexion = ConexionDB()
     listarDeposito = []
     sql = f'SELECT * FROM deposito {where}'
     try:
         conexion.cursor.execute(sql)
         listarDeposito = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        conexion.closeConexion()
     except Exception as e:
         error_advice()
-        mensaje = f'Error en InformacionDeposito, AdjustDepotsDao: {str(e)}'
+        mensaje = f'Error en searchDepots, DepotsDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
     return listarDeposito
 
 
-def DepotDisable(id):
+def depotDisable(id):
     conexion = ConexionDB()
     sql = f'UPDATE deposito SET activo = 0 WHERE id = {id}'
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         delete_advice()
 
     except Exception as e:
         error_advice()
-        conexion.cerrarConexion()
-        mensaje = f'Error en DepotDisable, en AdjustDepotsDao: {str(e)}'
+        conexion.closeConexion()
+        mensaje = f'Error en DepotDisable, en DepotsDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
-def EditDepot(deposito, id):
+def edit_depot(deposito, id):
     conexion = ConexionDB()
     sql = f"""UPDATE deposito SET name_dep = '{deposito.name_dep}', date_update = '{deposito.date_update}', activo = 1 WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         save_advice()
         
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en EditDepot, AdjustDepotsDao: {str(e)}'
+        mensaje = f'Error en edit_depot, DepotsDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
-def AsignarDeposito():
-        try:
-                conexion = ConexionDB()
-                sql = f"""SELECT id, codDep, name_dep FROM deposito"""
-                conexion.ejecutar_consulta(sql)
-                resultados = conexion.obtener_resultados()
-                
-                depositos = resultados
-                conexion.cerrarConexion()
-                return depositos
-        except Exception as e:
-                error_advice()
-                mensaje = f'Error en asignarDeposito, adjustDepotsDao: {str(e)}'
-                with open('error_log.txt', 'a') as file:
-                        file.write(mensaje + '\n') 
-def obtener_depositos():
+def getDepots():
     conexion = ConexionDB()
     sql = "SELECT * FROM deposito WHERE activo = 1"
     depositos = []
@@ -105,11 +90,11 @@ def obtener_depositos():
     try:
         conexion.cursor.execute(sql)
         depositos = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        conexion.closeConexion()
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f"Error en obtener_depositos, AdjustDepotsDao: {str(e)}"
+        mensaje = f"Error en getDepots, DepotsDao: {str(e)}"
         with open("error_log.txt", "a") as file:
             file.write(mensaje + "\n")
 

@@ -2,7 +2,7 @@ from .conexion import ConexionDB
 from tkinter import messagebox
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 
-def EditProv(proveedores, id):
+def edit_supplier(proveedores, id):
     conexion = ConexionDB()
     sql = f"""UPDATE proveedores SET nom_fiscal = '{proveedores.nom_fiscal}', rif_prov = '{proveedores.rif_prov}',
     tipo_per = '{proveedores.tipo_per}', telf_prov = '{proveedores.telf_prov}',
@@ -10,17 +10,17 @@ def EditProv(proveedores, id):
     date_update = '{proveedores.date_update}', activo = 1 WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         edit_advice()
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en EditProv, ProvDao: {str(e)}'
+        mensaje = f'Error en edit_supplier, SupplierDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
 
-def SaveProv(proveedores):
+def save_supplier(proveedores):
     conexion = ConexionDB()
     sql = f"""INSERT INTO proveedores (codProv, nom_fiscal, rif_prov, tipo_per, telf_prov, dir_fiscal, 
     email_prov, dias_credito, date_created, date_update, activo)
@@ -29,17 +29,17 @@ def SaveProv(proveedores):
     '{proveedores.dias_credito}','{proveedores.date_created}','{proveedores.date_update}',1)"""
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         save_advice()
         
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en SaveProv, ProvDao: {str(e)}'
+        mensaje = f'Error en save_supplier, SupplierDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
-def listarProveedores():
+def listSupplier():
     conexion = ConexionDB()
     listaProveedores = []
     sql = 'SELECT * FROM proveedores WHERE activo = 1'
@@ -47,58 +47,58 @@ def listarProveedores():
     try:
         conexion.cursor.execute(sql )
         listaProveedores = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        conexion.closeConexion()
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en listarProveedores, ProvsDao: {str(e)}'
+        mensaje = f'Error en listSupplier, SupplierDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
     return listaProveedores
 
-def ProveedoresDesactivados():
+def inactiveSuppliers():
     conexion = ConexionDB()
     listaProveedores = []
     sql = f'SELECT * FROM proveedores WHERE activo = 0'
     try:
         conexion.cursor.execute(sql)
         listaProveedores = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        conexion.closeConexion()
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en ProveedoresDesactivados, ProvDao: {str(e)}'
+        mensaje = f'Error en inactiveSuppliers, SupplierDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
     return listaProveedores    
 
-def consulProv(where):
+def searchSupplier(where):
     conexion = ConexionDB()
     listarProveedor = []
     sql = f'SELECT * FROM proveedores {where}'
     try:
         conexion.cursor.execute(sql)
         listarProveedor = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        conexion.closeConexion()
     except Exception as e:
         error_advice()
-        mensaje = f'Error en consulProv, ProvDao: {str(e)}'
+        mensaje = f'Error en searchSupplier, SupplierDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
     return listarProveedor
 
-def ProvDisable(id):
+def supplierDisable(id):
     conexion = ConexionDB()
     sql = f'UPDATE proveedores SET activo = 0 WHERE id = {id}'
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         delete_advice()
 
     except Exception as e:
         error_advice()
-        conexion.cerrarConexion()
-        mensaje = f'Error en ProvDelete, en ProvDao: {str(e)}'
+        conexion.closeConexion()
+        mensaje = f'Error en supplierDisable, en SupplierDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 

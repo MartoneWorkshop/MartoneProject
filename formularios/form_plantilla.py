@@ -7,7 +7,7 @@ from PIL import Image, ImageTk
 from tkinter import ttk
 from util.util_alerts import set_opacity, save_advice, error_advice, edit_advice, delete_advice
 from util.util_functions import buscarCorrelativo, actualizarCorrelativo
-from functions.ClientsDao import Client, SaveClient, consulClient, clientDelete, clientesDesactivados, listarCliente, EditClient 
+from functions.ClientsDao import Client, save_client, searchClients, clientDelete, clientesDesactivados, listClient, edit_client 
 from config import  COLOR_FONDO, WIDTH_LOGO, HEIGHT_LOGO, COLOR_MENU_LATERAL, ANCHO_MENU, ALTO_MENU
 import datetime
 from tkinter import messagebox
@@ -87,9 +87,9 @@ class FormClient():
         #################################################### INFORMACION DE LA TABLA ####################################################
         where = ""
         if len(where) > 0:
-            self.ListaClient = consulClient(where)
+            self.ListaClient = searchClients(where)
         else:            
-            self.ListaClient = listarCliente()
+            self.ListaClient = listClient()
             self.ListaClient.reverse()
 
         self.tablaClients = ttk.Treeview(self.marco_clients, column=('codClient','codDep','codgrupo','codProv','nombre_cliente','marca','modelo','serial','costo','descripcion'), height=25)
@@ -142,7 +142,7 @@ class FormClient():
         # Borrar los elementos existentes en la tabla de permisos
         self.tablaClients.delete(*self.tablaClients.get_children())
         # Obtener la lista de permisos activos
-        permisos_activos = listarCliente()
+        permisos_activos = listClient()
         # Insertar los permisos activos en la tabla
         for p in permisos_activos:
             self.tablaClients.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5],p[6],p[7],p[8],p[9],p[10]))
@@ -264,12 +264,12 @@ class FormClient():
             )
             
             if self.id is None:
-                SaveClient(clients)
+                save_client(clients)
                 actualizarCorrelativo('cliente')
 
                 self.topCreateArt.destroy()
             else:
-                EditClient(clients, self.id)
+                edit_client(clients, self.id)
                 self.topEditArt.destroy()
 
             self.listarClientsEnTabla()
@@ -286,9 +286,9 @@ class FormClient():
             self.tablaClients.delete(*self.tablaClients.get_children())
 
             if where is not None and len(where) > 0:
-                self.ListaClient = consulClient(where)
+                self.ListaClient = searchClients(where)
             else:
-                self.ListaClient = listarCliente()
+                self.ListaClient = listClient()
                 self.ListaClient.reverse()
 
             for p in self.ListaClient:

@@ -2,7 +2,7 @@ import tkinter as tk
 from config import  COLOR_FONDO
 import customtkinter
 from customtkinter import CTkFont
-from functions.ClientsDao import Clients, SaveClient, listarCliente, client_Delete, consulClient, EditClient
+from functions.ClientsDao import Clients, save_client, listClient, client_Delete, searchClients, edit_client
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice    
 from config import COLOR_BOTON_CURSOR_ENCIMA, COLOR_MENU_LATERAL, COLOR_BOTON_CURSOR_FUERA, COLOR_FG, COLOR_TEXTO, COLOR_HOVER, COLOR_FONDO
 from tkinter import Image, ttk, messagebox, Canvas
@@ -191,9 +191,9 @@ class FormularioRegistrosDesign():
         #################################################### INFORMACION DE LA TABLA ####################################################
         where = ""
         if len(where) > 0:
-            self.listaCliente = consulClient(where)
+            self.listaCliente = searchClients(where)
         else:
-            self.listaCliente = listarCliente()
+            self.listaCliente = listClient()
             self.listaCliente.reverse()
 
         self.tablaClientes = ttk.Treeview(marco_tabla, column=('client_firstname','client_lastname','client_ci','client_phone','client_address','client_mail'))
@@ -561,9 +561,9 @@ class FormularioRegistrosDesign():
                 self.svclient_mail.get()
             )
             if self.id_client is None:
-                SaveClient(clients)
+                save_client(clients)
             else:
-                EditClient(clients, self.id_client)
+                edit_client(clients, self.id_client)
             self.Depurador()
             self.listarClientesEnTabla()
         except Exception as e:
@@ -592,9 +592,9 @@ class FormularioRegistrosDesign():
             self.tablaClientes.delete(*self.tablaClientes.get_children())
 
             if where is not None and len(where) > 0:
-                self.listaCliente = consulClient(where)
+                self.listaCliente = searchClients(where)
             else:
-                self.listaCliente = listarCliente()
+                self.listaCliente = listClient()
                 self.listaCliente.reverse()
 
             for p in self.listaCliente:

@@ -3,114 +3,94 @@ from tkinter import messagebox
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 
 
-def SaveGroup(grupo):
+def save_cat(grupo):
     conexion = ConexionDB()
     sql = f"""INSERT INTO grupo (codgrupo, name_group, date_created, date_update, activo)
     VALUES('{grupo.codgrupo}','{grupo.name_group}','{grupo.date_created}','{grupo.date_update}',1)"""
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         save_advice()
         
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
         mensaje = f'Error en SaveDepot, GruposDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
-
-def GroupDisable(id):
+def catDisable(id):
     conexion = ConexionDB()
     sql = f'UPDATE grupo SET activo = 0 WHERE id = {id}'
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         delete_advice()
 
     except Exception as e:
         error_advice()
-        conexion.cerrarConexion()
-        mensaje = f'Error en GroupDisable, en GruposDao: {str(e)}'
+        conexion.closeConexion()
+        mensaje = f'Error en catDisable, en GruposDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
-
-def ListarGrupos():
+def listCategory():
     conexion = ConexionDB()
-    ListarGrupos = []
+    listCategory = []
     sql = 'SELECT * FROM grupo WHERE activo = 1'
 
     try:
         conexion.cursor.execute(sql)
-        ListarGrupos = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        listCategory = conexion.cursor.fetchall()
+        conexion.closeConexion()
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en ListarGrupos, GruposDao: {str(e)}'
+        mensaje = f'Error en listCategory, GruposDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
-    return ListarGrupos
-
-def GruposDesactivados():
+    return listCategory
+def inactive_cat():
     conexion = ConexionDB()
-    listaGrupos = []
+    listCategory = []
     sql = f'SELECT * FROM grupo WHERE activo = 0'
     try:
         conexion.cursor.execute(sql)
-        listaGrupos = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        listCategory = conexion.cursor.fetchall()
+        conexion.closeConexion()
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en GruposDesactivados, GruposDao: {str(e)}'
+        mensaje = f'Error en inactive_cat, GruposDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
-    return listaGrupos    
-
-def InformacionGrupos(where):
+    return listCategory    
+def searchCategories(where):
     conexion = ConexionDB()
     listarGrupo = []
     sql = f'SELECT * FROM grupo {where}'
     try:
         conexion.cursor.execute(sql)
         listarGrupo = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
+        conexion.closeConexion()
     except Exception as e:
         error_advice()
-        mensaje = f'Error en InformacionGrupos, GruposDao: {str(e)}'
+        mensaje = f'Error en searchCategories, GruposDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
     return listarGrupo
-
-def EditGroup(grupo, id):
+def edit_cat(grupo, id):
     conexion = ConexionDB()
     sql = f"""UPDATE grupo SET name_group = '{grupo.name_group}', date_update = '{grupo.date_update}', activo = 1 WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         edit_advice()
         
     except Exception as e:
-        conexion.cerrarConexion()
+        conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en EditGroup, GruposDao: {str(e)}'
+        mensaje = f'Error en edit_cat, GruposDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
-
-def consulCat(where):
-    conexion = ConexionDB()
-    listarGrupo = []
-    sql = f'SELECT * FROM articulo {where}'
-    try:
-        conexion.cursor.execute(sql)
-        listarGrupo = conexion.cursor.fetchall()
-        conexion.cerrarConexion()
-    except Exception as e:
-        error_advice()
-        mensaje = f'Error en consulCat, GruposDao: {str(e)}'
-        with open('error_log.txt', 'a') as file:
-            file.write(mensaje + '\n')
-    return listarGrupo
 
 class Grupo:
     def __init__(self, codgrupo, name_group, date_created, date_update):

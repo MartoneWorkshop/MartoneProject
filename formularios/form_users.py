@@ -7,8 +7,8 @@ from PIL import Image, ImageTk
 from tkinter import messagebox
 from util.util_alerts import edit_advice, error_advice, save_advice, set_opacity
 from functions.conexion import ConexionDB
-from util.util_functions import obtener_permisos, ObtenerListaDeModulos, ObtenerPermisosDeModulos, ObtenerRoles, buscarCorrelativo, actualizarCorrelativo, ObtenerModulos
-from functions.UsersDao import usuarios, consulUsers, listarUsuarios, SaveUser, EditUser, UserDisable, UsuariosDesactivados
+from util.util_functions import obtener_permisos, getModuleList, getModulePerm, ObtenerRoles, buscarCorrelativo, actualizarCorrelativo, getModule
+from functions.UsersDao import user, searchUsers, listUsers, save_user, edit_user, userDisable, inactive_users
 import sqlite3
 import datetime
 import ctypes
@@ -36,7 +36,7 @@ class FormUsers():
         label_fondo.place(x=0, y=0, relwidth=1, relheight=1)
         self.label_fondo = label_fondo
         
-        def ajustar_imagen(event):
+        def adjustImage(event):
             # Cambiar el tamaño de la imagen para que coincida con el tamaño del frame
             nueva_imagen = imagen.resize((event.width, event.height))
             nueva_imagen_tk = ImageTk.PhotoImage(nueva_imagen)
@@ -44,7 +44,7 @@ class FormUsers():
             # Actualizar la imagen en el Label de fondo
             label_fondo.config(image=nueva_imagen_tk)
             
-        self.barra_inferior.bind("<Configure>", ajustar_imagen)
+        self.barra_inferior.bind("<Configure>", adjustImage)
         
         bg = imagen_tk
 
@@ -54,110 +54,107 @@ class FormUsers():
         set_opacity(self.marco_create, 0.8)
         ##################################################### BOTONES DE LA TABLA ##################################################
         self.buttonCreateUser = tk.Button(self.marco_create, text="Crear\n Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                        command=lambda: self.crear_usuario(permisos, bg))
+                                        command=lambda: self.FormCreateUser(permisos, bg))
         self.buttonCreateUser.place(x=140, y=50)
 
         self.buttonEditUser = tk.Button(self.marco_create, text="Editar\n Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                        command=lambda: self.editar_usuario(permisos, self.tablaUsuarios.item(self.tablaUsuarios.selection())['values']))
+                                        command=lambda: self.FormEditUser(permisos, self.usersTable.item(self.usersTable.selection())['values']))
         self.buttonEditUser.place(x=245, y=50)
 
         if 'CONF1006' in permisos:
             self.buttonDeleteUser = tk.Button(self.marco_create, text="Desactivar\n Usuario", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                            command=lambda: self.desactivarUsuario(permisos))
+                                            command=lambda: self.inactivateUser(permisos))
             self.buttonDeleteUser.place(x=350, y=50)
         else: 
             self.buttonDeleteUser = tk.Button(self.marco_create, text="Desactivar\n Usuario", font=("Roboto", 12), state='disabled', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                            command=lambda: self.desactivarUsuario(permisos))
+                                            command=lambda: self.inactivateUser(permisos))
             self.buttonDeleteUser.place(x=350, y=50)
 
         if 'CONF1014' in permisos:
             self.switchStatus = tk.BooleanVar(value=True)
-            self.switchUserStatus = customtkinter.CTkSwitch(self.marco_create, variable=self.switchStatus, state='normal', text="Activos", font=("Roboto", 12), command=self.MostrarActivosInactivos)
+            self.switchUserStatus = customtkinter.CTkSwitch(self.marco_create, variable=self.switchStatus, state='normal', text="Activos", font=("Roboto", 12), command=self.SwitchStatus)
             self.switchUserStatus.place(x=700, y=157)
         else:
             self.switchStatus = tk.BooleanVar(value=True)
-            self.switchUserStatus = customtkinter.CTkSwitch(self.marco_create, variable=self.switchStatus, state='disabled', text="Activos", font=("Roboto", 12), command=self.MostrarActivosInactivos)
+            self.switchUserStatus = customtkinter.CTkSwitch(self.marco_create, variable=self.switchStatus, state='disabled', text="Inactivos", font=("Roboto", 12), command=self.SwitchStatus)
             self.switchUserStatus.place(x=700, y=157)
 
         ###################################################### BUSCADOR DE LA TABLA #################################################
         search_image = Image.open("imagenes/icons/search.png")
         search_resized = search_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         self.search_icon = ImageTk.PhotoImage(search_resized)
-        self.lblsearch_usuarios = customtkinter.CTkLabel(self.marco_create, text='', image=self.search_icon, font=("Roboto", 14))
-        self.lblsearch_usuarios.place(x=140, y=155)
+        self.lblsearch_users = customtkinter.CTkLabel(self.marco_create, text='', image=self.search_icon, font=("Roboto", 14))
+        self.lblsearch_users.place(x=140, y=155)
 
-        self.sventrysearch_usuarios = customtkinter.StringVar()
-        self.entrysearch_usuarios = ttk.Entry(self.marco_create, textvariable=self.sventrysearch_usuarios, style='Modern.TEntry', width=30)
-        self.entrysearch_usuarios.place(x=175, y=157)
-        self.entrysearch_usuarios.bind('<KeyRelease>', self.update_users_content)
+        self.sventrysearch_users = customtkinter.StringVar()
+        self.entrysearch_users = ttk.Entry(self.marco_create, textvariable=self.sventrysearch_users, style='Modern.TEntry', width=30)
+        self.entrysearch_users.place(x=175, y=157)
+        self.entrysearch_users.bind('<KeyRelease>', self.updateSearch)
 
         #################################################### INFORMACION DE LA TABLA ####################################################
         where = ""
         if len(where) > 0:
-            self.ListaUsuarios = consulUsers(where)
+            self.userList = searchUsers(where)
         else:
-            self.ListaUsuarios = listarUsuarios()
-            self.ListaUsuarios.reverse()
+            self.userList = listUsers()
+            self.userList.reverse()
 
-        self.tablaUsuarios = ttk.Treeview(self.marco_create, column=('coduser','username','password','idrol','data_create','data_update'), height=25)
-        self.tablaUsuarios.place(x=145, y=200)
+        self.usersTable = ttk.Treeview(self.marco_create, column=('coduser','username','password','idrol','data_create','data_update'), height=25)
+        self.usersTable.place(x=145, y=200)
 
-        self.scroll = ttk.Scrollbar(self.marco_create, orient='vertical', command=self.tablaUsuarios.yview)
+        self.scroll = ttk.Scrollbar(self.marco_create, orient='vertical', command=self.usersTable.yview)
         self.scroll.place(x=890, y=200, height=526)
 
-        self.tablaUsuarios.configure(yscrollcommand=self.scroll.set)
-        self.tablaUsuarios.tag_configure('evenrow')
+        self.usersTable.configure(yscrollcommand=self.scroll.set)
+        self.usersTable.tag_configure('evenrow')
 
-        self.tablaUsuarios.heading('#0',text="ID")
-        self.tablaUsuarios.heading('#1',text="Coduser")
-        self.tablaUsuarios.heading('#2',text="Username")
-        self.tablaUsuarios.heading('#3',text="Contraseña")
-        self.tablaUsuarios.heading('#4',text="Perfil")
-        self.tablaUsuarios.heading('#5',text="Date-C")
-        self.tablaUsuarios.heading('#6',text="Date-U")
+        self.usersTable.heading('#0',text="ID")
+        self.usersTable.heading('#1',text="Coduser")
+        self.usersTable.heading('#2',text="Username")
+        self.usersTable.heading('#3',text="Contraseña")
+        self.usersTable.heading('#4',text="Perfil")
+        self.usersTable.heading('#5',text="Date-C")
+        self.usersTable.heading('#6',text="Date-U")
 
-        self.tablaUsuarios.column("#0", width=60, stretch=False, anchor='w')#HAY QUE CENTRARLO
-        self.tablaUsuarios.column("#1", width=60, stretch=False)
-        self.tablaUsuarios.column("#2", width=125, stretch=False)
-        self.tablaUsuarios.column("#3", width=125, stretch=False)
-        self.tablaUsuarios.column("#4", width=125, stretch=False)
-        self.tablaUsuarios.column("#5", width=124, stretch=False)
-        self.tablaUsuarios.column("#6", width=124, stretch=False)
+        self.usersTable.column("#0", width=60, stretch=False, anchor='w')#HAY QUE CENTRARLO
+        self.usersTable.column("#1", width=60, stretch=False)
+        self.usersTable.column("#2", width=125, stretch=False)
+        self.usersTable.column("#3", width=125, stretch=False)
+        self.usersTable.column("#4", width=125, stretch=False)
+        self.usersTable.column("#5", width=124, stretch=False)
+        self.usersTable.column("#6", width=124, stretch=False)
 
-        for p in self.ListaUsuarios:
-            self.tablaUsuarios.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6]))
+        for p in self.userList:
+            self.usersTable.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6]))
 
-        self.tablaUsuarios.bind('<Double-1>', lambda event: self.editar_usuario(event, self.tablaUsuarios.item(self.tablaUsuarios.selection())['values']))
+        self.usersTable.bind('<Double-1>', lambda event: self.FormEditUser(event, self.usersTable.item(self.usersTable.selection())['values']))
     
-    def MostrarActivosInactivos(self):
+    def SwitchStatus(self):
         if self.switchStatus.get():
             self.switchUserStatus.configure(text="Activos")
-            self.mostrarUsuariosActivos()
+            self.showActiveUsers()
         else:
             self.switchUserStatus.configure(text="Inactivos")
-            self.mostrarUsuariosDesactivados()
-
-    def mostrarUsuariosActivos(self):
+            self.showInactiveUsers()
+    def showActiveUsers(self):
         # Borrar los elementos existentes en la tabla de permisos
-        self.tablaUsuarios.delete(*self.tablaUsuarios.get_children())
+        self.usersTable.delete(*self.usersTable.get_children())
         # Obtener la lista de permisos activos
-        permisos_activos = listarUsuarios()
+        permisos_activos = listUsers()
         # Insertar los permisos activos en la tabla
         for p in permisos_activos:
-            self.tablaUsuarios.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5],p[6]))
-
-    def mostrarUsuariosDesactivados(self):
-        self.tablaUsuarios.delete(*self.tablaUsuarios.get_children())
-        permisos_desactivados = UsuariosDesactivados()
+            self.usersTable.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5],p[6]))
+    def showInactiveUsers(self):
+        self.usersTable.delete(*self.usersTable.get_children())
+        permisos_desactivados = inactive_users()
         for p in permisos_desactivados:
-            self.tablaUsuarios.insert('',0, text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6]))
-
-    def update_users_content(self, event=None):
+            self.usersTable.insert('',0, text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6]))
+    def updateSearch(self, event=None):
         conexion = ConexionDB()
     # Obtener el contenido del Entry
-        self.content = self.entrysearch_usuarios.get()
+        self.content = self.entrysearch_users.get()
     # Realizar la consulta
-        sql = """SELECT * FROM usuarios WHERE
+        sql = """SELECT * FROM users WHERE
                 id LIKE ? OR 
                 coduser LIKE ? OR 
                 username LIKE ? OR 
@@ -172,44 +169,43 @@ class FormUsers():
                 '%' + self.content.strip() + '%',
                 '%' + self.content.strip() + '%', 
                 '%' + self.content.strip() + '%')
-        conexion.ejecutar_consulta_parametros(sql, parametros)
-        resultados = conexion.obtener_resultados()  
+        conexion.execute_consult_param(sql, parametros)
+        resultados = conexion.get_results()  
     # Filtrar los registros según el contenido ingresado
         filtered_results = []
-        for p in self.ListaUsuarios:
+        for p in self.userList:
             if self.content.lower() in str(p[0]).lower() or self.content.lower() in str(p[1]).lower() or self.content.lower() in str(p[2]).lower() or self.content.lower() in str(p[3]).lower() or self.content.lower() in str(p[4]).lower() or self.content.lower() in str(p[5]).lower() or self.content.lower() in str(p[6]).lower():              filtered_results.append(p)
 
     # Borrar los elementos existentes en la tablaEquipos
-        self.tablaUsuarios.delete(*self.tablaUsuarios.get_children())
+        self.usersTable.delete(*self.usersTable.get_children())
 
     # Insertar los nuevos resultados en la tablaEquipos
         for p in filtered_results:
-            self.tablaUsuarios.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6]))
-        conexion.cerrarConexion()
-
-    def crear_usuario(self, permisos, bg):
+            self.usersTable.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6]))
+        conexion.closeConexion()
+    def FormCreateUser(self, permisos, bg):
         self.id = None
         #Creacion del top level
-        self.topCreate = customtkinter.CTkToplevel()
-        self.topCreate.title("Crear Usuarios")
-        self.topCreate.w = 600
-        self.topCreate.h = 400
-        self.topCreate.geometry(f"{self.topCreate.w}x{self.topCreate.h}")
-        self.topCreate.resizable(False, False)
-        self.topCreate.configure(bg_color='#6a717e')
-        self.topCreate.configure(fg_color='#6a717e')
+        self.topCreateUser = customtkinter.CTkToplevel()
+        self.topCreateUser.title("Crear users")
+        self.topCreateUser.w = 600
+        self.topCreateUser.h = 400
+        self.topCreateUser.geometry(f"{self.topCreateUser.w}x{self.topCreateUser.h}")
+        self.topCreateUser.resizable(False, False)
+        self.topCreateUser.configure(bg_color='#6a717e')
+        self.topCreateUser.configure(fg_color='#6a717e')
 
 
         #Centrar la ventana en la pantalla
-        screen_width = self.topCreate.winfo_screenwidth()
-        screen_height = self.topCreate.winfo_screenheight()
-        x = (screen_width - self.topCreate.w) // 2
-        y = (screen_height - self.topCreate.h) // 2
-        self.topCreate.geometry(f"+{x}+{y}")
+        screen_width = self.topCreateUser.winfo_screenwidth()
+        screen_height = self.topCreateUser.winfo_screenheight()
+        x = (screen_width - self.topCreateUser.w) // 2
+        y = (screen_height - self.topCreateUser.h) // 2
+        self.topCreateUser.geometry(f"+{x}+{y}")
 
-        self.topCreate.lift()
-        self.topCreate.grab_set()
-        self.topCreate.transient()
+        self.topCreateUser.lift()
+        self.topCreateUser.grab_set()
+        self.topCreateUser.transient()
         #Conversion de ico
         user_ico = Image.open("imagenes/user.png")
         user_ico = user_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
@@ -219,10 +215,10 @@ class FormUsers():
         pass_ico = pass_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
         pass_img = ImageTk.PhotoImage(pass_ico)
 
-        selected_item = self.tablaUsuarios.focus()
-        values = self.tablaUsuarios.item(selected_item)['values']
+        selected_item = self.usersTable.focus()
+        values = self.usersTable.item(selected_item)['values']
         #Datos para el usuario
-        marco_crearusuario = customtkinter.CTkFrame(self.topCreate, width=550,height=350, bg_color="white", fg_color="white")
+        marco_crearusuario = customtkinter.CTkFrame(self.topCreateUser, width=550,height=350, bg_color="white", fg_color="white")
         marco_crearusuario.place(relx=0.5, rely=0.5, anchor="center")
         
         set_opacity(marco_crearusuario, 0.8)
@@ -253,36 +249,35 @@ class FormUsers():
         self.multioption.place(x=325, y=120)
 
         self.buttonCreate = tk.Button(marco_crearusuario, text="Crear Usuario", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", 
-                                        compound=tk.LEFT, padx=10, command=self.GuardarUsuario)
+                                        compound=tk.LEFT, padx=10, command=self.SaveUser)
         self.buttonCreate.place(x=215, y=250)
-
-    def editar_usuario(self, permisos, values):
+    def FormEditUser(self, permisos, values):
         if values:
     # Creación del top level
-            self.id = self.tablaUsuarios.item(self.tablaUsuarios.selection())['text']
-            self.usuario = self.tablaUsuarios.item(self.tablaUsuarios.selection())['values'][1]
-            self.password = self.tablaUsuarios.item(self.tablaUsuarios.selection())['values'][2]
+            self.id = self.usersTable.item(self.usersTable.selection())['text']
+            self.usuario = self.usersTable.item(self.usersTable.selection())['values'][1]
+            self.password = self.usersTable.item(self.usersTable.selection())['values'][2]
 
-            self.topEdit = customtkinter.CTkToplevel()
-            self.topEdit.title("Editar Usuario")
-            self.topEdit.w = 600
-            self.topEdit.h = 400
-            self.topEdit.geometry(f"{self.topEdit.w}x{self.topEdit.h}")
-            self.topEdit.resizable(False, False)
-            self.topEdit.configure(bg_color='#6a717e')
-            self.topEdit.configure(fg_color='#6a717e')
+            self.topEditUser = customtkinter.CTkToplevel()
+            self.topEditUser.title("Editar Usuario")
+            self.topEditUser.w = 600
+            self.topEditUser.h = 400
+            self.topEditUser.geometry(f"{self.topEditUser.w}x{self.topEditUser.h}")
+            self.topEditUser.resizable(False, False)
+            self.topEditUser.configure(bg_color='#6a717e')
+            self.topEditUser.configure(fg_color='#6a717e')
 
 
             # Centrar la ventana en la pantalla
-            screen_width = self.topEdit.winfo_screenwidth()
-            screen_height = self.topEdit.winfo_screenheight()
-            x = (screen_width - self.topEdit.w) // 2
-            y = (screen_height - self.topEdit.h) // 2
-            self.topEdit.geometry(f"+{x}+{y}")
+            screen_width = self.topEditUser.winfo_screenwidth()
+            screen_height = self.topEditUser.winfo_screenheight()
+            x = (screen_width - self.topEditUser.w) // 2
+            y = (screen_height - self.topEditUser.h) // 2
+            self.topEditUser.geometry(f"+{x}+{y}")
 
-            self.topEdit.lift()
-            self.topEdit.grab_set()
-            self.topEdit.transient()
+            self.topEditUser.lift()
+            self.topEditUser.grab_set()
+            self.topEditUser.transient()
 
             # Conversion de ico
             user_ico = Image.open("imagenes/icons/user.png")
@@ -293,7 +288,7 @@ class FormUsers():
             pass_ico = pass_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
             pass_img = ImageTk.PhotoImage(pass_ico)
             # Datos para el usuario
-            marco_editarusuario = customtkinter.CTkFrame(self.topEdit, width=550, height=350, bg_color="white", fg_color="white")
+            marco_editarusuario = customtkinter.CTkFrame(self.topEditUser, width=550, height=350, bg_color="white", fg_color="white")
             marco_editarusuario.place(relx=0.5, rely=0.5, anchor="center")
 
             set_opacity(marco_editarusuario, 0.8)
@@ -329,12 +324,11 @@ class FormUsers():
             self.multioption.place(x=325, y=120)
 
             self.buttonSave = tk.Button(marco_editarusuario, text="Guardar Cambios", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", 
-                                            compound=tk.LEFT, padx=10, command=self.GuardarUsuario)
+                                            compound=tk.LEFT, padx=10, command=self.SaveUser)
             self.buttonSave.place(x=215, y=250)
         else:
             messagebox.showerror("Error", "Debe seleccionar un usuario")
-
-    def GuardarUsuario(self):
+    def SaveUser(self):
         try:
             # Otener el contenido del Entry
             coduser = buscarCorrelativo('usuario')
@@ -350,7 +344,7 @@ class FormUsers():
                     idperfil = rol[0]
                     break
 
-            usuario = usuarios(
+            usuario = user(
                 coduser,
                 self.svusuario.get(),
                 self.svpassword.get(),
@@ -359,51 +353,49 @@ class FormUsers():
                 date_update
             )
             if self.id is None:
-                SaveUser(usuario)
+                save_user(usuario)
                 actualizarCorrelativo('usuario')
-                self.topCreate.destroy()
+                self.topCreateUser.destroy()
             else:
-                EditUser(usuario, self.id)
-                self.topEdit.destroy()
-            self.listarUsuariosEnTabla()
+                edit_user(usuario, self.id)
+                self.topEditUser.destroy()
+            self.UpdateTable()
 
         except Exception as e:
             error_advice()
-            mensaje = f'Error en GuardarUsuario, form_users: {str(e)}'
+            mensaje = f'Error en SaveUser, form_users: {str(e)}'
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')
-    
-    def desactivarUsuario(self, permisos):
+    def inactivateUser(self, permisos):
         try:
-            self.id = self.tablaUsuarios.item(self.tablaUsuarios.selection())['text']
+            self.id = self.usersTable.item(self.usersTable.selection())['text']
             confirmar = messagebox.askyesno("Confirmar", "¿Estas Seguro de que deseas desactivar este usuario?")
 
             if confirmar:
-                UserDisable(self.id)
-                self.listarUsuariosEnTabla()
+                userDisable(self.id)
+                self.UpdateTable()
 
         except Exception as e:
             error_advice()
-            mensaje = f'Error en desactivarUsuario, form_users: {str(e)}'
+            mensaje = f'Error en inactivateUser, form_users: {str(e)}'
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')
-
-    def listarUsuariosEnTabla(self, where=None):
+    def UpdateTable(self, where=None):
         try:
         # Limpiar la tabla existente
-            self.tablaUsuarios.delete(*self.tablaUsuarios.get_children())
+            self.usersTable.delete(*self.usersTable.get_children())
 
             if where is not None and len(where) > 0:
-                self.listaCliente = consulUsers(where)
+                self.listaCliente = searchUsers(where)
             else:
-                self.listaCliente = listarUsuarios()
+                self.listaCliente = listUsers()
                 self.listaCliente.reverse()
 
             for p in self.listaCliente:
-                self.tablaUsuarios.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6]))
+                self.usersTable.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5], p[6]))
         except Exception as e:
             error_advice()
-            mensaje = f'Error en listarUsuariosEnTabla, form_users: {str(e)}'
+            mensaje = f'Error en UpdateTable, form_users: {str(e)}'
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')
 
