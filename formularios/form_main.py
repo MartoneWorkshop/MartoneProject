@@ -212,7 +212,7 @@ class FormMain(customtkinter.CTk):
             username = sv_datauser.get()
             password = sv_datapass.get()
 
-            sql = f"SELECT * FROM usuarios WHERE username = '{username}' AND password = '{password}'"
+            sql = f"SELECT * FROM user WHERE username = '{username}' AND password = '{password}'"
             conexion.execute_consult(sql)
             resultado = conexion.get_result()
             
@@ -558,7 +558,7 @@ class FormMain(customtkinter.CTk):
                 self.buttonRegClient.pack_forget()
                 del self.buttonRegClient
             else:
-                self.buttonRegClient = tk.Button(self.menu_lateral, text="Registro\nde Clientes",  font=("Roboto", 15), image=self.regClient_icon, highlightthickness=20, width=ANCHO_MENU,
+                self.buttonRegClient = tk.Button(self.menu_lateral, text="Registro\nde Clientes",  font=("Roboto", 13), image=self.regClient_icon, highlightthickness=20, width=ANCHO_MENU,
                     height=ALTO_MENU, bg=COLOR_SUBMENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.openFormRegClient(permisos))        
                 self.buttonRegClient.pack()
 

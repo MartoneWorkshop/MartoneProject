@@ -5,7 +5,7 @@ from util.util_alerts import save_advice, edit_advice, error_advice, delete_advi
 
 def edit_profile(roles, id):
     conexion = ConexionDB()
-    sql = f"""UPDATE roles SET name = '{roles.name}', date_update = '{roles.date_update}', activo = 1 WHERE id = {id}"""
+    sql = f"""UPDATE roles SET name = '{roles.name}', updated_at = '{roles.updated_at}', activo = 1 WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
         conexion.closeConexion()
@@ -19,8 +19,8 @@ def edit_profile(roles, id):
 
 def save_profile(roles):
     conexion = ConexionDB()
-    sql = f"""INSERT INTO roles (name, date_created, date_update, activo)
-    VALUES('{roles.name}','{roles.date_created}','{roles.date_update}', 1)"""
+    sql = f"""INSERT INTO roles (name, created_at, updated_at, activo)
+    VALUES('{roles.name}','{roles.created_at}','{roles.updated_at}', 1)"""
     try:
         conexion.cursor.execute(sql)
         conexion.closeConexion()
@@ -138,11 +138,13 @@ def ProfileDisable(id):
 
 
 class Roles:
-    def __init__(self, name, date_created, date_update):
+    def __init__(self, name, created_at, updated_at, deleted_at):
         self.id = None
         self.name = name
-        self.date_created = date_created
-        self.date_update = date_update
+        self.created_at = created_at
+        self.updated_at = updated_at
+        self.deleted_at = deleted_at
+        
 
     def __str__(self):
-        return f'Roles[{self.name}, {self.date_created}, {self.date_update}]'
+        return f'Roles[{self.name}, {self.created_at}, {self.updated_at},{self.deleted_at}]'

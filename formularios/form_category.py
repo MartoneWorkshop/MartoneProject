@@ -6,7 +6,7 @@ from PIL import Image, ImageTk
 from tkinter import ttk
 from util.util_alerts import set_opacity, save_advice, error_advice, edit_advice, delete_advice
 from util.util_functions import buscarCorrelativo, actualizarCorrelativo
-from functions.CategoryDao import Grupo, save_cat, edit_cat, searchCategories, listCategory, catDisable, inactive_cat
+from functions.CategoryDao import category, save_cat, edit_cat, searchCategories, listCategory, catDisable, inactive_cat
 from config import COLOR_MENU_LATERAL
 import datetime
 from tkinter import messagebox
@@ -92,7 +92,7 @@ class FormCategory():
             self.Listacategoria = listCategory()
             self.Listacategoria.reverse()
 
-        self.categoryTable = ttk.Treeview(self.marco_categoria, column=('codgrupo','name_group','date_created','date_update'), height=25)
+        self.categoryTable = ttk.Treeview(self.marco_categoria, column=('codcategory','name_group','created_at','updated_at'), height=25)
         self.categoryTable.place(x=235, y=200)
 
         self.scroll = ttk.Scrollbar(self.marco_categoria, orient='vertical', command=self.categoryTable.yview)
@@ -102,8 +102,8 @@ class FormCategory():
         self.categoryTable.tag_configure('evenrow')
 
         self.categoryTable.heading('#0',text="ID")
-        self.categoryTable.heading('#1',text="CodGrupo")
-        self.categoryTable.heading('#2',text="Nombre Grupo")
+        self.categoryTable.heading('#1',text="Codcategory")
+        self.categoryTable.heading('#2',text="Nombre category")
         self.categoryTable.heading('#3',text="Date-Created")
         self.categoryTable.heading('#4',text="Date-Update")
 
@@ -145,12 +145,12 @@ class FormCategory():
     # Obtener el contenido del Entry
         self.content = self.entrysearch_categoria.get()
     # Realizar la consulta
-        self.cursor.execute("""SELECT * FROM grupo WHERE
+        self.cursor.execute("""SELECT * FROM category WHERE
                         id LIKE ? OR 
-                        codgrupo LIKE ? OR 
+                        codcategory LIKE ? OR 
                         name_group LIKE ? OR 
-                        date_created LIKE ? OR
-                        date_update LIKE ?""", 
+                        created_at LIKE ? OR
+                        updated_at LIKE ?""", 
                         ('%' + self.content + '%',
                         '%' + self.content + '%',  
                         '%' + self.content + '%',
@@ -175,7 +175,7 @@ class FormCategory():
        self.id = None
        #Creacion del top level
        self.topCreateCat = customtkinter.CTkToplevel()
-       self.topCreateCat.title("Crear Grupo")
+       self.topCreateCat.title("Crear category")
        self.topCreateCat.w = 500
        self.topCreateCat.h = 300
        self.topCreateCat.geometry(f"{self.topCreateCat.w}x{self.topCreateCat.h}")
@@ -202,24 +202,24 @@ class FormCategory():
        self.lblinfo = customtkinter.CTkLabel(frame_createCat, text="Crear una Categoria", font=("Roboto",13))
        self.lblinfo.place(x=170, rely=0.1)
    
-       self.lblnombre_grupo = customtkinter.CTkLabel(frame_createCat, text='Nombre de la categoria', font=("Roboto", 13))
-       self.lblnombre_grupo.place(x=162, y=70)
+       self.lblnombre_category = customtkinter.CTkLabel(frame_createCat, text='Nombre de la categoria', font=("Roboto", 13))
+       self.lblnombre_category.place(x=162, y=70)
    
-       self.svnombre_grupo = customtkinter.StringVar()
-       self.entrynombre_grupo = ttk.Entry(frame_createCat, style='Modern.TEntry', textvariable=self.svnombre_grupo)
-       self.entrynombre_grupo.place(x=164, y=100)
-       self.entrynombre_grupo.configure(style='Entry.TEntry')
+       self.svnombre_category = customtkinter.StringVar()
+       self.entrynombre_category = ttk.Entry(frame_createCat, style='Modern.TEntry', textvariable=self.svnombre_category)
+       self.entrynombre_category.place(x=164, y=100)
+       self.entrynombre_category.configure(style='Entry.TEntry')
    
-       self.buttonCrearGrupo = tk.Button(frame_createCat, text="Crear \nCategoria", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.SaveCategory)
-       self.buttonCrearGrupo.place(x=182, y=160) 
+       self.buttonCrearcategory = tk.Button(frame_createCat, text="Crear \nCategoria", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.SaveCategory)
+       self.buttonCrearcategory.place(x=182, y=160) 
     def FormEditCategory(self, permisos, values):
         if values:
             self.id = self.categoryTable.item(self.categoryTable.selection())['text']
-            self.editarnombre_grupo = self.categoryTable.item(self.categoryTable.selection())['values'][0]
+            self.svedit_nombrecategory = self.categoryTable.item(self.categoryTable.selection())['values'][1]
 
             #Creacion del top level
             self.topEditCat = customtkinter.CTkToplevel()
-            self.topEditCat.title("Editar Grupo")
+            self.topEditCat.title("Editar category")
             self.topEditCat.w = 550
             self.topEditCat.h = 300
             self.topEditCat.geometry(f"{self.topEditCat.w}x{self.topEditCat.h}")
@@ -246,44 +246,45 @@ class FormCategory():
             self.lblinfo = customtkinter.CTkLabel(frame_editCat, text="Editar una Categoria", font=("Roboto",13))
             self.lblinfo.place(x=170, rely=0.1)
 
-            self.lblnombre_grupo = customtkinter.CTkLabel(frame_editCat, text='Nombre de la categoria', font=("Roboto", 13))
-            self.lblnombre_grupo.place(x=162, y=70)
+            self.lblnombre_category = customtkinter.CTkLabel(frame_editCat, text='Nombre de la categoria', font=("Roboto", 13))
+            self.lblnombre_category.place(x=162, y=70)
 
-            self.svnombre_grupo = customtkinter.StringVar()
-            self.entrynombre_grupo = ttk.Entry(frame_editCat, style='Modern.TEntry', textvariable=self.svnombre_grupo)
-            self.entrynombre_grupo.place(x=164, y=100)
-            self.entrynombre_grupo.configure(style='Entry.TEntry')
+            self.svnombre_category = customtkinter.StringVar(value=self.svedit_nombrecategory)
+            self.entrynombre_category = ttk.Entry(frame_editCat, style='Modern.TEntry', textvariable=self.svnombre_category)
+            self.entrynombre_category.place(x=164, y=100)
+            self.entrynombre_category.configure(style='Entry.TEntry')
 
-            self.buttonActualizarGrupo = tk.Button(frame_editCat, text="Actualizar \nCategoria", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.SaveCategory)
-            self.buttonActualizarGrupo.place(x=178, y=160)
+            self.buttonActualizarcategory = tk.Button(frame_editCat, text="Actualizar \nCategoria", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.SaveCategory)
+            self.buttonActualizarcategory.place(x=178, y=160)
         else:
             messagebox.showerror("Error", "Debe seleccionar una categoria")
     def SaveCategory(self):
-        codGrupo = buscarCorrelativo('grupo')
-        codGrupo = codGrupo + 1
+        codcategory = buscarCorrelativo('category')
+        codcategory = codcategory + 1
     
         fecha_actual = datetime.datetime.now()
-        date_created = fecha_actual.strftime("%d/%m/%Y")
-        date_update = fecha_actual.strftime("%d/%m/%y %H:%M:%S")
-        grupo = Grupo(
-            codGrupo,
-            self.svnombre_grupo.get(),
-            date_created,
-            date_update
+        created_at = fecha_actual.strftime("%Y-%M-%d")
+        updated_at = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
+        category = category(
+            codcategory,
+            self.svnombre_category.get(),
+            created_at,
+            updated_at,
+            deleted_at = 'NULL'
         )
     
         if self.id is None:
-            save_cat(grupo)
-            actualizarCorrelativo('grupo')
+            save_cat(category)
+            actualizarCorrelativo('category')
             self.topCreateCat.destroy()
         else:
-            edit_cat(grupo, self.id)
+            edit_cat(category, self.id)
             self.topEditCat.destroy()
         self.updateTable()
     def categoryDisable(self, permisos):
         try:
             self.id = self.categoryTable.item(self.categoryTable.selection())['text']
-            confirmar = messagebox.askyesno("Confirmar", "¿Estas seguro de que deseas desactivar este grupo?")
+            confirmar = messagebox.askyesno("Confirmar", "¿Estas seguro de que deseas desactivar este category?")
 
             if confirmar:
                 catDisable(self.id)

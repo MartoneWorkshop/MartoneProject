@@ -8,7 +8,7 @@ from tkinter import messagebox
 from util.util_alerts import edit_advice, error_advice, save_advice, set_opacity
 from functions.conexion import ConexionDB
 from util.util_functions import obtener_permisos, getModuleList, getModulePerm, ObtenerRoles, buscarCorrelativo, actualizarCorrelativo, getModule
-from functions.SupplierDao import Proveedores, searchSupplier, listSupplier, save_supplier, edit_supplier, supplierDisable, inactiveSuppliers
+from functions.SupplierDao import suppliers, searchSupplier, listSupplier, save_supplier, edit_supplier, supplierDisable, inactiveSuppliers
 import sqlite3
 import datetime
 import ctypes
@@ -83,10 +83,10 @@ class FormSuppliers():
         self.lblsearch_proveedors = customtkinter.CTkLabel(self.frame_supplier, text='', image=self.search_icon, font=("Roboto", 14))
         self.lblsearch_proveedors.place(x=65, y=155)
 
-        self.sventrysearch_proveedores = customtkinter.StringVar()
-        self.entrysearch_proveedores = ttk.Entry(self.frame_supplier, textvariable=self.sventrysearch_proveedores, style='Modern.TEntry', width=30)
-        self.entrysearch_proveedores.place(x=100, y=157)
-        self.entrysearch_proveedores.bind('<KeyRelease>', self.updateSearch)
+        self.sventrysearch_supplier = customtkinter.StringVar()
+        self.entrysearch_supplier = ttk.Entry(self.frame_supplier, textvariable=self.sventrysearch_supplier, style='Modern.TEntry', width=30)
+        self.entrysearch_supplier.place(x=100, y=157)
+        self.entrysearch_supplier.bind('<KeyRelease>', self.updateSearch)
 
         #################################################### INFORMACION DE LA TABLA ####################################################
         where = ""
@@ -142,23 +142,23 @@ class FormSuppliers():
         # Borrar los elementos existentes en la tabla de permisos
         self.supplierTable.delete(*self.supplierTable.get_children())
         # Obtener la lista de permisos activos
-        proveedores_activos = listSupplier()
+        supplier_activos = listSupplier()
         # Insertar los permisos activos en la tabla
-        for p in proveedores_activos:
+        for p in supplier_activos:
             self.supplierTable.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5],p[6],p[7],p[8]))
 
     def showInactive(self):
         self.supplierTable.delete(*self.supplierTable.get_children())
-        proveedores_desactivados = inactiveSuppliers()
-        for p in proveedores_desactivados:
+        supplier_desactivados = inactiveSuppliers()
+        for p in supplier_desactivados:
             self.supplierTable.insert('',0, text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6],p[7],p[8]))
 
     def updateSearch(self, event=None):
         conexion = ConexionDB()
     # Obtener el contenido del Entry
-        self.content = self.entrysearch_proveedores.get()
+        self.content = self.entrysearch_supplier.get()
     # Realizar la consulta
-        sql = """SELECT * FROM proveedores WHERE
+        sql = """SELECT * FROM supplier WHERE
                 id LIKE ? OR 
                 codprov LIKE ? OR 
                 nom_fiscal LIKE ? OR 
@@ -522,10 +522,10 @@ class FormSuppliers():
             codprov = buscarCorrelativo('proveedor')
             codprov = codprov + 1
             fecha_actual = datetime.datetime.now()
-            date_created = fecha_actual.strftime("%d/%m/%Y")
-            date_update = fecha_actual.strftime("%d/%m/%y %H:%M:%S")
+            date_created = fecha_actual.strftime("%Y-%M-%d")
+            date_update = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
 
-            proveedor = Proveedores(
+            proveedor = suppliers(
                 codprov,
                 self.svnom_fiscal.get(),
                 self.svrif_prov.get(),

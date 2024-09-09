@@ -7,7 +7,7 @@ from PIL import Image, ImageTk
 from tkinter import ttk
 from util.util_alerts import set_opacity, save_advice, error_advice, edit_advice, delete_advice
 from util.util_functions import buscarCorrelativo, actualizarCorrelativo
-from functions.ClientsDao import Client, save_client, searchClients, clientDelete, clientesDesactivados, listClient, edit_client 
+from functions.ClientsDao import client, save_client, searchClients, clientDelete, clientesDesactivados, listClient, edit_client 
 from config import  COLOR_FONDO, WIDTH_LOGO, HEIGHT_LOGO, COLOR_MENU_LATERAL, ANCHO_MENU, ALTO_MENU
 import datetime
 from tkinter import messagebox
@@ -55,15 +55,15 @@ class FormClient():
 
         set_opacity(self.frame_clients, 0.8)
         ##################################################### BOTONES DE LA TABLA ##################################################
-        self.buttonCreateClient = tk.Button(self.frame_clients, text="Crear\n Client", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+        self.buttonCreateClient = tk.Button(self.frame_clients, text="Crear\n Cliente", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                         command=lambda: self.FormCreateClient(permisos))
         self.buttonCreateClient.place(x=140, y=50)
 
-        self.buttonEditClient = tk.Button(self.frame_clients, text="Editar\n Client", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+        self.buttonEditClient = tk.Button(self.frame_clients, text="Editar\n Cliente", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                             command=lambda: self.FormEditClient(permisos, self.clientsTable.item(self.clientsTable.selection())['values']))
         self.buttonEditClient.place(x=265, y=50)
             
-        self.buttonDeleteClient = tk.Button(self.frame_clients, text="Desactivar\n Client", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+        self.buttonDeleteClient = tk.Button(self.frame_clients, text="Desactivar\n Cliente", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                                 command=lambda: self.inactivateClient(permisos))
         self.buttonDeleteClient.place(x=390, y=50)
 
@@ -77,11 +77,11 @@ class FormClient():
         search_resized = search_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
         self.search_icon = ImageTk.PhotoImage(search_resized)
         self.lblsearch_clients = customtkinter.CTkLabel(self.frame_clients, text='', image=self.search_icon, font=("Roboto", 14))
-        self.lblsearch_clients.place(x=65, y=155)
+        self.lblsearch_clients.place(x=115, y=155)
 
         self.sventrysearch_clients = customtkinter.StringVar()
         self.entrysearch_clients = ttk.Entry(self.frame_clients, textvariable=self.sventrysearch_clients, style='Modern.TEntry', width=30)
-        self.entrysearch_clients.place(x=100, y=157)
+        self.entrysearch_clients.place(x=145, y=157)
         self.entrysearch_clients.bind('<KeyRelease>', self.updateSearch)
 
         #################################################### INFORMACION DE LA TABLA ####################################################
@@ -94,10 +94,10 @@ class FormClient():
 
         self.clientsTable = ttk.Treeview(self.frame_clients, column=('client_firstname','client_lastname','client_ci',
                                                                      'client_phone','client_address','client_email','created_at'), height=25)
-        self.clientsTable.place(x=32, y=200)
+        self.clientsTable.place(x=135, y=200)
 
         self.scroll = ttk.Scrollbar(self.frame_clients, orient='vertical', command=self.clientsTable.yview)
-        self.scroll.place(x=1084, y=200, height=526)
+        self.scroll.place(x=977, y=200, height=526)
 
         self.clientsTable.configure(yscrollcommand=self.scroll.set)
         self.clientsTable.tag_configure('evenrow')
@@ -112,11 +112,11 @@ class FormClient():
         self.clientsTable.heading('#7',text="Creado en")
 
         self.clientsTable.column("#0", width=50, stretch=True, anchor='w')
-        self.clientsTable.column("#1", width=100, stretch=True)
-        self.clientsTable.column("#2", width=100, stretch=True)
+        self.clientsTable.column("#1", width=120, stretch=True)
+        self.clientsTable.column("#2", width=120, stretch=True)
         self.clientsTable.column("#3", width=100, stretch=True)
         self.clientsTable.column("#4", width=100, stretch=True)
-        self.clientsTable.column("#5", width=100, stretch=True)
+        self.clientsTable.column("#5", width=150, stretch=True)
         self.clientsTable.column("#6", width=100, stretch=True)
         self.clientsTable.column("#7", width=100, stretch=True)
 
@@ -212,28 +212,36 @@ class FormClient():
         self.lblinfo = customtkinter.CTkLabel(frame_createClient, text="Registro de Client", font=("Roboto",14))
         self.lblinfo.place(relx=0.36, rely=0.04)
         #LINEA 1
-        #Codigo del Client 1.1
-        self.lblcodClient = customtkinter.CTkLabel(frame_createClient, text='Codigo Client', font=("Roboto", 13))
-        self.lblcodClient.place(x=55, y=60)
+        #Nombre del cliente 1.1
+        self.lblclient_firtsname = customtkinter.CTkLabel(frame_createClient, text='Nombre:', font=("Roboto", 13))
+        self.lblclient_firtsname.place(x=55, y=60)
 
-        self.svcodClient = customtkinter.StringVar()
-        self.entrycodClient = ttk.Entry(frame_createClient, style='Modern.TEntry', textvariable=self.svcodClient)
-        self.entrycodClient.place(x=45, y=90)
-        self.entrycodClient.configure(style='Entry.TEntry')
+        self.svclient_firstname = customtkinter.StringVar()
+        self.entryclient_firstname = ttk.Entry(frame_createClient, style='Modern.TEntry', textvariable=self.svclient_firstname)
+        self.entryclient_firstname.place(x=45, y=90)
+        self.entryclient_firstname.configure(style='Entry.TEntry')
 
-        #Nombre del cliente 1.2
-        self.lblnombClient = customtkinter.CTkLabel(frame_createClient, text='Nombre del Client', font=("Roboto", 13))
-        self.lblnombClient.place(x=202, y=60)
+        #Apellido del cliente 1.2
+        self.lblclient_lastname = customtkinter.CTkLabel(frame_createClient, text='Apellido:', font=("Roboto", 13))
+        self.lblclient_lastname.place(x=202, y=60)
 
-        self.svnombClient = customtkinter.StringVar()
-        self.entrynombClient = ttk.Entry(frame_createClient, style='Modern.TEntry', textvariable=self.svnombClient)
-        self.entrynombClient.place(x=200, y=90)
-        self.entrynombClient.configure(style='Entry.TEntry')
+        self.svclient_lastname = customtkinter.StringVar()
+        self.entryclient_lastname = ttk.Entry(frame_createClient, style='Modern.TEntry', textvariable=self.svclient_lastname)
+        self.entryclient_lastname.place(x=200, y=90)
+        self.entryclient_lastname.configure(style='Entry.TEntry')
 
+        #Cedula del cliente 1.3
         
-        self.buttonGuardarArt = tk.Button(frame_createClient, text="Guardar Client", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+        #Telefono del cliente
+        
+        #Direccion del Cliente
+        
+        #Correo Cliente
+        
+        
+        self.buttonSaveClient = tk.Button(frame_createClient, text="Registrar Cliente", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                             command=lambda: self.SaveClient())
-        self.buttonGuardarArt.place(x=200, y=450)
+        self.buttonSaveClient.place(x=200, y=450)
 
     def SaveClient(self):
         try:
@@ -241,10 +249,10 @@ class FormClient():
             codart = buscarCorrelativo('cliente')
             codart = codart + 1
             fecha_actual = datetime.datetime.now()
-            date_created = fecha_actual.strftime("%d/%m/%Y")
-            date_update = fecha_actual.strftime("%d/%m/%y %H:%M:%S")
-
-            clients = Client(
+            date_created = fecha_actual.strftime("%Y-%M-%d")
+            date_update = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
+            
+            clients = client(
                 self.svcodClient.get(),
                 self.svdepositos_var.get(),
                 self.svcategoria_var.get(),

@@ -4,7 +4,7 @@ from util.util_alerts import save_advice, edit_advice, error_advice, delete_advi
 
 def edit_client(client, id):
     conexion = ConexionDB()
-    sql = f"""UPDATE client SET cod_client = '{client.cod_client}', client_firstname = '{client.client_firstname}', client_lastname = '{client.client_lastname}', client_ci = '{client.client_ci}', client_phone = '{client.client_phone}', client_address = '{client.client_address}', client_email = '{client.client_email}','{client.updated_at}', activo = 1 WHERE id = {id}"""
+    sql = f"""UPDATE client SET client_firstname = '{client.client_firstname}', client_lastname = '{client.client_lastname}', client_ci = '{client.client_ci}', client_phone = '{client.client_phone}', client_address = '{client.client_address}', client_email = '{client.client_email}','{client.updated_at}', activo = 1 WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
         conexion.closeConexion()
@@ -12,14 +12,14 @@ def edit_client(client, id):
     except Exception as e:
         conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en EditClient, ClientsDao: {str(e)}'
+        mensaje = f'Error en editClient, ClientsDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
 def save_client(client):
     conexion = ConexionDB()
-    sql = f"""INSERT INTO client (cod_client, client_firstname, client_lastname, client_ci, client_phone, client_address, client_email, created_at, update_at, activo)
-    VALUES('{client.cod_client}','{client.client_firstname}','{client.client_lastname}','{client.client_ci}','{client.client_phone}','{client.client_address}','{client.client_email}','{client.created_at}','{client.updated_at}',1)"""
+    sql = f"""INSERT INTO client (client_firstname, client_lastname, client_ci, client_phone, client_address, client_email, created_at, update_at, activo)
+    VALUES('{client.client_firstname}','{client.client_lastname}','{client.client_ci}','{client.client_phone}','{client.client_address}','{client.client_email}','{client.created_at}','{client.updated_at}',1)"""
     try:
         conexion.cursor.execute(sql)
         conexion.closeConexion()
@@ -31,7 +31,7 @@ def save_client(client):
         mensaje = f'Error en SaveClient, ClientsDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
-
+            
 def listClient():
     conexion = ConexionDB()
     listaCliente = []
@@ -44,7 +44,7 @@ def listClient():
     except Exception as e:
         conexion.closeConexion()
         error_advice()
-        mensaje = f'Error en listarCliente, ClientsDao: {str(e)}'
+        mensaje = f'Error en listClient, ClientsDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
     return listaCliente
@@ -95,18 +95,18 @@ def clientDelete(id):
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
-
-
-class Client:
-    def __init__(self, cod_client, client_firstname, client_lastname, client_ci, client_phone, client_address, client_email):
+class client:
+    def __init__(self, client_firstname, client_lastname, client_ci, client_phone, client_address, client_email, created_at, updated_at, deleted_at):
         self.id = None
-        self.cod_client = cod_client
         self.client_firstname = client_firstname
         self.client_lastname = client_lastname
         self.client_ci = client_ci
         self.client_phone = client_phone
         self.client_address = client_address
         self.client_email = client_email
+        self.created_at = created_at
+        self.updated_at = updated_at
+        self.deleted_at = deleted_at
 
     def __str__(self):
-        return f'Client[{self.cod_client}, {self.client_firstname}, {self.client_lastname}, {self.client_ci}, {self.client_phone}, {self.client_address}, {self.client_email}]'
+        return f'client[{self.client_firstname}, {self.client_lastname}, {self.client_ci}, {self.client_phone}, {self.client_address}, {self.client_email},{self.created_at}, ,{self.updated_at}, ,{self.deleted_at}]'

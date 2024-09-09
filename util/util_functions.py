@@ -4,7 +4,7 @@ from util.util_alerts import edit_advice, error_advice, save_advice, set_opacity
 def getModule():
         try:
                 conexion = ConexionDB()
-                sql = f"""SELECT id, name, codmod FROM modulos WHERE activo = 1"""
+                sql = f"""SELECT id, name, codmod FROM modules WHERE activo = 1"""
                 conexion.execute_consult(sql)
                 resultados = conexion.get_results()
                 
@@ -15,9 +15,7 @@ def getModule():
                 error_advice()
                 mensaje = f'Error en obtenerModulos, util_funtions: {str(e)}'
                 with open('error_log.txt', 'a') as file:
-                        file.write(mensaje + '\n')
-
-                        
+                        file.write(mensaje + '\n')                    
 def getAsignedPerm(perfil_id):
         try:
                 conexion = ConexionDB()
@@ -39,11 +37,10 @@ def getAsignedPerm(perfil_id):
                 mensaje = f'Error en ObtenerPermisosDeModulos, util_funtions: {str(e)}'
                 with open('error_log.txt', 'a') as file:
                         file.write(mensaje + '\n')
-
 def getModulePerm(idmod):
         try:
                 conexion = ConexionDB()
-                sql = f"SELECT id, idmod, name, codperm FROM permisos WHERE idmod = '{idmod}'"
+                sql = f"SELECT id, idmod, name, codperm FROM permiss WHERE idmod = '{idmod}'"
                 conexion.execute_consult(sql)
                 resultados = conexion.get_results()
                 permisos = []
@@ -64,12 +61,11 @@ def getModulePerm(idmod):
                 error_advice()
                 mensaje = f'Error en ObtenerPermisosDeModulos, util_funtions: {str(e)}'
                 with open('error_log.txt', 'a') as file:
-                        file.write(mensaje + '\n') 
-                        
+                        file.write(mensaje + '\n')                         
 def getModuleList():
         try:
                 conexion = ConexionDB()
-                sql = f"""SELECT id, name, codmod FROM modulos WHERE activo = 1"""
+                sql = f"""SELECT id, name, codmod FROM modules WHERE activo = 1"""
                 conexion.execute_consult(sql)
                 resultados = conexion.get_results()
 
@@ -89,11 +85,10 @@ def getModuleList():
                 mensaje = f'Error en obtenerModulos, util_functions: {str(e)}'
                 with open('error_log.txt', 'a') as file:
                         file.write(mensaje + '\n')
-
 def buscarCodigoModulo(dato):
         try:
                 conexion = ConexionDB()
-                sql = f"SELECT codmod FROM modulos WHERE name = '{dato}'"
+                sql = f"SELECT codmod FROM modules WHERE name = '{dato}'"
                 conexion.execute_consult(sql)    
                 resultado = conexion.get_result()
                 conexion.closeConexion()
@@ -104,14 +99,13 @@ def buscarCodigoModulo(dato):
                 mensaje = f'Error en buscarCodigoModulo, util_funtions: {str(e)}'
                 with open('error_log.txt', 'a') as file:
                         file.write(mensaje + '\n')
-
 def updateCodeModule(dato):
         try:
 
                 codigoModuloActual = buscarCodigoModulo(dato)
                 codigoModuloNuevo = codigoModuloActual + 1
                 conexion = ConexionDB()
-                sql = f"UPDATE modulos SET codmod = '{codigoModuloNuevo}' WHERE name = '{dato}'"
+                sql = f"UPDATE modules SET codmod = '{codigoModuloNuevo}' WHERE name = '{dato}'"
                 conexion.execute_consult(sql)
                 conexion.closeConexion()
         except Exception as e:
@@ -119,7 +113,6 @@ def updateCodeModule(dato):
                 mensaje = f'Error en actualizarCodigoModulo, util_funtions: {str(e)}'
                 with open('error_log.txt', 'a') as file:
                         file.write(mensaje + '\n') 
-
 def obtener_permisos(perfil_id):
         try:
                 conexion = ConexionDB()
@@ -167,9 +160,9 @@ def buscarCorrelativo(dato):
                 mensaje = f'Error en buscarCorrelativo, util_funtions: {str(e)}'
                 with open('error_log.txt', 'a') as file:
                         file.write(mensaje + '\n')
+                        
 def actualizarCorrelativo(dato):
         try:
-
                 correlativoActual = buscarCorrelativo(dato)
                 correlativoNuevo = correlativoActual + 1
                 conexion = ConexionDB()

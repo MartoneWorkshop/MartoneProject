@@ -392,8 +392,8 @@ class FormProfiles():
         try:
             # Otener el contenido del Entry
             fecha_actual = datetime.datetime.now()
-            date_created = fecha_actual.strftime("%d/%m/%Y")
-            date_update = fecha_actual.strftime("%d/%m/%Y %H:%M:%S")
+            date_created = fecha_actual.strftime("%Y-%M-%d")
+            date_update = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
     
             roles = Roles(
                 self.svnombre_perfil.get(),

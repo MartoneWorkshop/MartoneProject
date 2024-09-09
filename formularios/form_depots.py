@@ -6,7 +6,7 @@ from PIL import Image, ImageTk
 from tkinter import ttk
 from util.util_alerts import set_opacity, save_advice, error_advice, edit_advice, delete_advice
 from util.util_functions import buscarCorrelativo, actualizarCorrelativo
-from functions.DepotsDao import Deposito, searchDepots, listDepot, getDepots,  save_depot, edit_depot, depotDisable
+from functions.DepotsDao import deposit, searchDepots, listDepot, getDepots,  save_depot, edit_depot, depotDisable
 from config import COLOR_MENU_LATERAL
 import datetime
 from tkinter import messagebox
@@ -72,7 +72,7 @@ class FormDepot():
         else:
             self.depositList = listDepot()
             self.depositList.reverse()
-        self.depotsTable = ttk.Treeview(self.marco_adjustdepot, column=('codDep','name_dep','date_create','date_update'), height=25)
+        self.depotsTable = ttk.Treeview(self.marco_adjustdepot, column=('codDep','name_dep','date_create','updated_at'), height=25)
         self.depotsTable.place(x=180, y=140)
 
         self.depotsTable.heading('#0',text="ID")
@@ -202,14 +202,17 @@ class FormDepot():
         codDep = codDep + 1
 
         fecha_actual = datetime.datetime.now()
-        date_created = fecha_actual.strftime("%d/%m/%Y")
-        date_update = fecha_actual.strftime("%d/%m/%y %H:%M:%S")
+        created_at = fecha_actual.strftime("%Y-%M-%d")
+        updated_at = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
+        deleted_at = 'NULL'
         
-        deposito = Deposito(
+        
+        deposito = deposit(
             codDep,
             self.svnombre_deposito.get(),
-            date_created,
-            date_update
+            created_at,
+            updated_at,
+            deleted_at
         )
         if self.id is None:
             save_depot(deposito)

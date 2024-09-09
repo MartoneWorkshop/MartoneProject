@@ -2,9 +2,9 @@ from .conexion import ConexionDB
 from tkinter import messagebox
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 
-def edit_permission(permisos, id):
+def edit_permission(permiss, id):
     conexion = ConexionDB()
-    sql = f"""UPDATE permisos SET name = '{permisos.name}', date_update = '{permisos.date_update}' WHERE id = {id}"""
+    sql = f"""UPDATE permiss SET name = '{permiss.name}', updated_at = '{permiss.updated_at}' WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
         conexion.closeConexion()
@@ -16,10 +16,10 @@ def edit_permission(permisos, id):
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
-def save_permission(permisos):
+def save_permission(permiss):
     conexion = ConexionDB()
-    sql = f"""INSERT INTO permisos (idmod, name, codperm, date_created, date_update)
-    VALUES('{permisos.idmod}','{permisos.name}','{permisos.codperm}','{permisos.date_created}','{permisos.date_update}')"""
+    sql = f"""INSERT INTO permiss (idmod, name, codperm, created_at, updated_at)
+    VALUES('{permiss.idmod}','{permiss.name}','{permiss.codperm}','{permiss.created_at}','{permiss.updated_at}')"""
     try:
         conexion.cursor.execute(sql)
         conexion.closeConexion()
@@ -35,7 +35,7 @@ def save_permission(permisos):
 def listPermissions():
     conexion = ConexionDB()
     listPerm = []
-    sql = 'SELECT * FROM permisos'
+    sql = 'SELECT * FROM permiss'
     try:
         conexion.cursor.execute(sql)
         listPerm = conexion.cursor.fetchall()
@@ -52,7 +52,7 @@ def listPermissions():
 def searchPermiss(where):
     conexion = ConexionDB()
     permList = []
-    sql = f'SELECT * FROM permisos {where}'
+    sql = f'SELECT * FROM permiss {where}'
     try:
         conexion.cursor.execute(sql)
         permList = conexion.cursor.fetchall()
@@ -66,7 +66,7 @@ def searchPermiss(where):
 
 def PermissDelete(id):
     conexion = ConexionDB()
-    sql = f'DELETE FROM permisos WHERE id = {id}'
+    sql = f'DELETE FROM permiss WHERE id = {id}'
     try:
         conexion.cursor.execute(sql)
         conexion.closeConexion()
@@ -81,14 +81,13 @@ def PermissDelete(id):
 
 
 
-class Permisos:
-    def __init__(self, idmod, name, codperm, date_created, date_update):
+class permiss:
+    def __init__(self, idmod, name, codperm, created_at, updated_at):
         self.id = None
         self.idmod = idmod
         self.name = name
         self.codperm = codperm
-        self.date_created = date_created
-        self.date_update = date_update
-
+        self.created_at = created_at
+        self.updated_at = updated_at
     def __str__(self):
-        return f'Permisos[{self.idmod}, {self.name}, {self.codperm}, {self.date_created}, {self.date_update}]'
+        return f'permiss[{self.idmod}, {self.name}, {self.codperm}, {self.created_at}, {self.updated_at}]'

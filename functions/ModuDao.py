@@ -2,10 +2,10 @@ from .conexion import ConexionDB
 from tkinter import messagebox
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 
-def edit_module(modulos, id):
+def edit_module(modules, id):
     conexion = ConexionDB()
-    sql = f"""UPDATE modulos SET name = '{modulos.name}', alias = '{modulos.alias}', codmod = '{modulos.codmod}',
-    date_update = '{modulos.date_update}', activo = 1 WHERE id = {id}"""
+    sql = f"""UPDATE modules SET name = '{modules.name}', alias = '{modules.alias}', codmod = '{modules.codmod}',
+    updated_at = '{modules.updated_at}', activo = 1 WHERE id = {id}"""
     try:
         conexion.cursor.execute(sql)
         conexion.closeConexion()
@@ -17,10 +17,10 @@ def edit_module(modulos, id):
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
-def save_module(modulos):
+def save_module(modules):
     conexion = ConexionDB()
-    sql = f"""INSERT INTO modulos (name, alias, codmod, date_created, date_update, activo)
-    VALUES('{modulos.name}','{modulos.alias}','{modulos.codmod}','{modulos.date_created}','{modulos.date_update}', 1)"""
+    sql = f"""INSERT INTO modules (name, alias, codmod, created_at, updated_at, activo)
+    VALUES('{modules.name}','{modules.alias}','{modules.codmod}','{modules.created_at}','{modules.updated_at}', 1)"""
     try:
         conexion.cursor.execute(sql)
         conexion.closeConexion()
@@ -35,11 +35,11 @@ def save_module(modulos):
 
 def listModules():
     conexion = ConexionDB()
-    listaModulos = []
-    sql = 'SELECT * FROM modulos WHERE activo = 1'
+    listamodules = []
+    sql = 'SELECT * FROM modules WHERE activo = 1'
     try:
         conexion.cursor.execute(sql)
-        listaModulos = conexion.cursor.fetchall()
+        listamodules = conexion.cursor.fetchall()
         conexion.closeConexion()
     except Exception as e:
         conexion.closeConexion()
@@ -47,12 +47,12 @@ def listModules():
         mensaje = f'Error en listModules, ModuDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
-    return listaModulos
+    return listamodules
 
 def inactive_modules():
     conexion = ConexionDB()
     moduleList = []
-    sql = f'SELECT * FROM modulos WHERE activo = 0'
+    sql = f'SELECT * FROM modules WHERE activo = 0'
     try:
         conexion.cursor.execute(sql)
         moduleList = conexion.cursor.fetchall()
@@ -68,7 +68,7 @@ def inactive_modules():
 def searchModules(where):
     conexion = ConexionDB()
     moduleList = []
-    sql = f'SELECT * FROM modulos {where}'
+    sql = f'SELECT * FROM modules {where}'
     try:
         conexion.cursor.execute(sql)
         moduleList = conexion.cursor.fetchall()
@@ -82,7 +82,7 @@ def searchModules(where):
 
 def moduleDisable(id):
     conexion = ConexionDB()
-    sql = f'UPDATE modulos SET activo = 0 WHERE id = {id}'
+    sql = f'UPDATE modules SET activo = 0 WHERE id = {id}'
     try:
         conexion.cursor.execute(sql)
         conexion.closeConexion()
@@ -97,14 +97,15 @@ def moduleDisable(id):
 
 
 
-class Modulos:
-    def __init__(self, name, alias, codmod, date_created, date_update):
+class modules:
+    def __init__(self, name, alias, codmod, created_at, updated_at, deleted_at):
         self.id = None
         self.name = name
         self.alias = alias
         self.codmod = codmod
-        self.date_created = date_created
-        self.date_update = date_update
+        self.created_at = created_at
+        self.updated_at = updated_at
+        self.deleted_at = deleted_at
 
     def __str__(self):
-        return f'Modulos[{self.name}, {self.alias}, {self.codmod}, {self.date_created}, {self.date_update}]'
+        return f'modules[{self.name}, {self.alias}, {self.codmod}, {self.created_at}, {self.updated_at}, {self.deleted_at}]'

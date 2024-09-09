@@ -335,8 +335,9 @@ class FormUsers():
             
             coduser = coduser + 1
             fecha_actual = datetime.datetime.now()
-            date_created = fecha_actual.strftime("%d/%m/%Y")
-            date_update = fecha_actual.strftime("%d/%m/%y %H:%M:%S")
+            date_created = fecha_actual.strftime("%Y-%M-%d")
+            date_update = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
+            
             perfilname = self.svperfil_var.get()
             idperfil = None
             for rol in ObtenerRoles():

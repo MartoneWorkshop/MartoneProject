@@ -8,7 +8,7 @@ import sqlite3
 from tkinter import ttk
 from tkinter import messagebox
 from PIL import Image, ImageTk
-from functions.ModuDao import Modulos, listModules, searchModules, save_module, edit_module, moduleDisable, inactive_modules
+from functions.ModuDao import modules, listModules, searchModules, save_module, edit_module, moduleDisable, inactive_modules
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 from config import WIDTH_LOGO, HEIGHT_LOGO
 
@@ -350,10 +350,10 @@ class FormModules():
         try:
             # Otener el contenido del Entry
             fecha_actual = datetime.datetime.now()
-            date_created = fecha_actual.strftime("%d/%m/%Y")
-            date_update = fecha_actual.strftime("%d/%m/%y %H:%M:%S")
+            date_created = fecha_actual.strftime("%Y-%M-%d")
+            date_update = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
     
-            modulos = Modulos(
+            modulos = modules(
                 self.svnombre_mod.get(),
                 self.svalias.get(),
                 self.svcodmod.get(),

@@ -10,7 +10,7 @@ from tkinter import messagebox
 from tkinter import ttk
 from PIL import Image, ImageTk
 from util.util_functions import getModule, buscarCodigoModulo, updateCodeModule
-from functions.PermDao import Permisos, listPermissions, searchPermiss, save_permission, edit_permission, PermissDelete
+from functions.PermDao import permiss, listPermissions, searchPermiss, save_permission, edit_permission, PermissDelete
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 from config import WIDTH_LOGO, HEIGHT_LOGO
 
@@ -327,15 +327,15 @@ class FormPermissions():
         try:
             # Otener el contenido del Entry
             fecha_actual = datetime.datetime.now()
-            date_created = fecha_actual.strftime("%d/%m/%Y")
-            date_update = fecha_actual.strftime("%d/%m/%y %H:%M:%S")
+            date_created = fecha_actual.strftime("%Y-%M-%d")
+            date_update = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
 
             idmodulo = None
             for modul in getModule():
                 if modul[1] == self.svmodulo_var.get():
                     idmodulo = modul[0]
                     break
-            permisos = Permisos(
+            permisos = permiss(
                 idmodulo,
                 self.svnombre_perm.get(),
                 self.svcodpermiso.get(),
