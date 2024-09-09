@@ -14,3 +14,4 @@ Error en save_product, ProductDao: table product has no column named id_cat
 Error en save_product, ProductDao: table product has no column named id_cat
 Error en save_product, ProductDao: table product has no column named id_cat
 Error en save_product, ProductDao: table product has no column named id_cat
+Error en save_product, ProductDao: table product has no column named id_cat

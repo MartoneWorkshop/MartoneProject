@@ -7,7 +7,7 @@ from PIL import Image, ImageTk
 from tkinter import ttk
 from util.util_alerts import set_opacity, save_advice, error_advice, edit_advice, delete_advice
 from util.util_functions import buscarCorrelativo, actualizarCorrelativo
-from functions.ProductoDao import product, searchProducts, listProduct, getDepots, getSupplier, getCategory, save_product, edit_product, product_inactive, productDisable
+from functions.ProductDao import product, searchProducts, listProduct, getDepots, getSupplier, getCategory, save_product, edit_product, product_inactive, productDisable
 from config import  COLOR_FONDO, WIDTH_LOGO, HEIGHT_LOGO, COLOR_MENU_LATERAL, ANCHO_MENU, ALTO_MENU
 import datetime
 from tkinter import messagebox
@@ -174,11 +174,11 @@ class FormProducts():
     # Obtener el contenido del Entry
         self.content = self.entrysearch_productos.get()
     # Realizar la consulta
-        self.cursor.execute("""SELECT * FROM prducts WHERE
+        self.cursor.execute("""SELECT * FROM product WHERE
                         id LIKE ? OR 
                         codProducto LIKE ? OR 
                         codDep LIKE ? OR 
-                        codgrupo LIKE ? OR
+                        id_cat LIKE ? OR
                         nombre_producto LIKE ? OR
                         marca LIKE ? OR
                         modelo LIKE ? OR
@@ -196,7 +196,6 @@ class FormProducts():
                         '%' + self.content + '%',
                         '%' + self.content + '%',
                         '%' + self.content + '%',
-                        '%' + self.content + '%',
                         '%' + self.content.strip() + '%',
                         '%' + self.content.strip() + '%',
                         '%' + self.content.strip() + '%'))
@@ -204,7 +203,7 @@ class FormProducts():
     # Filtrar los registros según el contenido ingresado
         filtered_results = []
         for p in self.productList:
-            if self.content.lower() in str(p[0]).lower() or self.content.lower() in str(p[1]).lower() or self.content.lower() in str(p[2]).lower() or self.content.lower() in str(p[3]).lower() or self.content.lower() in str(p[4]).lower() or self.content.lower() in str(p[5]).lower() or self.content.lower() in str(p[6]).lower() or self.content.lower() in str(p[7]).lower() or self.content.lower() in str(p[8]).lower() or self.content.lower() in str(p[9]).lower() or self.content.lower() in str(p[10]).lower():              
+            if self.content.lower() in str(p[0]).lower() or self.content.lower() in str(p[1]).lower() or self.content.lower() in str(p[2]).lower() or self.content.lower() in str(p[3]).lower() or self.content.lower() in str(p[4]).lower() or self.content.lower() in str(p[5]).lower() or self.content.lower() in str(p[6]).lower() or self.content.lower() in str(p[7]).lower() or self.content.lower() in str(p[8]).lower() or self.content.lower() in str(p[9]).lower() or self.content.lower() in str(p[10]).lower()or self.content.lower() in str(p[11]).lower()or self.content.lower() in str(p[12]).lower():              
                 filtered_results.append(p)
 
     # Borrar los elementos existentes en la tablaEquipos
@@ -381,14 +380,14 @@ class FormProducts():
 
             producto = product(
                 self.svcodProducto.get(),
-                self.svnombProducto.get(),
+                self.svdepositos_var.get(),
+                self.svcategoria_var.get(),
                 self.svproveedor_var.get(),
+                self.svnombProducto.get(),
                 self.svmarcaProducto.get(),
                 self.svmodeloProducto.get(),
                 self.svserialProducto.get(),
                 self.svcostoProducto.get(),
-                self.svcategoria_var.get(),
-                self.svdepositos_var.get(),
                 self.descripcionProd.get("1.0", "end-1c"),
                 created_at,
                 updated_at,
@@ -463,94 +462,94 @@ class FormProducts():
             self.topEditProduct.grab_set()
             self.topEditProduct.transient()
             #Datos para el proveedor
-            marco_editarproductos = customtkinter.CTkFrame(self.topEditProduct, width=550,height=550, bg_color="white", fg_color="white")
-            marco_editarproductos.place(relx=0.5, rely=0.5, anchor="center")
-            set_opacity(marco_editarproductos, 0.8)
-            self.lblinfo = customtkinter.CTkLabel(marco_editarproductos, text="Registro de Producto", font=("Roboto",14))
+            frame_editProducts = customtkinter.CTkFrame(self.topEditProduct, width=550,height=550, bg_color="white", fg_color="white")
+            frame_editProducts.place(relx=0.5, rely=0.5, anchor="center")
+            set_opacity(frame_editProducts, 0.8)
+            self.lblinfo = customtkinter.CTkLabel(frame_editProducts, text="Registro de Producto", font=("Roboto",14))
             self.lblinfo.place(relx=0.36, rely=0.04)
             #LINEA 1
             #Codigo del Producto 1.1
-            self.lblcodProducto = customtkinter.CTkLabel(marco_editarproductos, text='Codigo Producto', font=("Roboto", 13))
+            self.lblcodProducto = customtkinter.CTkLabel(frame_editProducts, text='Codigo Producto', font=("Roboto", 13))
             self.lblcodProducto.place(x=55, y=60)
 
             self.svcodProducto = customtkinter.StringVar(value=self.editarcodProducto)
-            self.entrycodProducto = ttk.Entry(marco_editarproductos, style='Modern.TEntry', textvariable=self.svcodProducto)
+            self.entrycodProducto = ttk.Entry(frame_editProducts, style='Modern.TEntry', textvariable=self.svcodProducto)
             self.entrycodProducto.place(x=45, y=90)
             self.entrycodProducto.configure(style='Entry.TEntry')
 
             #Nombre del producto 1.2
-            self.lblnombProducto = customtkinter.CTkLabel(marco_editarproductos, text='Nombre del Producto', font=("Roboto", 13))
+            self.lblnombProducto = customtkinter.CTkLabel(frame_editProducts, text='Nombre del Producto', font=("Roboto", 13))
             self.lblnombProducto.place(x=202, y=60)
 
             self.svnombProducto = customtkinter.StringVar(value=self.editarnombProducto)
-            self.entrynombProducto = ttk.Entry(marco_editarproductos, style='Modern.TEntry', textvariable=self.svnombProducto)
+            self.entrynombProducto = ttk.Entry(frame_editProducts, style='Modern.TEntry', textvariable=self.svnombProducto)
             self.entrynombProducto.place(x=200, y=90)
             self.entrynombProducto.configure(style='Entry.TEntry')
 
        #    Seleccionar el proveedor del producto 1.3
-            self.lblprovProducto = customtkinter.CTkLabel(marco_editarproductos, text='Proveedor', font=("Roboto", 13))
+            self.lblprovProducto = customtkinter.CTkLabel(frame_editProducts, text='Proveedor', font=("Roboto", 13))
             self.lblprovProducto.place(x=365, y=60)
 
             proveedores = getSupplier()
             self.svproveedor_var = customtkinter.StringVar(value=self.editarproveedor)
-            self.multioption = customtkinter.CTkOptionMenu(marco_editarproductos, values=[proveedor[2] for proveedor in proveedores], variable=self.svproveedor_var)
+            self.multioption = customtkinter.CTkOptionMenu(frame_editProducts, values=[proveedor[2] for proveedor in proveedores], variable=self.svproveedor_var)
             self.multioption.place(x=360, y=85)
             
             ###LINEA 2
             ##Marca del producto 2.1
-            self.lblmarcaProducto = customtkinter.CTkLabel(marco_editarproductos, text='Marca Producto', font=("Roboto", 13))
+            self.lblmarcaProducto = customtkinter.CTkLabel(frame_editProducts, text='Marca Producto', font=("Roboto", 13))
             self.lblmarcaProducto.place(x=50, y=130)
 
             self.svmarcaProducto = customtkinter.StringVar(value=self.editarmarcaProducto)
-            self.entrymarcaProducto = ttk.Entry(marco_editarproductos, style='Modern.TEntry', textvariable=self.svmarcaProducto)
+            self.entrymarcaProducto = ttk.Entry(frame_editProducts, style='Modern.TEntry', textvariable=self.svmarcaProducto)
             self.entrymarcaProducto.place(x=45, y=160)
             self.entrymarcaProducto.configure(style='Entry.TEntry')
 
             ##Modelo del producto 2.2
-            self.lblmodeloProducto = customtkinter.CTkLabel(marco_editarproductos, text='Modelo Producto', font=("Roboto", 13))
+            self.lblmodeloProducto = customtkinter.CTkLabel(frame_editProducts, text='Modelo Producto', font=("Roboto", 13))
             self.lblmodeloProducto.place(x=200, y=130)
 
             self.svmodeloProducto = customtkinter.StringVar(value=self.editarmodeloProducto)
-            self.entrymodeloProducto = ttk.Entry(marco_editarproductos, style='Modern.TEntry', textvariable=self.svmodeloProducto)
+            self.entrymodeloProducto = ttk.Entry(frame_editProducts, style='Modern.TEntry', textvariable=self.svmodeloProducto)
             self.entrymodeloProducto.place(x=200, y=160)
             self.entrymodeloProducto.configure(style='Entry.TEntry')
 
             #####
             ##Serial del producto 2.3
-            self.lblserialProducto = customtkinter.CTkLabel(marco_editarproductos, text='Serial Producto', font=("Roboto", 13))
+            self.lblserialProducto = customtkinter.CTkLabel(frame_editProducts, text='Serial Producto', font=("Roboto", 13))
             self.lblserialProducto.place(x=365, y=130)
 
             self.svserialProducto = customtkinter.StringVar(value=self.editarserialProducto)
-            self.entryserialProducto = ttk.Entry(marco_editarproductos, style='Modern.TEntry', textvariable=self.svserialProducto)
+            self.entryserialProducto = ttk.Entry(frame_editProducts, style='Modern.TEntry', textvariable=self.svserialProducto)
             self.entryserialProducto.place(x=360, y=160)
             self.entryserialProducto.configure(style='Entry.TEntry')
 
             #Linea 3
             ##Costo del producto 3.1
-            self.lblcostoProducto = customtkinter.CTkLabel(marco_editarproductos, text='Costo Producto', font=("Roboto", 13))
+            self.lblcostoProducto = customtkinter.CTkLabel(frame_editProducts, text='Costo Producto', font=("Roboto", 13))
             self.lblcostoProducto.place(x=50, y=200)
 #   
             self.svcostoProducto = customtkinter.StringVar(value=self.editarcostoProducto)
-            self.entrycostoProducto = ttk.Entry(marco_editarproductos, style='Modern.TEntry', textvariable=self.svcostoProducto)
+            self.entrycostoProducto = ttk.Entry(frame_editProducts, style='Modern.TEntry', textvariable=self.svcostoProducto)
             self.entrycostoProducto.place(x=45, y=230)
             self.entrycostoProducto.configure(style='Entry.TEntry')
 #   
             ###Categoria del producto 3.2
-            self.lblcategoriaProducto = customtkinter.CTkLabel(marco_editarproductos, text='Categoria', font=("Roboto", 13))
+            self.lblcategoriaProducto = customtkinter.CTkLabel(frame_editProducts, text='Categoria', font=("Roboto", 13))
             self.lblcategoriaProducto.place(x=205, y=200)
 
             categoria = getCategory() 
             self.svcategoria_var = customtkinter.StringVar(value=self.editarcategoria_var)
-            self.multioption = customtkinter.CTkOptionMenu(marco_editarproductos, values=[categoria[3] for categoria in categoria], variable=self.svcategoria_var)
+            self.multioption = customtkinter.CTkOptionMenu(frame_editProducts, values=[categoria[2] for categoria in categoria], variable=self.svcategoria_var)
             self.multioption.place(x=200, y=230)
 
             ##Seleccion de Deposito 3.3
-            self.lblDepositoProducto = customtkinter.CTkLabel(marco_editarproductos, text='Deposito', font=("Roboto", 13))
+            self.lblDepositoProducto = customtkinter.CTkLabel(frame_editProducts, text='Deposito', font=("Roboto", 13))
             self.lblDepositoProducto.place(x=365, y=200)
 
             depositos = getDepots()
             self.svdepositos_var = customtkinter.StringVar(value=self.editardepositos_var)
-            self.multioption = customtkinter.CTkOptionMenu(marco_editarproductos, values=[deposito[2] for deposito in depositos], variable=self.svdepositos_var)
+            self.multioption = customtkinter.CTkOptionMenu(frame_editProducts, values=[deposito[2] for deposito in depositos], variable=self.svdepositos_var)
 
             self.multioption.place(x=360, y=230)
 
@@ -577,14 +576,14 @@ class FormProducts():
                     self.descripcionProd.delete("1.0", "end")
                     self.descripcionProd.insert("1.0", text)
 
-            self.lbldescripcionProd = customtkinter.CTkLabel(marco_editarproductos, text='Descripcion del Producto', font=("Roboto", 13))
+            self.lbldescripcionProd = customtkinter.CTkLabel(frame_editProducts, text='Descripcion del Producto', font=("Roboto", 13))
             self.lbldescripcionProd.place(x=55, y=280)
 
-            self.descripcionProd = customtkinter.CTkTextbox(marco_editarproductos, width=445, height=55, border_width=1)
+            self.descripcionProd = customtkinter.CTkTextbox(frame_editProducts, width=445, height=55, border_width=1)
             self.descripcionProd.place(x=45, y=310)
             self.descripcionProd.insert("1.0", self.editardescripcionProd)
             
-            character_count_label = customtkinter.CTkLabel(marco_editarproductos, text="")
+            character_count_label = customtkinter.CTkLabel(frame_editProducts, text="")
             character_count_label.place(x=440, y=370)
 
             def on_text_change(event):
@@ -592,7 +591,7 @@ class FormProducts():
 
             self.descripcionProd.bind("<KeyRelease>", on_text_change)
 
-            self.buttonActualizarArt = tk.Button(marco_editarproductos, text="Actualizar Producto", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+            self.buttonActualizarArt = tk.Button(frame_editProducts, text="Actualizar Producto", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
                                                 command=lambda: self.GuardarProducto())
             self.buttonActualizarArt.place(x=200, y=450)
 

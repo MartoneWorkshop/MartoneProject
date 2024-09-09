@@ -65,11 +65,10 @@ def edit_product(product, id):
             file.write(mensaje + '\n')
 def save_product(product):
     conexion = ConexionDB()
-    sql = f"""INSERT INTO product (codProducto, nombre_producto, codProv, 
-    marca, modelo, serial, costo, id_cat, codDep, descripcion, created_at, updated_at, activo)
-    VALUES('{product.codProducto}','{product.nombre_producto}','{product.codProv}',
-    '{product.marca}','{product.modelo}','{product.serial}','{product.costo}','{product.id_cat}',
-    '{product.codDep}','{product.descripcion}','{product.created_at}','{product.updated_at}',1)"""
+    sql = f"""INSERT INTO product (codProducto, codDep, id_cat, codProv, nombre_producto,  
+    marca, modelo, serial, costo,  descripcion, created_at, updated_at, activo)
+    VALUES('{product.codProducto}','{product.codDep}','{product.id_cat}','{product.codProv}','{product.nombre_producto}',
+    '{product.marca}','{product.modelo}','{product.serial}','{product.costo}','{product.descripcion}','{product.created_at}','{product.updated_at}',1)"""
     try:
         conexion.cursor.execute(sql)
         conexion.closeConexion()
