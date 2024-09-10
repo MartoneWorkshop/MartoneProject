@@ -15,3 +15,9 @@ Error en save_product, ProductDao: table product has no column named id_cat
 Error en save_product, ProductDao: table product has no column named id_cat
 Error en save_product, ProductDao: table product has no column named id_cat
 Error en save_product, ProductDao: table product has no column named id_cat
+Error en buscarCorrelativo, util_funtions: 'NoneType' object is not subscriptable
+Error en buscarCorrelativo, util_funtions: 'NoneType' object is not subscriptable
+Error en buscarCorrelativo, util_funtions: 'NoneType' object is not subscriptable
+Error en GuardarProveedor, form_suppliers: suppliers.__init__() missing 1 required positional argument: 'deleted_at'
+Error en GuardarProveedor, form_suppliers: suppliers.__init__() missing 1 required positional argument: 'deleted_at'
+Error en SaveUser, form_users: user.__init__() missing 1 required positional argument: 'deleted_at'

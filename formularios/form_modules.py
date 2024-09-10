@@ -26,7 +26,7 @@ class FormModules():
         self.barra_inferior = tk.Frame(cuerpo_principal)
         self.barra_inferior.pack(side=tk.BOTTOM, fill='both', expand=True)  
         # Segundo Label con la imagen
-        ruta_imagen = "imagenes/background.png"
+        ruta_imagen = "imagenes/bg1.jpeg"
         # Cargar la imagen
         imagen = Image.open(ruta_imagen)
         imagen_tk = ImageTk.PhotoImage(imagen)
@@ -156,13 +156,13 @@ class FormModules():
     # Obtener el contenido del Entry
         self.content = self.entrysearch_modulos.get()
     # Realizar la consulta
-        self.cursor.execute("""SELECT * FROM modulos WHERE
+        self.cursor.execute("""SELECT * FROM modules WHERE
                         id LIKE ? OR 
                         name LIKE ? OR 
                         alias LIKE ? OR 
                         codmod LIKE ? OR 
-                        date_created LIKE ? OR
-                        date_update LIKE ?""", 
+                        created_at LIKE ? OR
+                        updated_at LIKE ?""", 
                         ('%' + self.content + '%',
                         '%' + self.content + '%',  
                         '%' + self.content + '%',
@@ -350,15 +350,16 @@ class FormModules():
         try:
             # Otener el contenido del Entry
             fecha_actual = datetime.datetime.now()
-            date_created = fecha_actual.strftime("%Y-%M-%d")
-            date_update = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
+            created_at = fecha_actual.strftime("%Y-%M-%d")
+            updated_at = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
     
             modulos = modules(
                 self.svnombre_mod.get(),
                 self.svalias.get(),
                 self.svcodmod.get(),
-                date_created,
-                date_update
+                created_at,
+                updated_at,
+                deleted_at = 'NULL'
             )
             if self.id is None:
                 save_module(modulos)

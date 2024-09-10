@@ -25,7 +25,7 @@ class FormPermissions():
         self.barra_inferior = tk.Frame(cuerpo_principal)
         self.barra_inferior.pack(side=tk.BOTTOM, fill='both', expand=True)  
         # Segundo Label con la imagen
-        ruta_imagen = "imagenes/background.png"
+        ruta_imagen = "imagenes/bg1.jpeg"
         # Cargar la imagen
         imagen = Image.open(ruta_imagen)
         imagen_tk = ImageTk.PhotoImage(imagen)
@@ -128,8 +128,8 @@ class FormPermissions():
                         idmod LIKE ? OR
                         name LIKE ? OR 
                         codperm LIKE ? OR 
-                        date_created LIKE ? OR 
-                        date_update LIKE ?""", 
+                        created_at LIKE ? OR 
+                        updated_at LIKE ?""", 
                         ('%' + self.content + '%',
                         '%' + self.content + '%',  
                         '%' + self.content + '%',
@@ -327,8 +327,8 @@ class FormPermissions():
         try:
             # Otener el contenido del Entry
             fecha_actual = datetime.datetime.now()
-            date_created = fecha_actual.strftime("%Y-%M-%d")
-            date_update = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
+            created_at = fecha_actual.strftime("%Y-%M-%d")
+            updated_at = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
 
             idmodulo = None
             for modul in getModule():
@@ -339,8 +339,8 @@ class FormPermissions():
                 idmodulo,
                 self.svnombre_perm.get(),
                 self.svcodpermiso.get(),
-                date_created,
-                date_update
+                created_at,
+                updated_at
             )
             if self.id is None:
                 updateCodeModule(self.svmodulo_var.get())

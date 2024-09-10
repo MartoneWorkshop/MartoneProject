@@ -17,7 +17,7 @@ class formDashboard():
         self.barra_inferior = tk.Frame(cuerpo_principal)
         self.barra_inferior.pack(side=tk.BOTTOM, fill='both', expand=True)  
 
-        ruta_imagen = "imagenes/background.png"
+        ruta_imagen = "imagenes/bg1.jpeg"
         # Cargar la imagen
         imagen = Image.open(ruta_imagen)
         imagen_tk = ImageTk.PhotoImage(imagen)

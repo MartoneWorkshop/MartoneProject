@@ -23,7 +23,7 @@ class FormSuppliers():
         self.barra_inferior = tk.Frame(cuerpo_principal)
         self.barra_inferior.pack(side=tk.BOTTOM, fill='both', expand=True)  
         # Segundo Label con la imagen
-        ruta_imagen = "imagenes/background.png"
+        ruta_imagen = "imagenes/bg1.jpeg"
         # Cargar la imagen
         imagen = Image.open(ruta_imagen)
         imagen_tk = ImageTk.PhotoImage(imagen)
@@ -158,7 +158,7 @@ class FormSuppliers():
     # Obtener el contenido del Entry
         self.content = self.entrysearch_supplier.get()
     # Realizar la consulta
-        sql = """SELECT * FROM supplier WHERE
+        sql = """SELECT * FROM suppliers WHERE
                 id LIKE ? OR 
                 codprov LIKE ? OR 
                 nom_fiscal LIKE ? OR 
@@ -171,17 +171,18 @@ class FormSuppliers():
         parametros = ('%' + self.content + '%',
                 '%' + self.content + '%',  
                 '%' + self.content + '%',
-                '%' + self.content.strip() + '%',
-                '%' + self.content.strip() + '%',
-                '%' + self.content.strip() + '%',
-                '%' + self.content.strip() + '%', 
+                '%' + self.content + '%',
+                '%' + self.content + '%',
+                '%' + self.content + '%',
+                '%' + self.content + '%',
+                '%' + self.content + '%', 
                 '%' + self.content.strip() + '%')
         conexion.execute_consult_param(sql, parametros)
         resultados = conexion.get_results()  
     # Filtrar los registros según el contenido ingresado
         filtered_results = []
         for p in self.supplierList:
-            if self.content.lower() in str(p[0]).lower() or self.content.lower() in str(p[1]).lower() or self.content.lower() in str(p[2]).lower() or self.content.lower() in str(p[3]).lower() or self.content.lower() in str(p[4]).lower() or self.content.lower() in str(p[5]).lower() or self.content.lower() in str(p[6]).lower() or self.content.lower() in str(p[7]).lower() or self.content.lower() in str(p[8]).lower() or self.content.lower():              
+            if self.content.lower() in str(p[0]).lower() or self.content.lower() in str(p[1]).lower() or self.content.lower() in str(p[2]).lower() or self.content.lower() in str(p[3]).lower() or self.content.lower() in str(p[4]).lower() or self.content.lower() in str(p[5]).lower() or self.content.lower() in str(p[6]).lower() or self.content.lower() in str(p[7]).lower() or self.content.lower() in str(p[8]).lower():              
                 filtered_results.append(p)
 
     # Borrar los elementos existentes en la tablaEquipos
@@ -522,8 +523,8 @@ class FormSuppliers():
             codprov = buscarCorrelativo('proveedor')
             codprov = codprov + 1
             fecha_actual = datetime.datetime.now()
-            date_created = fecha_actual.strftime("%Y-%M-%d")
-            date_update = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
+            created_at = fecha_actual.strftime("%Y-%M-%d")
+            updated_at = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
 
             proveedor = suppliers(
                 codprov,
@@ -534,8 +535,10 @@ class FormSuppliers():
                 self.dir_fiscal.get("1.0", "end-1c"),
                 self.svemail_prov.get(),
                 self.svdias_credito.get(),
-                date_created,
-                date_update
+                created_at,
+                updated_at,
+                deleted_at = 'NULL'
+                
             )
             
             if self.id is None:

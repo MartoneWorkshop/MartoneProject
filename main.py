@@ -1,4 +1,4 @@
-from formularios.form_main import FormMain
+from formularios.form_maintest import FormMain
 
 
 app = FormMain()

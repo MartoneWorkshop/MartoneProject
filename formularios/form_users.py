@@ -26,7 +26,7 @@ class FormUsers():
         self.barra_inferior = tk.Frame(cuerpo_principal)
         self.barra_inferior.pack(side=tk.BOTTOM, fill='both', expand=True)  
         # Segundo Label con la imagen
-        ruta_imagen = "imagenes/background.png"
+        ruta_imagen = "imagenes/bg1.jpeg"
         # Cargar la imagen
         imagen = Image.open(ruta_imagen)
         imagen_tk = ImageTk.PhotoImage(imagen)
@@ -160,8 +160,8 @@ class FormUsers():
                 username LIKE ? OR 
                 password LIKE ? OR 
                 idrol LIKE ? OR 
-                date_created LIKE ? OR
-                date_update LIKE ?"""
+                created_at LIKE ? OR
+                updated_at LIKE ?"""
         parametros = ('%' + self.content + '%',
                 '%' + self.content + '%',  
                 '%' + self.content + '%',
@@ -335,8 +335,8 @@ class FormUsers():
             
             coduser = coduser + 1
             fecha_actual = datetime.datetime.now()
-            date_created = fecha_actual.strftime("%Y-%M-%d")
-            date_update = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
+            created_at = fecha_actual.strftime("%Y-%M-%d")
+            updated_at = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
             
             perfilname = self.svperfil_var.get()
             idperfil = None
@@ -350,8 +350,9 @@ class FormUsers():
                 self.svusuario.get(),
                 self.svpassword.get(),
                 idperfil,
-                date_created,
-                date_update
+                created_at,
+                updated_at,
+                deleted_at = 'NULL'
             )
             if self.id is None:
                 save_user(usuario)

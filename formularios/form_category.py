@@ -25,7 +25,7 @@ class FormCategory():
         self.barra_inferior = tk.Frame(cuerpo_principal)
         self.barra_inferior.pack(side=tk.BOTTOM, fill='both', expand=True)  
 
-        ruta_imagen = "imagenes/background.png"
+        ruta_imagen = "imagenes/bg1.jpeg"
         # Cargar la imagen
         imagen = Image.open(ruta_imagen)
         imagen_tk = ImageTk.PhotoImage(imagen)
@@ -92,7 +92,7 @@ class FormCategory():
             self.Listacategoria = listCategory()
             self.Listacategoria.reverse()
 
-        self.categoryTable = ttk.Treeview(self.marco_categoria, column=('codcategory','name_group','created_at','updated_at'), height=25)
+        self.categoryTable = ttk.Treeview(self.marco_categoria, column=('name_group','created_at','updated_at'), height=25)
         self.categoryTable.place(x=235, y=200)
 
         self.scroll = ttk.Scrollbar(self.marco_categoria, orient='vertical', command=self.categoryTable.yview)
@@ -102,19 +102,18 @@ class FormCategory():
         self.categoryTable.tag_configure('evenrow')
 
         self.categoryTable.heading('#0',text="ID")
-        self.categoryTable.heading('#1',text="Codcategory")
-        self.categoryTable.heading('#2',text="Nombre category")
-        self.categoryTable.heading('#3',text="Date-Created")
-        self.categoryTable.heading('#4',text="Date-Update")
+        self.categoryTable.heading('#1',text="Nombre Categoria")
+        self.categoryTable.heading('#2',text="Date-Created")
+        self.categoryTable.heading('#3',text="Date-Update")
 
-        self.categoryTable.column("#0", width=50, stretch=False, anchor='w')#HAY QUE CENTRARLO
-        self.categoryTable.column("#1", width=100, stretch=False)
-        self.categoryTable.column("#2", width=150, stretch=False)
-        self.categoryTable.column("#3", width=125, stretch=False)
-        self.categoryTable.column("#4", width=125, stretch=False)
+        self.categoryTable.column("#0", width=65, stretch=False, anchor='w')#HAY QUE CENTRARLO
+        self.categoryTable.column("#1", width=162, stretch=False)
+        self.categoryTable.column("#2", width=162, stretch=False)
+        self.categoryTable.column("#3", width=161, stretch=False)
+
 
         for p in self.Listacategoria:
-            self.categoryTable.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4]))
+            self.categoryTable.insert('',0,text=p[0], values=(p[1],p[2],p[3]))
 
         self.categoryTable.bind('<Double-1>', lambda event: self.FormEditCategory(event, self.categoryTable.item(self.categoryTable.selection())['values']))
 
@@ -132,12 +131,12 @@ class FormCategory():
         acitveCats = listCategory()
         # Insertar los permisos activos en la tabla
         for p in acitveCats:
-            self.categoryTable.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4]))
+            self.categoryTable.insert('', 0, text=p[0], values=(p[1], p[2], p[3]))
     def showInactive(self):
         self.categoryTable.delete(*self.categoryTable.get_children())
         categoria_desactivados = inactive_cat()
         for p in categoria_desactivados:
-            self.categoryTable.insert('',0, text=p[0], values=(p[1],p[2],p[3],p[4]))
+            self.categoryTable.insert('',0, text=p[0], values=(p[1],p[2],p[3]))
     def updateSearch(self, event=None):
     # Conectar a la base de datos
         self.connection = sqlite3.connect('database/database.db')
@@ -147,20 +146,18 @@ class FormCategory():
     # Realizar la consulta
         self.cursor.execute("""SELECT * FROM category WHERE
                         id LIKE ? OR 
-                        codcategory LIKE ? OR 
-                        name_group LIKE ? OR 
+                        name_category LIKE ? OR 
                         created_at LIKE ? OR
                         updated_at LIKE ?""", 
                         ('%' + self.content + '%',
                         '%' + self.content + '%',  
-                        '%' + self.content + '%',
                         '%' + self.content.strip() + '%',
                         '%' + self.content.strip() + '%'))
         self.result = self.cursor.fetchall()
     # Filtrar los registros según el contenido ingresado
         filtered_results = []
-        for p in self.catList:
-            if self.content.lower() in str(p[0]).lower() or self.content.lower() in str(p[1]).lower() or self.content.lower() in str(p[2]).lower() or self.content.lower() in str(p[3]).lower() or self.content.lower() in str(p[4]).lower():              
+        for p in self.Listacategoria:
+            if self.content.lower() in str(p[0]).lower() or self.content.lower() in str(p[1]).lower() or self.content.lower() in str(p[2]).lower() or self.content.lower() in str(p[3]).lower():              
                 filtered_results.append(p)
 
     # Borrar los elementos existentes en la tablaEquipos
@@ -168,7 +165,7 @@ class FormCategory():
 
     # Insertar los nuevos resultados en la tablaEquipos
         for p in filtered_results:
-            self.categoryTable.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5]))
+            self.categoryTable.insert('', 0, text=p[0], values=(p[1], p[2], p[3]))
         self.cursor.close()
         self.connection.close()
     def FormCreateCategory(self, permisos):
@@ -259,14 +256,13 @@ class FormCategory():
         else:
             messagebox.showerror("Error", "Debe seleccionar una categoria")
     def SaveCategory(self):
-        codcategory = buscarCorrelativo('category')
-        codcategory = codcategory + 1
+        id_cat = buscarCorrelativo('categoria')
+        id_cat = id_cat + 1
     
         fecha_actual = datetime.datetime.now()
         created_at = fecha_actual.strftime("%Y-%M-%d")
         updated_at = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
-        category = category(
-            codcategory,
+        Category = category(
             self.svnombre_category.get(),
             created_at,
             updated_at,
@@ -274,17 +270,17 @@ class FormCategory():
         )
     
         if self.id is None:
-            save_cat(category)
-            actualizarCorrelativo('category')
+            save_cat(Category)
+            actualizarCorrelativo('categoria')
             self.topCreateCat.destroy()
         else:
-            edit_cat(category, self.id)
+            edit_cat(Category, self.id)
             self.topEditCat.destroy()
         self.updateTable()
     def categoryDisable(self, permisos):
         try:
             self.id = self.categoryTable.item(self.categoryTable.selection())['text']
-            confirmar = messagebox.askyesno("Confirmar", "¿Estas seguro de que deseas desactivar este category?")
+            confirmar = messagebox.askyesno("Confirmar", "¿Estas seguro de que deseas desactivar este categoria?")
 
             if confirmar:
                 catDisable(self.id)
@@ -307,7 +303,7 @@ class FormCategory():
                 self.catList.reverse()
 
             for p in self.catList:
-                self.categoryTable.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4],p[5]))
+                self.categoryTable.insert('', 0, text=p[0], values=(p[1], p[2], p[3]))
         except Exception as e:
             error_advice()
             mensaje = f'Error en updateTable, form_category: {str(e)}'

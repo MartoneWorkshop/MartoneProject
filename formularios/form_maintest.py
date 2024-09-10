@@ -29,6 +29,10 @@ class FormMain(customtkinter.CTk):
         self.createPanels()
         self.topBarControls()
         self.bodyControls()
+        self.botones = []
+        self.iconos = []
+        self.textos_originales = []
+        self.menu_expandido = True
     def bodyControls(self):    
         self.loginSection()
         self.barra_superior.pack_forget()
@@ -46,12 +50,11 @@ class FormMain(customtkinter.CTk):
     def createPanels(self):        
         # Crear createPanels:
         #Barra Superior
-        self.barra_superior = tk.Frame(
-            self, bg=COLOR_BARRA_SUPERIOR, height=50)
-        self.barra_superior.pack(side=tk.TOP, fill='both')
+        self.barra_superior = tk.Frame(self, bg=COLOR_BARRA_SUPERIOR, height=50)
+        self.barra_superior.pack(side=tk.TOP, fill=tk.X, expand=True)
         #Menu Lateral
         self.menu_lateral = tk.Frame(self, bg=COLOR_MENU_LATERAL, width=150)
-        self.menu_lateral.pack(side=tk.LEFT, fill='both', expand=False) 
+        self.menu_lateral.pack(side=tk.LEFT, fill=tk.Y, anchor='nw', pady=(50,0), expand=False)
         #Cuerpo Principal
         self.cuerpo_principal = tk.Frame(self)
         self.cuerpo_principal.pack(side=tk.RIGHT, fill='both', expand=True)
@@ -67,246 +70,56 @@ class FormMain(customtkinter.CTk):
         self.menu_image = ImageTk.PhotoImage(self.menu_resized_image)
         # Botón del menú lateral
         self.buttonMenuLateral = customtkinter.CTkButton(self.barra_superior, text="", image=self.menu_image,
-                                        command=self.toggle_panel, bg_color='transparent', fg_color='transparent', hover=False, width=WIDTH_LOGO, height=HEIGHT_LOGO)
+                                        command=self.toggle_menu, bg_color='transparent', fg_color='transparent', hover=False, width=WIDTH_LOGO, height=HEIGHT_LOGO)
         self.buttonMenuLateral.pack(side=tk.LEFT, padx=20)
+
+    def cargar_icono(self, ruta, ancho, alto):
+        imagen = Image.open(ruta)
+        imagen_redimensionada = imagen.resize((ancho, alto))
+        return ImageTk.PhotoImage(imagen_redimensionada)
+
+    def crear_boton(self, text, icono, comando, permisos, permiso_codigo):
+        if permiso_codigo in permisos:
+            boton = tk.Button(self.menu_lateral, text=text, font=("Roboto", 16), image=icono,
+                              highlightthickness=20, width=ANCHO_MENU, height=ALTO_MENU, 
+                              bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", 
+                              compound=tk.LEFT, padx=10, command=comando)
+            boton.pack()
+            binding_hover_event(boton)
+            return boton
+        return None
+
     def menuControls(self, permisos):
         self.logo = util_img.leer_imagen("./imagenes/icons/logo.png", (100, 100))
-        ## ESTO AUN NO ESTA DEFINIDO
         self.labellogo = tk.Label(self.menu_lateral, image=self.logo, bg=COLOR_MENU_LATERAL)
-        self.labellogo.pack(side=tk.TOP, pady=15, padx=10)
-        
-        #RUTAS DE LAS IMAGENES
-        home_image = Image.open("imagenes/icons/home.png")
-        #Home Resized
-        home_resized = home_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        #Home Finals
-        self.home_icon = ImageTk.PhotoImage(home_resized)
+        self.labellogo.pack(side=tk.TOP,  pady=15, padx=10)
 
-        #Proveedores 
-        prov_image = Image.open("imagenes/icons/prov.png")
-        listProv_image = Image.open("imagenes/icons/listprov.png")
-        #Prov Resized
-        prov_resized = prov_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        listProv_resized = listProv_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        #Prov Final
-        self.prov_icon = ImageTk.PhotoImage(prov_resized)
-        self.listProv_icon = ImageTk.PhotoImage(listProv_resized)
+        botones_info = [
+            {"text": "Inicio", "icon_path": "imagenes/icons/home.png", "command": self.openFormDashboard, "permiso": "HOME1001"},
+            {"text": "Almacen", "icon_path": "imagenes/icons/almacen.png", "command": lambda: self.submenuStore(permisos), "permiso": "ALMA1001"},
+            {"text": "Proveedores", "icon_path": "imagenes/icons/prov.png", "command": lambda: self.submenuSuppliers(permisos), "permiso": "PROV1001"},
+            {"text": "Clientes", "icon_path": "imagenes/icons/clients.png", "command": lambda: self.submenuClients(permisos), "permiso": "CLIE1001"},
+            {"text": "Ajustes", "icon_path": "imagenes/icons/settings.png", "command": lambda: self.submenuConfig(permisos), "permiso": "CONF1001"}
+        ]
 
-        #Clients
-        client_image = Image.open("imagenes/icons/clients.png")
-        regClient_image = Image.open("imagenes/icons/addclient.png")
-        #Clients Resized
-        client_resized = client_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        regClient_resized = regClient_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        #Clients Final
-        self.client_icon = ImageTk.PhotoImage(client_resized)
-        self.regClient_icon = ImageTk.PhotoImage(regClient_resized)
+        for boton_info in botones_info:
+            icono = self.cargar_icono(boton_info["icon_path"], WIDTH_LOGO, HEIGHT_LOGO)
+            self.iconos.append(icono)
+            boton = self.crear_boton(boton_info["text"], icono, boton_info["command"], permisos, boton_info["permiso"])
+            if boton:
+                self.botones.append(boton)
+                self.textos_originales.append(boton_info["text"])
+    def toggle_menu(self):
+        self.menu_expandido = not self.menu_expandido
 
-        #Settings
-        settings_image = Image.open("imagenes/icons/settings.png")
-        adjustUser_image = Image.open("imagenes/icons/user_adjust.png")
-        userProfiles_image = Image.open("imagenes/icons/user_profiles.png") 
-        permises_image = Image.open("imagenes/icons/permise.png")
-        adjustModul_image = Image.open("imagenes/icons/module.png")
-        #Settings Resized
-        settings_resized = settings_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        adjustUser_resized = adjustUser_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        userProfiles_resized = userProfiles_image.resize((WIDTH_LOGO, HEIGHT_LOGO)) 
-        permises_resized = permises_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        adjustModul_resized = adjustModul_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        #Settings Finals
-        self.settings_icon = ImageTk.PhotoImage(settings_resized)
-        self.adjustUser_icon = ImageTk.PhotoImage(adjustUser_resized)
-        self.userProfiles_icon = ImageTk.PhotoImage(userProfiles_resized)
-        self.permises_icon = ImageTk.PhotoImage(permises_resized)
-        self.adjustModul_icon = ImageTk.PhotoImage(adjustModul_resized)
-        
-        #Products
-        products_image = Image.open("imagenes/icons/product.png")
-        category_image = Image.open("imagenes/icons/product_cat.png")
-        #Products Resized
-        products_resized = products_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        category_resized = category_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        #Products Finals
-        self.products_icon = ImageTk.PhotoImage(products_resized)
-        self.category_icon = ImageTk.PhotoImage(category_resized)
-
-        #Almacen
-        almacen_image = Image.open("imagenes/icons/almacen.png")
-        adjustdepot_image = Image.open("imagenes/icons/adjustdepot.png")
-        #Almacen Resized
-        almacen_resized = almacen_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        adjustdepot_resized = adjustdepot_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        #Almacen Finals
-        self.adjustdepot_icon = ImageTk.PhotoImage(adjustdepot_resized)
-        self.almacen_icon = ImageTk.PhotoImage(almacen_resized)
-
-        #BOTONES DEL MENU
-        #Home1001 visualizar modulo home
-        if 'HOME1001' in permisos:
-            self.buttonHome = tk.Button(self.menu_lateral, text="Inicio", font=("Roboto", 16), image=self.home_icon, highlightthickness=20, width=ANCHO_MENU,
-                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.openFormDashboard)
-            self.buttonHome.pack()
-            binding_hover_event(self.buttonHome)
+        if self.menu_expandido:
+            self.menu_lateral.config(width=150)
+            for boton, texto_original in zip (self.botones, self.textos_originales):
+                boton.config(text=texto_original)
         else:
-            pass
-        if 'ALMA1001' in permisos:
-            self.buttonAlmacen = tk.Button(self.menu_lateral, text="Almacen",  font=("Roboto", 16), image=self.almacen_icon, highlightthickness=20, width=ANCHO_MENU,
-                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenuStore(permisos))
-            self.buttonAlmacen.pack()
-            binding_hover_event(self.buttonAlmacen)
-        else:
-            pass
-
-        if 'PROV1001' in permisos:
-            self.buttonProveedores = tk.Button(self.menu_lateral, text="Proveedores", font=("Roboto", 16), image=self.prov_icon, highlightthickness=20, width=ANCHO_MENU,
-                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenuSuppliers(permisos))
-            self.buttonProveedores.pack()
-            binding_hover_event(self.buttonProveedores) 
-        else:
-            pass
-
-        if 'CLIE1001' in permisos:
-            self.buttonClient = tk.Button(self.menu_lateral, text="Clientes",  font=("Roboto", 16),  image=self.client_icon, highlightthickness=20, width=ANCHO_MENU,
-                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenuClients(permisos))        
-            self.buttonClient.pack()
-            binding_hover_event(self.buttonClient)
-        else:
-            pass
-
-        if 'CONF1001' in permisos:
-            self.buttonSettings = tk.Button(self.menu_lateral, text="Ajustes",  font=("Roboto", 16),image=self.settings_icon, highlightthickness=20, width=ANCHO_MENU,
-                height=ALTO_MENU, bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.submenuConfig(permisos))
-            self.buttonSettings.pack()
-            binding_hover_event(self.buttonSettings)
-        else:
-            pass
-    def loginSection(self):
-        self.w, self.h = 800, 600
-        self.geometry(f"{self.w}x{self.h}")
-        util_ventana.centrar_ventana(self, self.w, self.h)
-        ############# INICIALIZACION DE LA IMAGEN DE FONDO AUTOEXPANDIBLE #############
-        ruta_imagen = "imagenes/bg1.jpeg"
-        # Cargar la imagen
-        imagen = Image.open(ruta_imagen)
-        imagen_tk = ImageTk.PhotoImage(imagen)
-        self.imagen_tk = imagen_tk
-        # Crear el Label con la imagen de fondo
-        label_fondo = tk.Label(self.cuerpo_principal, image=imagen_tk)
-        label_fondo.place(x=0, y=0, relwidth=1, relheight=1)
-        self.label_fondo = label_fondo
-        # Configurar el Label para que se ajuste automáticamente al tamaño del frame
-        def adjustImage(event):
-            # Cambiar el tamaño de la imagen para que coincida con el tamaño del frame
-            nueva_imagen = imagen.resize((event.width, event.height))
-            nueva_imagen_tk = ImageTk.PhotoImage(nueva_imagen)
-            self.imagen_tk = nueva_imagen_tk
-            # Actualizar la imagen en el Label de fondo
-            label_fondo.config(image=nueva_imagen_tk)
-        
-        self.cuerpo_principal.bind("<Configure>", adjustImage)
-
-        def validateLogin():
-            conexion = ConexionDB()
-            
-            username = sv_datauser.get()
-            password = sv_datapass.get()
-
-            sql = f"SELECT * FROM user WHERE username = '{username}' AND password = '{password}'"
-            conexion.execute_consult(sql)
-            resultado = conexion.get_result()
-            
-
-            if resultado:
-
-                usuario = resultado[2]
-                contrasena = resultado[3]
-                idrol = resultado[4]
-                activo = resultado[7]
-
-                login_correct_advice()
-
-                datauser = {
-                    'username': usuario,
-                    'password': contrasena,
-                    'idrol': idrol,
-                    'activo': activo
-                } 
-
-                self.get_idrol(idrol)
-                self.barra_superior.pack(side=tk.TOP, fill='both')
-                self.menu_lateral.pack(side=tk.LEFT, fill='both', expand=False)
-                self.cuerpo_principal.destroy()
-                self.cuerpo_principal = tk.Frame(self)
-                self.cuerpo_principal.pack(side=tk.RIGHT, fill='both', expand=True)
-                self.w, self.h = 1440, 900
-                self.geometry(f"{self.w}x{self.h}")
-                self.resizable(True, True)
-                util_ventana.centrar_ventana(self, self.w, self.h)
-                self.openFormDashboard()
-            else:
-                login_wrong_advice()
-
-        marco_login = customtkinter.CTkFrame(self.cuerpo_principal, fg_color="white", width=300, height=250)
-        marco_login.place(relx=0.5, rely=0.5, anchor="center")
-
-        set_opacity(marco_login, 0.9)
-        #Iconos
-        user_ico = Image.open("imagenes/icons/user.png")
-        user_ico = user_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
-        user_img = ImageTk.PhotoImage(user_ico)
-
-        pass_ico = Image.open("imagenes/icons/pass.png")
-        pass_ico = pass_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
-        pass_img = ImageTk.PhotoImage(pass_ico)
-
-        #LOGIN USER
-        lbluser = customtkinter.CTkLabel(marco_login, text="", image=user_img, bg_color="white")
-        lbluser.pack(pady=1, padx=6)
-        lbluser.place(x=55, y=55)
-        
-        set_opacity(lbluser, 0.8)
-
-        sv_datauser = customtkinter.StringVar()
-        style = ttk.Style()
-        style.configure("Custom.TEntry", borderwidth=0)
-
-        entryuser = ttk.Entry(marco_login, textvariable=sv_datauser, width=14, font=("Arial", 12), style="Custom.TEntry", justify="center")
-        entryuser.place(x=105, y=56)
-        #LOGIN PASSWORD
-        lblpass = customtkinter.CTkLabel(marco_login, text="", image=pass_img, bg_color="white")
-        lblpass.pack(pady=1, padx=6)
-        lblpass.place(x=55, y=125)
-
-        set_opacity(lblpass, 0.8)
-
-        sv_datapass = customtkinter.StringVar()
-        #entrypass = customtkinter.CTkEntry(self.cuerpo_principal, textvariable=sv_datapass, show="*", width=150)
-        entrypass = ttk.Entry(marco_login, textvariable=sv_datapass, width=14, font=("Arial", 13), style="Custom.TEntry", show="*", justify="center")
-        entrypass.place(x=105, y=126)
-        entrypass.bind("<Return>", lambda event: validateLogin())
-        
-        #LOGIN BOTON
-        stylebutton = ttk.Style()
-        stylebutton.configure("Custom.TButton")
-        btnLogIn = ttk.Button(marco_login, text="Iniciar Sesion", command=validateLogin, width=14, style="Custom.TButton")
-        btnLogIn.place(x=120, y=180)
-    def get_idrol(self, idrol):
-        self
-        conexion = ConexionDB()
-        sql = f"SELECT codpermiso FROM asigperm WHERE idrol = '{idrol}'"
-        conexion.execute_consult(sql)
-        resultados = conexion.get_results()
-        permisos = []
-        for resultado in resultados:
-            permisos.append(resultado[0])
-
-        self.permisos_actualizados = permisos
-        if permisos:
-            #self.prueba_menu_lateral(permisos)
-            self.menuControls(permisos)
-        else:
-            return None
+            self.menu_lateral.config(width=50)
+            for boton in self.botones:
+                boton.config(text="")
     def submenuStore(self, permisos):
         #LIMPIEZA PROVEEDORES
         if 'PROV1001' in permisos:
@@ -567,6 +380,132 @@ class FormMain(customtkinter.CTk):
         #INICIALIZACION CONFIG
         if 'CONF1001' in permisos:
             self.buttonSettings.pack()
+    def loginSection(self):
+        self.w, self.h = 800, 600
+        self.geometry(f"{self.w}x{self.h}")
+        util_ventana.centrar_ventana(self, self.w, self.h)
+        ############# INICIALIZACION DE LA IMAGEN DE FONDO AUTOEXPANDIBLE #############
+        ruta_imagen = "imagenes/bg1.jpeg"
+        # Cargar la imagen
+        imagen = Image.open(ruta_imagen)
+        imagen_tk = ImageTk.PhotoImage(imagen)
+        self.imagen_tk = imagen_tk
+        # Crear el Label con la imagen de fondo
+        label_fondo = tk.Label(self.cuerpo_principal, image=imagen_tk)
+        label_fondo.place(x=0, y=0, relwidth=1, relheight=1)
+        self.label_fondo = label_fondo
+        # Configurar el Label para que se ajuste automáticamente al tamaño del frame
+        def adjustImage(event):
+            # Cambiar el tamaño de la imagen para que coincida con el tamaño del frame
+            nueva_imagen = imagen.resize((event.width, event.height))
+            nueva_imagen_tk = ImageTk.PhotoImage(nueva_imagen)
+            self.imagen_tk = nueva_imagen_tk
+            # Actualizar la imagen en el Label de fondo
+            label_fondo.config(image=nueva_imagen_tk)
+        
+        self.cuerpo_principal.bind("<Configure>", adjustImage)
+
+        def validateLogin():
+            conexion = ConexionDB()
+            
+            username = sv_datauser.get()
+            password = sv_datapass.get()
+
+            sql = f"SELECT * FROM user WHERE username = '{username}' AND password = '{password}'"
+            conexion.execute_consult(sql)
+            resultado = conexion.get_result()
+            
+
+            if resultado:
+
+                usuario = resultado[2]
+                contrasena = resultado[3]
+                idrol = resultado[4]
+                activo = resultado[7]
+
+                login_correct_advice()
+
+                datauser = {
+                    'username': usuario,
+                    'password': contrasena,
+                    'idrol': idrol,
+                    'activo': activo
+                } 
+
+                self.get_idrol(idrol)
+                self.w, self.h = 1440, 900
+                self.geometry(f"{self.w}x{self.h}")
+                self.resizable(True, True)
+                util_ventana.centrar_ventana(self, self.w, self.h)
+                self.barra_superior.pack(side=tk.TOP, fill=tk.X, expand=True)
+                self.menu_lateral.pack(side=tk.LEFT, fill=tk.Y, anchor='nw', pady=(50,0), expand=False)
+                self.cuerpo_principal.destroy()
+                self.cuerpo_principal = tk.Frame(self)
+                self.cuerpo_principal.pack(side=tk.RIGHT, fill='both', expand=True)
+                self.openFormDashboard()
+            else:
+                login_wrong_advice()
+
+        marco_login = customtkinter.CTkFrame(self.cuerpo_principal, fg_color="white", width=300, height=250)
+        marco_login.place(relx=0.5, rely=0.5, anchor="center")
+
+        set_opacity(marco_login, 0.9)
+        #Iconos
+        user_ico = Image.open("imagenes/icons/user.png")
+        user_ico = user_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
+        user_img = ImageTk.PhotoImage(user_ico)
+
+        pass_ico = Image.open("imagenes/icons/pass.png")
+        pass_ico = pass_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
+        pass_img = ImageTk.PhotoImage(pass_ico)
+
+        #LOGIN USER
+        lbluser = customtkinter.CTkLabel(marco_login, text="", image=user_img, bg_color="white")
+        lbluser.pack(pady=1, padx=6)
+        lbluser.place(x=55, y=55)
+        
+        set_opacity(lbluser, 0.8)
+
+        sv_datauser = customtkinter.StringVar()
+        style = ttk.Style()
+        style.configure("Custom.TEntry", borderwidth=0)
+
+        entryuser = ttk.Entry(marco_login, textvariable=sv_datauser, width=14, font=("Arial", 12), style="Custom.TEntry", justify="center")
+        entryuser.place(x=105, y=56)
+        #LOGIN PASSWORD
+        lblpass = customtkinter.CTkLabel(marco_login, text="", image=pass_img, bg_color="white")
+        lblpass.pack(pady=1, padx=6)
+        lblpass.place(x=55, y=125)
+
+        set_opacity(lblpass, 0.8)
+
+        sv_datapass = customtkinter.StringVar()
+        #entrypass = customtkinter.CTkEntry(self.cuerpo_principal, textvariable=sv_datapass, show="*", width=150)
+        entrypass = ttk.Entry(marco_login, textvariable=sv_datapass, width=14, font=("Arial", 13), style="Custom.TEntry", show="*", justify="center")
+        entrypass.place(x=105, y=126)
+        entrypass.bind("<Return>", lambda event: validateLogin())
+        
+        #LOGIN BOTON
+        stylebutton = ttk.Style()
+        stylebutton.configure("Custom.TButton")
+        btnLogIn = ttk.Button(marco_login, text="Iniciar Sesion", command=validateLogin, width=14, style="Custom.TButton")
+        btnLogIn.place(x=120, y=180)
+    def get_idrol(self, idrol):
+        self
+        conexion = ConexionDB()
+        sql = f"SELECT codpermiso FROM asigperm WHERE idrol = '{idrol}'"
+        conexion.execute_consult(sql)
+        resultados = conexion.get_results()
+        permisos = []
+        for resultado in resultados:
+            permisos.append(resultado[0])
+
+        self.permisos_actualizados = permisos
+        if permisos:
+            #self.prueba_menu_lateral(permisos)
+            self.menuControls(permisos)
+        else:
+            return None
     def get_idrol(self, idrol):
         conexion = ConexionDB()
         sql = f"SELECT codpermiso FROM asigperm WHERE idrol = '{idrol}'"
@@ -583,7 +522,6 @@ class FormMain(customtkinter.CTk):
             self.menuControls(permisos)
         else:
             return None
-    def toggle_panel(self):
         # Alternar visibilidad del menú lateral
         if self.menu_lateral.winfo_ismapped():
             self.menu_lateral.pack_forget()
