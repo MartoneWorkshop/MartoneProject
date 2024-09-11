@@ -3,7 +3,7 @@ import util.util_ventana as util_ventana
 import util.util_imagenes as util_img
 import customtkinter
 from tkinter import font, ttk
-from config import COLOR_BARRA_SUPERIOR, COLOR_MENU_LATERAL, COLOR_FONDO, COLOR_MENU_CURSOR_ENCIMA, COLOR_SUBMENU_LATERAL, COLOR_SUBMENU_CURSOR_ENCIMA, ANCHO_MENU, MITAD_MENU, ALTO_MENU, WIDTH_LOGO, HEIGHT_LOGO
+from config import COLOR_BARRA_SUPERIOR, COLOR_MENU_LATERAL, COLOR_FONDO, COLOR_MENU_CURSOR_ENCIMA, COLOR_SUBMENU_LATERAL, COLOR_SUBMENU_CURSOR_ENCIMA, ANCHO_MENU, MITAD_MENU, ALTO_MENU, WIDTH_LOGO, HEIGHT_LOGO, WIDTH_LOGO_MAX, HEIGHT_LOGO_MAX
 from PIL import Image, ImageTk, ImageColor
 from util.util_alerts import edit_advice, error_advice, save_advice, delete_advice, login_correct_advice, login_wrong_advice
 from customtkinter import *
@@ -20,19 +20,21 @@ from formularios.form_suppliers import FormSuppliers
 from formularios.form_depots import FormDepot
 from formularios.form_products import FormProducts
 from formularios.form_category import FormCategory
-from util.util_ventana import set_window_icon, set_opacity, binding_hover_event, binding_hover_submenu_event, cleanPanel
+from util.util_ventana import set_window_icon, set_opacity, binding_hover_event, binding_hover_submenu_event_min, binding_hover_submenu_event, binding_hover_event_min, cleanPanel, loadBackgroundImage, centerWindow
 
 class FormMain(customtkinter.CTk):
     def __init__(self):
         super().__init__()
         self.config_window()
         self.createPanels()
+        self.load_images()
         self.topBarControls()
         self.bodyControls()
         self.botones = []
-        self.iconos = []
         self.textos_originales = []
-        self.menu_expandido = True
+        self.submenu_frames = {}
+        self.submenu_visible = False
+        self.current_submenu_frame = None
     def bodyControls(self):    
         self.loginSection()
         self.barra_superior.pack_forget()
@@ -51,405 +53,333 @@ class FormMain(customtkinter.CTk):
         # Crear createPanels:
         #Barra Superior
         self.barra_superior = tk.Frame(self, bg=COLOR_BARRA_SUPERIOR, height=50)
-        self.barra_superior.pack(side=tk.TOP, fill=tk.X, expand=True)
+        self.barra_superior.pack(side=tk.TOP, fill=tk.X)
         #Menu Lateral
         self.menu_lateral = tk.Frame(self, bg=COLOR_MENU_LATERAL, width=150)
-        self.menu_lateral.pack(side=tk.LEFT, fill=tk.Y, anchor='nw', pady=(50,0), expand=False)
+        self.menu_lateral.pack(side=tk.LEFT, fill=tk.Y)
         #Cuerpo Principal
         self.cuerpo_principal = tk.Frame(self)
         self.cuerpo_principal.pack(side=tk.RIGHT, fill='both', expand=True)
+    def load_images(self):
+        # Define un diccionario para almacenar las imágenes
+        self.images = {
+            'logo': './imagenes/icons/logo.png',
+            'home': 'imagenes/icons/home.png',
+            'prov': 'imagenes/icons/prov.png',
+            'listprov': 'imagenes/icons/listprov.png',
+            'clients': 'imagenes/icons/clients.png',
+            'addclient': 'imagenes/icons/addclient.png',
+            'settings': 'imagenes/icons/settings.png',
+            'user_adjust': 'imagenes/icons/user_adjust.png',
+            'user_profiles': 'imagenes/icons/user_profiles.png',
+            'permise': 'imagenes/icons/permise.png',
+            'module': 'imagenes/icons/module.png',
+            'product': 'imagenes/icons/product.png',
+            'product_cat': 'imagenes/icons/product_cat.png',
+            'almacen': 'imagenes/icons/almacen.png',
+            'adjustdepot': 'imagenes/icons/adjustdepot.png',
+            'menu': 'imagenes/icons/menu.png'
+        }
+
+        # Redimensionar imágenes y convertir a PhotoImage
+        self.icons = {}
+
+        for key, path in self.images.items():
+            image = Image.open(path)
+            resized_image = image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+            self.icons[key] = ImageTk.PhotoImage(resized_image)
     def topBarControls(self):
         # Configuración de la barra superior
         font_awesome = customtkinter.CTkFont(family='Roboto', size=12)
+        
         # Etiqueta de título
-        self.labelTitulo = customtkinter.CTkLabel(self.barra_superior, text="Menu", font=font_awesome,padx=20, text_color="white")
+        self.labelTitulo = customtkinter.CTkLabel(
+            self.barra_superior, text="Menu", font=font_awesome, padx=20, text_color="white"
+        )
         self.labelTitulo.configure(fg_color="transparent", font=("Roboto", 15), bg_color='transparent', pady=10, width=16)
         self.labelTitulo.pack(side=tk.LEFT)
-        self.menu_original_image = Image.open("imagenes/icons/menu.png")
-        self.menu_resized_image = self.menu_original_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        self.menu_image = ImageTk.PhotoImage(self.menu_resized_image)
+        
         # Botón del menú lateral
-        self.buttonMenuLateral = customtkinter.CTkButton(self.barra_superior, text="", image=self.menu_image,
-                                        command=self.toggle_menu, bg_color='transparent', fg_color='transparent', hover=False, width=WIDTH_LOGO, height=HEIGHT_LOGO)
+        self.buttonMenuLateral = customtkinter.CTkButton(
+            self.barra_superior, text="", image=self.icons['menu'],
+            command=self.toggle_menu, bg_color='transparent', fg_color='transparent', hover=False, width=WIDTH_LOGO, height=HEIGHT_LOGO
+        )
         self.buttonMenuLateral.pack(side=tk.LEFT, padx=20)
-
-    def cargar_icono(self, ruta, ancho, alto):
-        imagen = Image.open(ruta)
-        imagen_redimensionada = imagen.resize((ancho, alto))
-        return ImageTk.PhotoImage(imagen_redimensionada)
-
-    def crear_boton(self, text, icono, comando, permisos, permiso_codigo):
-        if permiso_codigo in permisos:
-            boton = tk.Button(self.menu_lateral, text=text, font=("Roboto", 16), image=icono,
-                              highlightthickness=20, width=ANCHO_MENU, height=ALTO_MENU, 
-                              bg=COLOR_MENU_LATERAL, bd=0, fg="white", anchor="w", 
-                              compound=tk.LEFT, padx=10, command=comando)
-            boton.pack()
-            binding_hover_event(boton)
-            return boton
-        return None
-
     def menuControls(self, permisos):
-        self.logo = util_img.leer_imagen("./imagenes/icons/logo.png", (100, 100))
-        self.labellogo = tk.Label(self.menu_lateral, image=self.logo, bg=COLOR_MENU_LATERAL)
-        self.labellogo.pack(side=tk.TOP,  pady=15, padx=10)
+        self.botones = []
+        self.textos_originales = []
+        self.submenu_frames = {}
+        self.submenu_visible = False
+        self.current_submenu_frame = None 
+        self.submenu_botones_textos = {}
 
-        botones_info = [
-            {"text": "Inicio", "icon_path": "imagenes/icons/home.png", "command": self.openFormDashboard, "permiso": "HOME1001"},
-            {"text": "Almacen", "icon_path": "imagenes/icons/almacen.png", "command": lambda: self.submenuStore(permisos), "permiso": "ALMA1001"},
-            {"text": "Proveedores", "icon_path": "imagenes/icons/prov.png", "command": lambda: self.submenuSuppliers(permisos), "permiso": "PROV1001"},
-            {"text": "Clientes", "icon_path": "imagenes/icons/clients.png", "command": lambda: self.submenuClients(permisos), "permiso": "CLIE1001"},
-            {"text": "Ajustes", "icon_path": "imagenes/icons/settings.png", "command": lambda: self.submenuConfig(permisos), "permiso": "CONF1001"}
-        ]
+        logo_image = Image.open("imagenes/icons/logo.png")
+        self.logo_image = ImageTk.PhotoImage(logo_image.resize((WIDTH_LOGO_MAX, HEIGHT_LOGO_MAX)))
+        self.logo_min_image = ImageTk.PhotoImage(logo_image.resize((WIDTH_LOGO, HEIGHT_LOGO)))
+        self.labellogo = tk.Label(self.menu_lateral, image=self.logo_min_image, bg=COLOR_MENU_LATERAL)
+        self.labellogo.pack(side=tk.TOP, pady=15, padx=10)
 
-        for boton_info in botones_info:
-            icono = self.cargar_icono(boton_info["icon_path"], WIDTH_LOGO, HEIGHT_LOGO)
-            self.iconos.append(icono)
-            boton = self.crear_boton(boton_info["text"], icono, boton_info["command"], permisos, boton_info["permiso"])
-            if boton:
-                self.botones.append(boton)
-                self.textos_originales.append(boton_info["text"])
+        buttons_info = {
+            'HOME1001': ('home', "Inicio", self.openFormDashboard),
+            'ALMA1001': ('almacen', "Almacen", lambda: self.toggleSubmenu('ALMA1001', permisos)),
+            'PROV1001': ('prov', "Proveedores", lambda: self.toggleSubmenu('PROV1001', permisos)),
+            'CLIE1001': ('clients', "Clientes", lambda: self.toggleSubmenu('CLIE1001', permisos)),
+            'CONF1001': ('settings', "Ajustes", lambda: self.toggleSubmenu('CONF1001', permisos))
+        }
+
+        for perm, (icon_key, text, command) in buttons_info.items():
+            if perm in permisos:
+                icon_image = Image.open(f"imagenes/icons/{icon_key}.png")
+                icon_resized = icon_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+                icon_photo = ImageTk.PhotoImage(icon_resized)
+                button = tk.Button(self.menu_lateral, text=text, font=("Roboto", 16), image=icon_photo,
+                                   highlightthickness=20, width=150, height=ALTO_MENU, bg=COLOR_MENU_LATERAL,
+                                   bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=command)
+                button.image = icon_photo
+                button.pack(fill='x')
+                self.botones.append(button)
+                self.textos_originales.append(text)
+                binding_hover_event(button)
+                
+                if perm not in self.submenu_frames:
+                    self.submenu_frame = tk.Frame(self.menu_lateral, bg=COLOR_SUBMENU_LATERAL)
+                    self.submenu_frame.pack(fill='x')
+                    self.submenu_frames[perm] = self.submenu_frame
+                    self.submenu_botones_textos[perm] = {}
+
     def toggle_menu(self):
         self.menu_expandido = not self.menu_expandido
 
         if self.menu_expandido:
+            # Expande el menú
             self.menu_lateral.config(width=150)
-            for boton, texto_original in zip (self.botones, self.textos_originales):
-                boton.config(text=texto_original)
+            self.labellogo.config(image=self.logo_image)  # Usa el logo en tamaño normal
+            for boton, texto_original in zip(self.botones, self.textos_originales):
+                boton.config(text=texto_original, width=150, anchor="w")
+                binding_hover_event(boton)
+            for submenu_key, submenu_frame in self.submenu_frames.items():
+            # Restaura los textos originales de los botones del submenú
+                for widget in submenu_frame.winfo_children():
+                    if isinstance(widget, tk.Button):
+                        original_text = self.submenu_botones_textos.get(submenu_key, {}).get(widget, None)
+                        if original_text:
+                            widget.config(text=original_text, width=150, anchor="w")
+                            binding_hover_submenu_event(widget)
         else:
+            # Minimiza el menú
             self.menu_lateral.config(width=50)
+            self.labellogo.config(image=self.logo_min_image)  # Usa el logo en tamaño minimizado
             for boton in self.botones:
-                boton.config(text="")
-    def submenuStore(self, permisos):
-        #LIMPIEZA PROVEEDORES
-        if 'PROV1001' in permisos:
-            self.buttonProveedores.pack_forget()
-        if 'PROV1002' in permisos:
-            if hasattr(self, "buttonListaProv"):
-                self.buttonListaProv.pack_forget()
-                del self.buttonListaProv
-        #LIMPIEZA EN CLIENTES
-        if 'CLIE1001' in permisos:
-            self.buttonClient.pack_forget()
-        #LIMPIEZA CLIENTES
-        if 'CLIE1002' in permisos:
-            if hasattr(self, "buttonRegClient"):
-                self.buttonRegClient.pack_forget()
-                del self.buttonRegClient
-        #LIMPIEZA EN AJUSTES
-        if 'CONF1001' in permisos:
-            self.buttonSettings.pack_forget()
-        if 'CONF1002' in permisos:
-            if hasattr(self, "buttonAdjustUsers"):
-                self.buttonAdjustUsers.pack_forget()
-                del self.buttonAdjustUsers
-        if 'CONF1003' in permisos:
-            if hasattr(self, "buttonAdjustProfiles"):
-                self.buttonAdjustProfiles.pack_forget()
-                del self.buttonAdjustProfiles
-        if 'CONF1004' in permisos:
-            if hasattr(self, "buttonModulos"):
-                self.buttonModulos.pack_forget()
-                del self.buttonModulos
-        if 'CONF1005' in permisos:
-            if hasattr(self, "buttonPermisos"):
-                self.buttonPermisos.pack_forget()
-                del self.buttonPermisos
-        #INICIALIZACION SUBMENU ALMACEN
-        if 'ALMA1002' in permisos:  
-            if hasattr(self, "buttonDepositos"):
-                self.buttonDepositos.pack_forget()
-                del self.buttonDepositos
-            else:
-                self.buttonDepositos = tk.Button(self.menu_lateral, text="Depositos", font=("Roboto", 12), image=self.adjustdepot_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.openFormDepots(permisos))
-                self.buttonDepositos.pack()
-                binding_hover_submenu_event(self.buttonDepositos)
-        if 'ALMA1003' in permisos:
-            if hasattr(self, "buttonProductos"):
-                self.buttonProductos.pack_forget()
-                del self.buttonProductos
-            else:
-                self.buttonProductos = tk.Button(self.menu_lateral, text="Productos", font=("Roboto", 12),image=self.products_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.openFormProducts(permisos))
-                self.buttonProductos.pack()
-                binding_hover_submenu_event(self.buttonProductos)
-        if 'ALMA1004' in permisos:
-            if hasattr(self, "buttonCatArt"):
-                self.buttonCatArt.pack_forget()
-                del self.buttonCatArt
-            else:
-                self.buttonCatArt = tk.Button(self.menu_lateral, text="Categoria de\nProductos", font=("Roboto", 12),image=self.category_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.openFormCategory(permisos))
-                
-                self.buttonCatArt.pack()
-                binding_hover_submenu_event(self.buttonCatArt)
-        if 'PROV1001' in permisos:
-            self.buttonProveedores.pack()
-        if 'CLIE1001' in permisos:
-            self.buttonClient.pack()
-        if 'CONF1001' in permisos:
-            self.buttonSettings.pack()
-    def submenuSuppliers(self, permisos):
-        #VERIFICAR LOS PERMISOS Y QUE BOTONES ESTAN DISPONIBLES  
-        #LIMPIEZA DE ALMACEN Y SUBMENU      
-        if 'ALMA1002' in permisos:
-            if hasattr(self, "buttonDepositos"):
-                self.buttonDepositos.pack_forget()
-                del self.buttonDepositos
-        if 'ALMA1003' in permisos:
-            if hasattr(self, "buttonProductos"):
-                self.buttonProductos.pack_forget()
-                del self.buttonProductos
-        if 'ALMA1004' in permisos:
-            if hasattr(self, "buttonCatArt"):
-                self.buttonCatArt.pack_forget()
-                del self.buttonCatArt
-        #LIMPIEZA EN CLIENTES
-        if 'CLIE1001' in permisos:
-            self.buttonClient.pack_forget()
-        #LIMPIEZA CLIENTES
-        if 'CLIE1002' in permisos:
-            if hasattr(self, "buttonRegClient"):
-                self.buttonRegClient.pack_forget()
-                del self.buttonRegClient
-        #LIMPIEZA DE AJUSTES Y SUBMENU
-        if 'CONF1001' in permisos:
-            if hasattr(self, "buttonSettings"):
-                self.buttonSettings.pack_forget()
-        if 'CONF1002' in permisos:
-            if hasattr(self, "buttonAdjustUsers"):
-                self.buttonAdjustUsers.pack_forget()
-                del self.buttonAdjustUsers
-        if 'CONF1003' in permisos:
-            if hasattr(self, "buttonAdjustProfiles"):
-                self.buttonAdjustProfiles.pack_forget()
-                del self.buttonAdjustProfiles
-        if 'CONF1004' in permisos:
-            if hasattr(self, "buttonModulos"):
-                self.buttonModulos.pack_forget()
-                del self.buttonModulos
-        if 'CONF1005' in permisos:
-            if hasattr(self, "buttonPermisos"):
-                self.buttonPermisos.pack_forget()
-                del self.buttonPermisos
-        #INICIALIZACION DE PROVEEDORES
-        if 'ALMA1001' in permisos:
-            self.buttonAlmacen.pack()
+                boton.config(text="", width=50, anchor="center")
+                binding_hover_event_min(boton)
+            for submenu_frame in self.submenu_frames.values():
+            # Asegúrate de que los botones en el submenu también se configuren correctamente al minimizar
+                for widget in submenu_frame.winfo_children():
+                    if isinstance(widget, tk.Button):
+                        widget.config(text="", width=50, anchor="center")  # Ajusta el tamaño al estado minimizado
+                        binding_hover_submenu_event_min(widget)
+    def restore_submenu_buttons_text(self):
+        if not hasattr(self, 'submenu_textos_originales'):
+            return
         
-        if 'PROV1002' in permisos:
-            if hasattr(self, "buttonListaProv"):
-                self.buttonListaProv.pack_forget()
-                del self.buttonListaProv
+        for submenu_frame in self.submenu_frames.values():
+            for button in submenu_frame.winfo_children():
+                boton_nombre = next((name for name, widget in self.__dict__.items() if widget == button), None)
+                if boton_nombre and boton_nombre in self.submenu_textos_originales:
+                    button.config(text=self.submenu_textos_originales[boton_nombre], width=ANCHO_MENU)
+
+    def hide_submenu_buttons_text(self):
+        for submenu_frame in self.submenu_frames.values():
+            for button in submenu_frame.winfo_children():
+                # Ocultar texto del botón del submenú
+                button.config(text="", width=50)
+    def toggleSubmenu(self, submenu_key, permisos):
+        submenu_frame = self.submenu_frames.get(submenu_key)
+        if submenu_frame:
+            if self.menu_expandido:
+                if submenu_frame == self.current_submenu_frame:
+                    self.closeCurrentSubmenu()
+                else:
+                    if self.current_submenu_frame:
+                        self.closeCurrentSubmenu()
+                    self.current_submenu_frame = submenu_frame
+                    self.openSubmenu(submenu_key, permisos)
+                    submenu_frame.pack(fill='x')
             else:
-                self.buttonListaProv = tk.Button(self.menu_lateral, text="Listado de\n Proveedores", font=("Roboto", 12), image=self.listProv_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.openFormSuppliers(permisos))
-                self.buttonListaProv.pack()
-                binding_hover_submenu_event(self.buttonListaProv)
-        
-            pass
-        #INICIALIZACION CLIENTES
-        if 'CLIE1001' in permisos:
-            self.buttonClient.pack()
-        #INICIALIZACION AJUSTES
-        if 'CONF1001' in permisos:
-            self.buttonSettings.pack()
+                if submenu_frame == self.current_submenu_frame:
+                    self.closeCurrentSubmenu()
+                else:
+                    self.current_submenu_frame = submenu_frame
+                    self.openSubmenu(submenu_key, permisos)
+
+                    # No expandir el menú, pero mostrar los submenús minimizados
+                    submenu_frame.pack(fill='x')
+                    for widget in submenu_frame.winfo_children():
+                        if isinstance(widget, tk.Button):
+                            widget.config(text="", width=50, anchor="center")  # Mantener submenú minimizado
+                            binding_hover_submenu_event_min(widget)
+    def minimize_all_submenus(self):
+        for submenu_frame in self.submenu_frames.values():
+            if submenu_frame:
+                submenu_frame.pack_forget()
+                submenu_frame.config(height=1)
+    def openSubmenu(self, submenu_key, permisos):
+        # Llama a la función correspondiente para configurar el submenú
+        if submenu_key == 'ALMA1001':
+            self.submenuStore(permisos)
+        elif submenu_key == 'PROV1001':
+            self.submenuSuppliers(permisos)
+        elif submenu_key == 'CLIE1001':
+            self.submenuClients(permisos)
+        elif submenu_key == 'CONF1001':
+            self.submenuConfig(permisos)
+
+        # Obtiene el frame del submenú correspondiente
+        submenu_frame = self.submenu_frames.get(submenu_key)
+
+        if submenu_frame:
+            # Guardar los textos originales de los botones en el submenú
+            for widget in submenu_frame.winfo_children():
+                if isinstance(widget, tk.Button):
+                    # Guarda el texto del botón solo si aún no ha sido guardado
+                    if widget not in self.submenu_botones_textos[submenu_key]:
+                        self.submenu_botones_textos[submenu_key][widget] = widget.cget("text")
+
+        # Oculta el submenú actual si hay uno abierto y es diferente al que se está abriendo
+        if self.current_submenu_frame and self.current_submenu_frame != submenu_frame:
+            for widget in self.current_submenu_frame.winfo_children():
+                if isinstance(widget, tk.Button):
+                    widget.config(text="", width=50, anchor="center")
+                    binding_hover_submenu_event_min(widget)
+            self.current_submenu_frame.update_idletasks()
+            self.current_submenu_frame.update()
+
+        # Actualiza el submenú actual
+        self.current_submenu_frame = submenu_frame
+
+        # Si el menú lateral está contraído, mostrar solo los íconos
+        if not self.menu_expandido:
+            for widget in submenu_frame.winfo_children():
+                if isinstance(widget, tk.Button):
+                    widget.config(text="", width=50, anchor="center")
+                    binding_hover_submenu_event_min(widget)
         else:
-            pass   
-    def submenuConfig(self, permisos):
-        #lIMPIEZA DE SUBMENU ALMACEN
-        if 'ALMA1002' in permisos:
-            if hasattr(self, "buttonDepositos"):
-                self.buttonDepositos.pack_forget()
-                del self.buttonDepositos
-        if 'ALMA1003' in permisos:
-            if hasattr(self, "buttonProductos"):
-                self.buttonProductos.pack_forget()
-                del self.buttonProductos
-        if 'ALMA1004' in permisos:
-            if hasattr(self, "buttonCatArt"):
-                self.buttonCatArt.pack_forget()
-                del self.buttonCatArt
-        #LIMPIEZA SUBMENU PROVEEDORES
-        if 'PROV1002' in permisos:
-            if hasattr(self, "buttonListaProv"):
-                self.buttonListaProv.pack_forget()
-                del self.buttonListaProv
-        #LIMPIEZA CLIENTES
-        if 'CLIE1002' in permisos:
-            if hasattr(self, "buttonRegClient"):
-                self.buttonRegClient.pack_forget()
-                del self.buttonRegClient
-        #INICIALIZACION DE CLIENTES
-        if 'CLIE1001' in permisos:
-            self.buttonClient.pack()
-        #INICIALIZACION DE SUBMENU DE AJUSTES
-        if 'CONF1002' in permisos:
-            if hasattr(self, "buttonAdjustUsers"):
-                self.buttonAdjustUsers.pack_forget()
-                del self.buttonAdjustUsers
-            else:
-                self.buttonAdjustUsers = tk.Button(self.menu_lateral, text="Ajuste de Usuario", font=("Roboto", 12), image=self.adjustUser_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.openFormUser(permisos))
-                self.buttonAdjustUsers.pack()
+            # Si el menú está expandido, restaurar los textos de los botones
+            for widget in submenu_frame.winfo_children():
+                if isinstance(widget, tk.Button) and widget in self.submenu_botones_textos[submenu_key]:
+                    widget.config(text=self.submenu_botones_textos[submenu_key][widget], width=150, anchor="w")
+                    binding_hover_submenu_event(widget)
+    def closeCurrentSubmenu(self):
+        if self.current_submenu_frame:
+            # Oculta los widgets dentro del frame del submenú actual
+            for widget in self.current_submenu_frame.winfo_children():
+                widget.pack_forget()
 
-                binding_hover_submenu_event(self.buttonAdjustUsers)
-        if 'CONF1003' in permisos:
-            if hasattr(self, "buttonAdjustProfiles"):
-                self.buttonAdjustProfiles.pack_forget()
-                del self.buttonAdjustProfiles
-            else:
-                self.buttonAdjustProfiles = tk.Button(self.menu_lateral, text="Ajuste de Perfiles", font=("Roboto", 12), image=self.userProfiles_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.openFormAdjustProfile(permisos))
-                self.buttonAdjustProfiles.pack()
+            # Configura el height del submenu_frame a 1 para minimizar
+            self.current_submenu_frame.config(height=1)
+            self.current_submenu_frame.update_idletasks()  # Asegúrate de que la interfaz se actualice correctamente
+            self.current_submenu_frame.update()
+            if not self.menu_expandido:
+                for widget in self.current_submenu_frame.winfo_children():
+                    if isinstance(widget, tk.Button):
+                        widget.config(text="", width=50, anchor="center")
+                        binding_hover_submenu_event_min(widget)
+            self.current_submenu_frame = None
 
-                binding_hover_submenu_event(self.buttonAdjustProfiles)
-        if 'CONF1004' in permisos:
-            if hasattr(self, "buttonModulos"):
-                self.buttonModulos.pack_forget()
-                del self.buttonModulos
-            else:
-                self.buttonModulos = tk.Button(self.menu_lateral, text="Ajuste de Modulo", font=("Roboto", 12), image=self.adjustModul_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.openFormModules(permisos))
-                self.buttonModulos.pack()
+    def submenuStore(self, permisos):
+        # Diccionario de configuración de botones para submenú Almacen
+        botones_submenu = {
+            'ALMA1002': ('buttonDepositos', "Depositos", self.icons['adjustdepot'], lambda: self.openFormDepots(permisos)),
+            'ALMA1003': ('buttonProductos', "Productos", self.icons['product'], lambda: self.openFormProducts(permisos)),
+            'ALMA1004': ('buttonCatArt', "Categoria de\nProductos", self.icons['product_cat'], lambda: self.openFormCategory(permisos))
+        }
 
-                binding_hover_submenu_event(self.buttonModulos)
-
-        if 'CONF1005' in permisos:
-            if hasattr(self, "buttonPermisos"):
-                self.buttonPermisos.pack_forget()
-                del self.buttonPermisos
-            else:
-                self.buttonPermisos = tk.Button(self.menu_lateral, text="Permisos", font=("Roboto", 12), image=self.permises_icon, highlightthickness=20, width=ANCHO_MENU,
-                    bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.openFormPermission(permisos))
-                self.buttonPermisos.pack()
+        submenu_frame = self.submenu_frames.get('ALMA1001')
+        if submenu_frame:
+            # Limpieza de submenú Almacen
+            for permiso, (boton_nombre, _, _, _) in botones_submenu.items():
+                if hasattr(self, boton_nombre):
+                    getattr(self, boton_nombre).pack_forget()
+                    delattr(self, boton_nombre)
             
-                binding_hover_submenu_event(self.buttonPermisos)
+            self.submenu_textos_originales = {}
+
+            # Inicialización del submenú Almacen basado en permisos
+            for permiso, (boton_nombre, texto, icono, comando) in botones_submenu.items():
+                if permiso in permisos:
+                    if not hasattr(self, boton_nombre):  # Solo crea botones si no existen
+                        boton = tk.Button(submenu_frame, text=texto, font=("Roboto", 12), image=icono, highlightthickness=20,
+                                          width=ANCHO_MENU, bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white",
+                                          anchor="w", compound=tk.LEFT, padx=10, command=comando)
+                        boton.pack()
+                        binding_hover_submenu_event(boton)
+                        setattr(self, boton_nombre, boton)
+                        self.submenu_textos_originales[boton_nombre] = texto
+                    else:
+                        getattr(self, boton_nombre).pack()
+
+    def submenuSuppliers(self, permisos):
+        # Configuración de botones para submenú Proveedores
+        botones_submenu = {
+            'PROV1002': ('buttonListaProv', "Listado de\nProveedores", self.icons['listprov'], lambda: self.openFormSuppliers(permisos))
+        }
+
+        # Limpieza de submenús existentes
+        self.limpiar_submenus(botones_submenu, permisos)
+
+        # Creación de botones según permisos
+        self.crear_botones_submenu(botones_submenu, permisos)
+    def submenuConfig(self, permisos):
+        # Configuración de botones para el submenú de Ajustes
+        botones_submenu = {
+            'CONF1002': ('buttonAdjustUsers', "Ajuste de Usuario", self.icons['user_adjust'], self.openFormUser),
+            'CONF1003': ('buttonAdjustProfiles', "Ajuste de Perfiles", self.icons['user_profiles'], self.openFormAdjustProfile),
+            'CONF1004': ('buttonModulos', "Ajuste de Modulo", self.icons['module'], self.openFormModules),
+            'CONF1005': ('buttonPermisos', "Permisos", self.icons['permise'], self.openFormPermission)
+        }
+
+        # Limpieza de submenús existentes
+        self.limpiar_submenus(botones_submenu, permisos)
+
+        # Creación de botones según permisos
+        self.crear_botones_submenu(botones_submenu, permisos)
     def submenuClients(self, permisos):
-        #lIMPIEZA DE SUBMENU ALMACEN
-        if 'ALMA1002' in permisos:
-            if hasattr(self, "buttonDepositos"):
-                self.buttonDepositos.pack_forget()
-                del self.buttonDepositos
-        if 'ALMA1003' in permisos:
-            if hasattr(self, "buttonProductos"):
-                self.buttonProductos.pack_forget()
-                del self.buttonProductos
-        if 'ALMA1004' in permisos:
-            if hasattr(self, "buttonCatArt"):
-                self.buttonCatArt.pack_forget()
-                del self.buttonCatArt
-        #LIMPIEZA SUBMENU PROVEEDORES
-        if 'PROV1002' in permisos:
-            if hasattr(self, "buttonListaProv"):
-                self.buttonListaProv.pack_forget()
-                del self.buttonListaProv
-        #LIMPIEZA DE AJUSTES Y SUBMENU
-        if 'CONF1001' in permisos:
-            if hasattr(self, "buttonSettings"):
-                self.buttonSettings.pack_forget()
-        if 'CONF1002' in permisos:
-            if hasattr(self, "buttonAdjustUsers"):
-                self.buttonAdjustUsers.pack_forget()
-                del self.buttonAdjustUsers
-        if 'CONF1003' in permisos:
-            if hasattr(self, "buttonAdjustProfiles"):
-                self.buttonAdjustProfiles.pack_forget()
-                del self.buttonAdjustProfiles
-        if 'CONF1004' in permisos:
-            if hasattr(self, "buttonModulos"):
-                self.buttonModulos.pack_forget()
-                del self.buttonModulos
-        if 'CONF1005' in permisos:
-            if hasattr(self, "buttonPermisos"):
-                self.buttonPermisos.pack_forget()
-                del self.buttonPermisos
+        # Configuración de botones para submenú Clientes
+        botones_submenu = {
+            'CLIE1002': ('buttonRegClient', "Registro\nde Clientes", self.icons['addclient'], lambda: self.openFormRegClient(permisos))
+        }
 
-        #INICIALIZACION CLIENTES
-        if 'CLIE1002' in permisos:
-            if hasattr(self, "buttonRegClient"):
-                self.buttonRegClient.pack_forget()
-                del self.buttonRegClient
-            else:
-                self.buttonRegClient = tk.Button(self.menu_lateral, text="Registro\nde Clientes",  font=("Roboto", 13), image=self.regClient_icon, highlightthickness=20, width=ANCHO_MENU,
-                    height=ALTO_MENU, bg=COLOR_SUBMENU_LATERAL, bd=0, fg="white", anchor="w", compound=tk.LEFT, padx=10, command=lambda: self.openFormRegClient(permisos))        
-                self.buttonRegClient.pack()
+        # Limpieza de submenús existentes
+        self.limpiar_submenus(botones_submenu, permisos)
 
-                binding_hover_submenu_event(self.buttonRegClient)
+        # Creación de botones según permisos
+        self.crear_botones_submenu(botones_submenu, permisos)
+    def limpiar_submenus(self, botones_submenu, permisos):
+        # Elimina los botones del submenú si ya existen
+        for permiso, (boton_nombre, _, _, _) in botones_submenu.items():
+            if hasattr(self, boton_nombre):
+                getattr(self, boton_nombre).pack_forget()
+                delattr(self, boton_nombre)
 
-        #INICIALIZACION CONFIG
-        if 'CONF1001' in permisos:
-            self.buttonSettings.pack()
+    def crear_botones_submenu(self, botones_submenu, permisos):
+        # Crea y empaqueta los botones del submenú basados en permisos
+        for permiso, (boton_nombre, texto, icono, comando) in botones_submenu.items():
+            if permiso in permisos:
+                boton = tk.Button(self.menu_lateral, text=texto, font=("Roboto", 12), image=icono, highlightthickness=20,
+                                  width=ANCHO_MENU, bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white",
+                                  anchor="w", compound=tk.LEFT, padx=10, command=comando)
+                boton.pack()
+                binding_hover_submenu_event(boton)
+                setattr(self, boton_nombre, boton)
     def loginSection(self):
         self.w, self.h = 800, 600
-        self.geometry(f"{self.w}x{self.h}")
-        util_ventana.centrar_ventana(self, self.w, self.h)
-        ############# INICIALIZACION DE LA IMAGEN DE FONDO AUTOEXPANDIBLE #############
-        ruta_imagen = "imagenes/bg1.jpeg"
-        # Cargar la imagen
-        imagen = Image.open(ruta_imagen)
-        imagen_tk = ImageTk.PhotoImage(imagen)
-        self.imagen_tk = imagen_tk
-        # Crear el Label con la imagen de fondo
-        label_fondo = tk.Label(self.cuerpo_principal, image=imagen_tk)
-        label_fondo.place(x=0, y=0, relwidth=1, relheight=1)
-        self.label_fondo = label_fondo
-        # Configurar el Label para que se ajuste automáticamente al tamaño del frame
-        def adjustImage(event):
-            # Cambiar el tamaño de la imagen para que coincida con el tamaño del frame
-            nueva_imagen = imagen.resize((event.width, event.height))
-            nueva_imagen_tk = ImageTk.PhotoImage(nueva_imagen)
-            self.imagen_tk = nueva_imagen_tk
-            # Actualizar la imagen en el Label de fondo
-            label_fondo.config(image=nueva_imagen_tk)
-        
-        self.cuerpo_principal.bind("<Configure>", adjustImage)
+        centerWindow(self)
+        loadBackgroundImage(self)
 
-        def validateLogin():
-            conexion = ConexionDB()
-            
-            username = sv_datauser.get()
-            password = sv_datapass.get()
+        frame_login = customtkinter.CTkFrame(self.cuerpo_principal, fg_color="white", width=300, height=250)
+        frame_login.place(relx=0.5, rely=0.5, anchor="center")
 
-            sql = f"SELECT * FROM user WHERE username = '{username}' AND password = '{password}'"
-            conexion.execute_consult(sql)
-            resultado = conexion.get_result()
-            
-
-            if resultado:
-
-                usuario = resultado[2]
-                contrasena = resultado[3]
-                idrol = resultado[4]
-                activo = resultado[7]
-
-                login_correct_advice()
-
-                datauser = {
-                    'username': usuario,
-                    'password': contrasena,
-                    'idrol': idrol,
-                    'activo': activo
-                } 
-
-                self.get_idrol(idrol)
-                self.w, self.h = 1440, 900
-                self.geometry(f"{self.w}x{self.h}")
-                self.resizable(True, True)
-                util_ventana.centrar_ventana(self, self.w, self.h)
-                self.barra_superior.pack(side=tk.TOP, fill=tk.X, expand=True)
-                self.menu_lateral.pack(side=tk.LEFT, fill=tk.Y, anchor='nw', pady=(50,0), expand=False)
-                self.cuerpo_principal.destroy()
-                self.cuerpo_principal = tk.Frame(self)
-                self.cuerpo_principal.pack(side=tk.RIGHT, fill='both', expand=True)
-                self.openFormDashboard()
-            else:
-                login_wrong_advice()
-
-        marco_login = customtkinter.CTkFrame(self.cuerpo_principal, fg_color="white", width=300, height=250)
-        marco_login.place(relx=0.5, rely=0.5, anchor="center")
-
-        set_opacity(marco_login, 0.9)
+        set_opacity(frame_login, 0.9)
         #Iconos
         user_ico = Image.open("imagenes/icons/user.png")
         user_ico = user_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
@@ -460,37 +390,61 @@ class FormMain(customtkinter.CTk):
         pass_img = ImageTk.PhotoImage(pass_ico)
 
         #LOGIN USER
-        lbluser = customtkinter.CTkLabel(marco_login, text="", image=user_img, bg_color="white")
+        lbluser = customtkinter.CTkLabel(frame_login, text="", image=user_img, bg_color="white")
         lbluser.pack(pady=1, padx=6)
         lbluser.place(x=55, y=55)
         
         set_opacity(lbluser, 0.8)
 
-        sv_datauser = customtkinter.StringVar()
+        self.sv_datauser = customtkinter.StringVar()
         style = ttk.Style()
         style.configure("Custom.TEntry", borderwidth=0)
 
-        entryuser = ttk.Entry(marco_login, textvariable=sv_datauser, width=14, font=("Arial", 12), style="Custom.TEntry", justify="center")
+        entryuser = ttk.Entry(frame_login, textvariable=self.sv_datauser, width=14, font=("Arial", 12), style="Custom.TEntry", justify="center")
         entryuser.place(x=105, y=56)
         #LOGIN PASSWORD
-        lblpass = customtkinter.CTkLabel(marco_login, text="", image=pass_img, bg_color="white")
+        lblpass = customtkinter.CTkLabel(frame_login, text="", image=pass_img, bg_color="white")
         lblpass.pack(pady=1, padx=6)
         lblpass.place(x=55, y=125)
 
         set_opacity(lblpass, 0.8)
 
-        sv_datapass = customtkinter.StringVar()
+        self.sv_datapass = customtkinter.StringVar()
         #entrypass = customtkinter.CTkEntry(self.cuerpo_principal, textvariable=sv_datapass, show="*", width=150)
-        entrypass = ttk.Entry(marco_login, textvariable=sv_datapass, width=14, font=("Arial", 13), style="Custom.TEntry", show="*", justify="center")
+        entrypass = ttk.Entry(frame_login, textvariable=self.sv_datapass, width=14, font=("Arial", 13), style="Custom.TEntry", show="*", justify="center")
         entrypass.place(x=105, y=126)
-        entrypass.bind("<Return>", lambda event: validateLogin())
+        entrypass.bind("<Return>", lambda event: self.validateLogin())
         
         #LOGIN BOTON
         stylebutton = ttk.Style()
         stylebutton.configure("Custom.TButton")
-        btnLogIn = ttk.Button(marco_login, text="Iniciar Sesion", command=validateLogin, width=14, style="Custom.TButton")
+        btnLogIn = ttk.Button(frame_login, text="Iniciar Sesion", command=self.validateLogin, width=14, style="Custom.TButton")
         btnLogIn.place(x=120, y=180)
-    def get_idrol(self, idrol):
+    def validateLogin(self):
+        conexion = ConexionDB()
+        username = self.sv_datauser.get()
+        password = self.sv_datapass.get()
+        sql = f"SELECT * FROM user WHERE username = '{username}' AND password = '{password}'"
+        conexion.execute_consult(sql)
+        resultado = conexion.get_result()
+        
+        if resultado:
+            usuario = resultado[2]
+            contrasena = resultado[3]
+            idrol = resultado[4]
+            activo = resultado[7]
+            login_correct_advice()
+            datauser = {
+                'username': usuario,
+                'password': contrasena,
+                'idrol': idrol,
+                'activo': activo
+            } 
+            self.cuerpo_principal.destroy()
+            self.initializeMainApp(idrol)
+        else:
+            login_wrong_advice()
+    def get_idrol(self, idrol): 
         self
         conexion = ConexionDB()
         sql = f"SELECT codpermiso FROM asigperm WHERE idrol = '{idrol}'"
@@ -502,31 +456,21 @@ class FormMain(customtkinter.CTk):
 
         self.permisos_actualizados = permisos
         if permisos:
-            #self.prueba_menu_lateral(permisos)
-            self.menuControls(permisos)
+            return permisos
         else:
             return None
-    def get_idrol(self, idrol):
-        conexion = ConexionDB()
-        sql = f"SELECT codpermiso FROM asigperm WHERE idrol = '{idrol}'"
-        conexion.execute_consult(sql)
-        resultados = conexion.get_results()
-        permisos = []
-        for resultado in resultados:
-            permisos.append(resultado[0])
-        
-        self.permisos_actualizados = permisos
-
-        if permisos:
-            #self.prueba_menu_lateral(permisos)
-            self.menuControls(permisos)
-        else:
-            return None
-        # Alternar visibilidad del menú lateral
-        if self.menu_lateral.winfo_ismapped():
-            self.menu_lateral.pack_forget()
-        else:
-            self.menu_lateral.pack(side=tk.LEFT, fill='y')
+    def initializeMainApp(self, idrol):
+        self.w, self.h = 1440, 900
+        self.geometry(f"{self.w}x{self.h}")
+        self.resizable(True, True)
+        util_ventana.centrar_ventana(self, self.w, self.h)
+        permisos = self.get_idrol(idrol)
+        self.createPanels()
+        self.menuControls(permisos)
+        self.topBarControls()
+        self.openFormDashboard()
+        self.menu_expandido = True
+        self.toggle_menu()
     def check_size(self):
         width_screen = self.winfo_width()
         height_screen = self.winfo_height()
