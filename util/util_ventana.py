@@ -10,10 +10,10 @@ def centrar_ventana(ventana,aplicacion_ancho,aplicacion_largo):
     x = int((pantall_ancho/2) - (aplicacion_ancho/2))
     y = int((pantall_largo/2) - (aplicacion_largo/2))
     return ventana.geometry(f"{aplicacion_ancho}x{aplicacion_largo}+{x}+{y}")
-def set_window_icon(self):
+def set_window_icon(window):
     icon_path = "imagenes/icons/logo_ico.ico"  # Ruta del archivo de icono
-    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("HAST")  # Cambia "myappid" por un identificador único para tu aplicación
-    self.iconbitmap(icon_path)
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("HAST")
+    window.iconbitmap(icon_path)
 def set_opacity(widget, value: float):
     widget = widget.winfo_id()
     value = int(255*value) # value from 0 to 1
@@ -56,8 +56,8 @@ def cleanPanel(panel):
 # Función para limpiar el contenido del panel
     for widget in panel.winfo_children():
         widget.destroy()
+
 def centerWindow(self):
-    self.update_idletasks()
     width = self.w
     height = self.h
     screenwidth = self.winfo_screenwidth()
@@ -65,6 +65,7 @@ def centerWindow(self):
     x = (screenwidth / 2) - (width / 2)
     y = (screenheight / 2) - (height / 2)
     self.geometry(f"{width}x{height}+{int(x)}+{int(y)}")
+
 def loadBackgroundImage(self):
     # Cargar y ajustar imagen de fondo
     ruta_imagen = "imagenes/bg1.jpeg"
