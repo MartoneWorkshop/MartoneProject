@@ -196,23 +196,32 @@ class FormMain(customtkinter.CTk):
     def toggleSubmenu(self, submenu_key, permisos):
         submenu_frame = self.submenu_frames.get(submenu_key)
         if submenu_frame:
+            # Cuando el menú está expandido
             if self.menu_expandido:
+                # Si el submenú actual es el que está abierto, lo cerramos
                 if submenu_frame == self.current_submenu_frame:
                     self.closeCurrentSubmenu()
                 else:
+                    # Si hay otro submenú abierto, lo cerramos
                     if self.current_submenu_frame:
                         self.closeCurrentSubmenu()
+                    # Abrimos el nuevo submenú
                     self.current_submenu_frame = submenu_frame
                     self.openSubmenu(submenu_key, permisos)
                     submenu_frame.pack(fill='x')
             else:
+                # Cuando el menú está contraído
                 if submenu_frame == self.current_submenu_frame:
                     self.closeCurrentSubmenu()
                 else:
+                    # Cerrar submenús abiertos si hay uno activo
+                    if self.current_submenu_frame:
+                        self.closeCurrentSubmenu()
+                    # Abrir el nuevo submenú
                     self.current_submenu_frame = submenu_frame
                     self.openSubmenu(submenu_key, permisos)
 
-                    # No expandir el menú, pero mostrar los submenús minimizados
+                    # Mantener el menú contraído pero mostrar submenús minimizados
                     submenu_frame.pack(fill='x')
                     for widget in submenu_frame.winfo_children():
                         if isinstance(widget, tk.Button):
@@ -224,7 +233,7 @@ class FormMain(customtkinter.CTk):
                 submenu_frame.pack_forget()
                 submenu_frame.config(height=1)
     def openSubmenu(self, submenu_key, permisos):
-        # Llama a la función correspondiente para configurar el submenú
+        # Llamar a la función correspondiente para configurar el submenú
         if submenu_key == 'ALMA1001':
             self.submenuStore(permisos)
         elif submenu_key == 'PROV1001':
@@ -234,57 +243,56 @@ class FormMain(customtkinter.CTk):
         elif submenu_key == 'CONF1001':
             self.submenuConfig(permisos)
 
-        # Obtiene el frame del submenú correspondiente
+        # Obtener el frame del submenú correspondiente
         submenu_frame = self.submenu_frames.get(submenu_key)
 
         if submenu_frame:
-            # Guardar los textos originales de los botones en el submenú
+            # Cerrar el submenú anterior si existe
+            if self.current_submenu_frame and self.current_submenu_frame != submenu_frame:
+                self.closeCurrentSubmenu()
+
+            # Guardar los textos originales de los botones si aún no se han guardado
             for widget in submenu_frame.winfo_children():
                 if isinstance(widget, tk.Button):
-                    # Guarda el texto del botón solo si aún no ha sido guardado
                     if widget not in self.submenu_botones_textos[submenu_key]:
                         self.submenu_botones_textos[submenu_key][widget] = widget.cget("text")
 
-        # Oculta el submenú actual si hay uno abierto y es diferente al que se está abriendo
-        if self.current_submenu_frame and self.current_submenu_frame != submenu_frame:
-            for widget in self.current_submenu_frame.winfo_children():
-                if isinstance(widget, tk.Button):
-                    widget.config(text="", width=50, anchor="center")
-                    binding_hover_submenu_event_min(widget)
-            self.current_submenu_frame.update_idletasks()
-            self.current_submenu_frame.update()
+            # Establecer el nuevo submenú actual
+            self.current_submenu_frame = submenu_frame
 
-        # Actualiza el submenú actual
-        self.current_submenu_frame = submenu_frame
+            # Si el menú lateral está contraído, mostrar solo los íconos
+            if not self.menu_expandido:
+                for widget in submenu_frame.winfo_children():
+                    if isinstance(widget, tk.Button):
+                        widget.config(text="", width=50, anchor="center")
+                        binding_hover_submenu_event_min(widget)
+            else:
+                # Si el menú está expandido, restaurar los textos de los botones
+                for widget in submenu_frame.winfo_children():
+                    if isinstance(widget, tk.Button) and widget in self.submenu_botones_textos[submenu_key]:
+                        widget.config(text=self.submenu_botones_textos[submenu_key][widget], width=150, anchor="w")
+                        binding_hover_submenu_event(widget)
 
-        # Si el menú lateral está contraído, mostrar solo los íconos
-        if not self.menu_expandido:
-            for widget in submenu_frame.winfo_children():
-                if isinstance(widget, tk.Button):
-                    widget.config(text="", width=50, anchor="center")
-                    binding_hover_submenu_event_min(widget)
-        else:
-            # Si el menú está expandido, restaurar los textos de los botones
-            for widget in submenu_frame.winfo_children():
-                if isinstance(widget, tk.Button) and widget in self.submenu_botones_textos[submenu_key]:
-                    widget.config(text=self.submenu_botones_textos[submenu_key][widget], width=150, anchor="w")
-                    binding_hover_submenu_event(widget)
+            # Mostrar el frame del submenú
+            submenu_frame.pack(fill='x')
     def closeCurrentSubmenu(self):
         if self.current_submenu_frame:
-            # Oculta los widgets dentro del frame del submenú actual
+            # Ocultar los widgets del submenú actual
             for widget in self.current_submenu_frame.winfo_children():
                 widget.pack_forget()
 
-            # Configura el height del submenu_frame a 1 para minimizar
+            # Minimizar el frame del submenú
             self.current_submenu_frame.config(height=1)
-            self.current_submenu_frame.update_idletasks()  # Asegúrate de que la interfaz se actualice correctamente
-            self.current_submenu_frame.update()
+            self.current_submenu_frame.update_idletasks()  # Actualizar la interfaz
+
             if not self.menu_expandido:
+                # Si el menú está contraído, ajustar los botones a su formato minimizado
                 for widget in self.current_submenu_frame.winfo_children():
                     if isinstance(widget, tk.Button):
                         widget.config(text="", width=50, anchor="center")
                         binding_hover_submenu_event_min(widget)
-            self.current_submenu_frame = None
+
+            self.current_submenu_frame = None 
 
     def submenuStore(self, permisos):
         # Diccionario de configuración de botones para submenú Almacen
@@ -319,58 +327,96 @@ class FormMain(customtkinter.CTk):
                         getattr(self, boton_nombre).pack()
 
     def submenuSuppliers(self, permisos):
-        # Configuración de botones para submenú Proveedores
+        # Diccionario de configuración de botones para submenú Proveedores
         botones_submenu = {
-            'PROV1002': ('buttonListaProv', "Listado de\nProveedores", self.icons['listprov'], lambda: self.openFormSuppliers(permisos))
+            'PROV1002': ('buttonProveedor', "Listado de\nProveedores", self.icons['listprov'], lambda: self.openFormSuppliers(permisos)),
         }
 
-        # Limpieza de submenús existentes
-        self.limpiar_submenus(botones_submenu, permisos)
+        submenu_frame = self.submenu_frames.get('PROV1001')
+        if submenu_frame:
+            # Limpieza de submenú Proveedores
+            for permiso, (boton_nombre, _, _, _) in botones_submenu.items():
+                if hasattr(self, boton_nombre):
+                    getattr(self, boton_nombre).pack_forget()
+                    delattr(self, boton_nombre)
 
-        # Creación de botones según permisos
-        self.crear_botones_submenu(botones_submenu, permisos)
+            self.submenu_textos_originales = {}
+
+            # Inicialización del submenú Proveedores basado en permisos
+            for permiso, (boton_nombre, texto, icono, comando) in botones_submenu.items():
+                if permiso in permisos:
+                    if not hasattr(self, boton_nombre):  # Solo crea botones si no existen
+                        boton = tk.Button(submenu_frame, text=texto, font=("Roboto", 12), image=icono, highlightthickness=20,
+                                          width=ANCHO_MENU, bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white",
+                                          anchor="w", compound=tk.LEFT, padx=10, command=comando)
+                        boton.pack()
+                        binding_hover_submenu_event(boton)
+                        setattr(self, boton_nombre, boton)
+                        self.submenu_textos_originales[boton_nombre] = texto
+                    else:
+                        getattr(self, boton_nombre).pack()
     def submenuConfig(self, permisos):
         # Configuración de botones para el submenú de Ajustes
         botones_submenu = {
-            'CONF1002': ('buttonAdjustUsers', "Ajuste de Usuario", self.icons['user_adjust'], self.openFormUser),
-            'CONF1003': ('buttonAdjustProfiles', "Ajuste de Perfiles", self.icons['user_profiles'], self.openFormAdjustProfile),
-            'CONF1004': ('buttonModulos', "Ajuste de Modulo", self.icons['module'], self.openFormModules),
-            'CONF1005': ('buttonPermisos', "Permisos", self.icons['permise'], self.openFormPermission)
-        }
+        'CONF1002': ('buttonUsuarios', "Usuarios", self.icons['user_adjust'], lambda: self.openFormUser(permisos)),
+        'CONF1003': ('buttonProfiles', "Perfiles", self.icons['user_profiles'], lambda: self.openFormAdjustProfile(permisos)),
+        'CONF1004': ('buttonModules', "Modulos", self.icons['module'], lambda: self.openFormModules(permisos)),
+        'CONF1005': ('buttonPermiss', "Permisos", self.icons['permise'], lambda: self.openFormPermission(permisos))
+    }
+        submenu_frame = self.submenu_frames.get('CONF1001')
+        if submenu_frame:
+            # Limpieza de submenú Configuración
+            for permiso, (boton_nombre, _, _, _) in botones_submenu.items():
+                if hasattr(self, boton_nombre):
+                    getattr(self, boton_nombre).pack_forget()
+                    delattr(self, boton_nombre)
 
-        # Limpieza de submenús existentes
-        self.limpiar_submenus(botones_submenu, permisos)
+            self.submenu_textos_originales = {}
 
-        # Creación de botones según permisos
-        self.crear_botones_submenu(botones_submenu, permisos)
+            # Inicialización del submenú Configuración basado en permisos
+            for permiso, (boton_nombre, texto, icono, comando) in botones_submenu.items():
+                if permiso in permisos:
+                    if not hasattr(self, boton_nombre):  # Solo crea botones si no existen
+                        boton = tk.Button(submenu_frame, text=texto, font=("Roboto", 12), image=icono, highlightthickness=20,
+                                          width=ANCHO_MENU, bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white",
+                                          anchor="w", compound=tk.LEFT, padx=10, command=comando)
+                        boton.pack()
+                        binding_hover_submenu_event(boton)
+                        setattr(self, boton_nombre, boton)
+                        self.submenu_textos_originales[boton_nombre] = texto
+                    else:
+                        getattr(self, boton_nombre).pack()
+
     def submenuClients(self, permisos):
-        # Configuración de botones para submenú Clientes
+        # Diccionario de configuración de botones para submenú Clientes
         botones_submenu = {
-            'CLIE1002': ('buttonRegClient', "Registro\nde Clientes", self.icons['addclient'], lambda: self.openFormRegClient(permisos))
+            'CLIE1002': ('buttonClientes', "Lista de Clientes", self.icons['addclient'], lambda: self.openFormRegClient(permisos)),
         }
 
-        # Limpieza de submenús existentes
-        self.limpiar_submenus(botones_submenu, permisos)
+        submenu_frame = self.submenu_frames.get('CLIE1001')
+        if submenu_frame:
+            # Limpieza de submenú Clientes
+            for permiso, (boton_nombre, _, _, _) in botones_submenu.items():
+                if hasattr(self, boton_nombre):
+                    getattr(self, boton_nombre).pack_forget()
+                    delattr(self, boton_nombre)
 
-        # Creación de botones según permisos
-        self.crear_botones_submenu(botones_submenu, permisos)
-    def limpiar_submenus(self, botones_submenu, permisos):
-        # Elimina los botones del submenú si ya existen
-        for permiso, (boton_nombre, _, _, _) in botones_submenu.items():
-            if hasattr(self, boton_nombre):
-                getattr(self, boton_nombre).pack_forget()
-                delattr(self, boton_nombre)
+            self.submenu_textos_originales = {}
 
-    def crear_botones_submenu(self, botones_submenu, permisos):
-        # Crea y empaqueta los botones del submenú basados en permisos
-        for permiso, (boton_nombre, texto, icono, comando) in botones_submenu.items():
-            if permiso in permisos:
-                boton = tk.Button(self.menu_lateral, text=texto, font=("Roboto", 12), image=icono, highlightthickness=20,
-                                  width=ANCHO_MENU, bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white",
-                                  anchor="w", compound=tk.LEFT, padx=10, command=comando)
-                boton.pack()
-                binding_hover_submenu_event(boton)
-                setattr(self, boton_nombre, boton)
+            # Inicialización del submenú Clientes basado en permisos
+            for permiso, (boton_nombre, texto, icono, comando) in botones_submenu.items():
+                if permiso in permisos:
+                    if not hasattr(self, boton_nombre):  # Solo crea botones si no existen
+                        boton = tk.Button(submenu_frame, text=texto, font=("Roboto", 12), image=icono, highlightthickness=20,
+                                          width=ANCHO_MENU, bd=0, height=MITAD_MENU, bg=COLOR_SUBMENU_LATERAL, fg="white",
+                                          anchor="w", compound=tk.LEFT, padx=10, command=comando)
+                        boton.pack()
+                        binding_hover_submenu_event(boton)
+                        setattr(self, boton_nombre, boton)
+                        self.submenu_textos_originales[boton_nombre] = texto
+                    else:
+                        getattr(self, boton_nombre).pack()
+                
     def loginSection(self):
         self.w, self.h = 800, 600
         centerWindow(self)
