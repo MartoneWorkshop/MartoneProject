@@ -41,6 +41,7 @@ class FormDepot():
         else: 
             self.buttonEditDepot = customtkinter.CTkButton(self.frame_depot,  text="Editar\nDepósito", width=90, height=60, state='disabled', font=("Roboto", 17),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.FormEditDepot(permisos, self.depotsTable.item(self.depotsTable.selection())['values']))
             self.buttonEditDepot.place(x=290, y=60)
+            
         if 'ALMA1008' in permisos:
            self.buttonDisableDepot = customtkinter.CTkButton(self.frame_depot,  text="Desactivar\nDepósito", width=90, height=60, state='normal', font=("Roboto", 17),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.inactivateDepot(permisos))
            self.buttonDisableDepot.place(x=400, y=60)
@@ -139,69 +140,96 @@ class FormDepot():
         frame_createDepot = customtkinter.CTkFrame(self.topNewDepot, width=350,height=200, bg_color="white", fg_color="white")
         frame_createDepot.place(relx=0.5, rely=0.5, anchor="center")
         
-        set_opacity(frame_createDepot, 0.8)
-
-        self.lblinfo = customtkinter.CTkLabel(frame_createDepot, text="Nuevo Deposito", font=("Roboto",13))
-        self.lblinfo.place(x=133, rely=0.1)
-
-        self.lblnombre_deposito = customtkinter.CTkLabel(frame_createDepot, text='Nombre del Deposito', font=("Roboto", 13))
-        self.lblnombre_deposito.place(x=120, y=60)
-
+        set_opacity(frame_createDepot, 0.8)      
+        self.lblnombre_deposito = customtkinter.CTkLabel(frame_createDepot, text='Nombre del Deposito', font=("Roboto", 15))        
+        self.lblnombre_deposito.place(x=110, y=25)        
+        # Actualización del Entry
+        style = ttk.Style()
+        style.configure(
+            'Modern.TEntry',
+            background="#2C3E50",  # Fondo oscuro similar al botón
+            #foreground="black",     # Texto en blanco
+            fieldbackground="#34495E",  # Color de fondo cuando el entry es editable
+            bordercolor="#34495E",
+            padding=[5, 8]
+        )
         self.svnombre_deposito = customtkinter.StringVar()
-        self.entrynombre_deposito = ttk.Entry(frame_createDepot, style='Modern.TEntry', textvariable=self.svnombre_deposito)
-        self.entrynombre_deposito.place(x=120, y=90)
-        self.entrynombre_deposito.configure(style='Entry.TEntry')
+        self.entrynombre_deposito = ttk.Entry(frame_createDepot, 
+                                            style='Modern.TEntry', 
+                                            textvariable=self.svnombre_deposito, 
+                                            font=("Roboto", 13),
+                                            justify='center')
+        self.entrynombre_deposito.place(x=70, y=70)
         
-        self.buttonCrearDeposito = customtkinter.CTkButton(self.frame_depot, text="Nuevo\nDepósito", width=90, height=60, font=("Roboto", 17), fg_color="#2C3E50", hover_color="#34495E", text_color="white", corner_radius=7, command=lambda: self.SaveDepot)
-        self.buttonCrearDeposito.place(x=118, y=140)
+        self.buttonCrearDeposito = customtkinter.CTkButton(frame_createDepot, text="Nuevo\nDepósito", width=70, height=50, font=("Roboto", 15), fg_color="#2C3E50", hover_color="#34495E", text_color="white", corner_radius=7, command=lambda: self.SaveDepot)
+        self.buttonCrearDeposito.place(x=135, y=135)
         
-
     def FormEditDepot(self, permisos, values):
         if values:
-    # Creación del top level
+            # Obtener el id y nombre del depósito seleccionado
             self.id = self.depotsTable.item(self.depotsTable.selection())['text']
             self.nombre_deposito = self.depotsTable.item(self.depotsTable.selection())['values'][1]
-            #Creacion del top level
-            self.topEditDepot = customtkinter.CTkToplevel()
-            self.topEditDepot.title("Crear Modulo")
+
+            # Creación del top level
+            self.topEditDepot = tk.Toplevel()
+            self.topEditDepot.title("Editar Deposito")
             self.topEditDepot.w = 400
             self.topEditDepot.h = 250
             self.topEditDepot.geometry(f"{self.topEditDepot.w}x{self.topEditDepot.h}")
             self.topEditDepot.resizable(False, False)
-            self.topEditDepot.configure(bg_color='#6a717e')
-            self.topEditDepot.configure(fg_color='#6a717e')
-
-            #Centrar la ventana en la pantalla
-            screen_width = self.topEditDepot.winfo_screenwidth()
-            screen_height = self.topEditDepot.winfo_screenheight()
-            x = (screen_width - self.topEditDepot.w) // 2
-            y = (screen_height - self.topEditDepot.h) // 2
-            self.topEditDepot.geometry(f"+{x}+{y}")
-
+            self.topEditDepot.configure(bg='#6a717e')
+            set_window_icon(self.topEditDepot)
+            centerWindow(self.topEditDepot)
             self.topEditDepot.lift()
             self.topEditDepot.grab_set()
             self.topEditDepot.transient()
 
-            frame_editDepot = customtkinter.CTkFrame(self.topEditDepot, width=350,height=200, bg_color="white", fg_color="white")
+            # Frame para editar el depósito
+            frame_editDepot = customtkinter.CTkFrame(self.topEditDepot, width=350, height=200, bg_color="white", fg_color="white")
             frame_editDepot.place(relx=0.5, rely=0.5, anchor="center")
 
             set_opacity(frame_editDepot, 0.8)
 
-            self.lblinfo = customtkinter.CTkLabel(frame_editDepot, text="Editar Deposito", font=("Roboto",13))
-            self.lblinfo.place(x=133, rely=0.1)
+            # Etiqueta y entry para el nombre del depósito
+            self.lblnombre_deposito = customtkinter.CTkLabel(frame_editDepot, text='Nombre del Deposito', font=("Roboto", 15))
+            self.lblnombre_deposito.place(x=110, y=25)
 
-            self.lblnombre_deposito = customtkinter.CTkLabel(frame_editDepot, text='Nombre del Deposito', font=("Roboto", 13))
-            self.lblnombre_deposito.place(x=120, y=60)
+            # Actualización del estilo del Entry
+            style = ttk.Style()
+            style.configure(
+                'Modern.TEntry',
+                background="#2C3E50",  # Fondo oscuro similar al botón
+                fieldbackground="#34495E",  # Color de fondo cuando el entry es editable
+                bordercolor="#34495E",
+                padding=[5, 8]
+            )
 
+            # Entry para editar el nombre del depósito
             self.svnombre_deposito = customtkinter.StringVar(value=self.nombre_deposito)
-            self.entrynombre_deposito = ttk.Entry(frame_editDepot, style='Modern.TEntry', textvariable=self.svnombre_deposito)
-            self.entrynombre_deposito.place(x=120, y=90)
-            self.entrynombre_deposito.configure(style='Entry.TEntry')
+            self.entrynombre_deposito = ttk.Entry(
+                frame_editDepot, 
+                style='Modern.TEntry', 
+                textvariable=self.svnombre_deposito, 
+                font=("Roboto", 13),
+                justify='center')
+            self.entrynombre_deposito.place(x=70, y=70)
 
-            self.buttonEditarDeposito = tk.Button(frame_editDepot, text="Editar Deposito", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, command=self.SaveDepot)
-            self.buttonEditarDeposito.place(x=118, y=140)
+            # Botón para editar el depósito
+            self.buttonEditarDeposito = customtkinter.CTkButton(
+                frame_editDepot, 
+                text="Editar\nDepósito", 
+                width=70, 
+                height=50, 
+                font=("Roboto", 15), 
+                fg_color="#2C3E50", 
+                hover_color="#34495E", 
+                text_color="white", 
+                corner_radius=7, 
+                command=lambda: self.SaveDepot()
+            )
+            self.buttonEditarDeposito.place(x=135, y=135)
         else:
-            messagebox.showerror("Error", "Debe seleccionar un ")
+            messagebox.showerror("Error", "Debe seleccionar un depósito")
 
     def inactivateDepot(self, permisos):
         try:

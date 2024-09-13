@@ -1,7 +1,7 @@
 from .conexion import ConexionDB
 from tkinter import messagebox
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
-
+import datetime
 
 def save_depot(deposit):
     conexion = ConexionDB()
@@ -54,7 +54,9 @@ def searchDepots(where):
 
 def depotDisable(id):
     conexion = ConexionDB()
-    sql = f'UPDATE deposit SET activo = 0 WHERE id = {id}'
+    fecha_actual = datetime.datetime.now()
+    deleted_at = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
+    sql = f"UPDATE deposit SET activo = 0, deleted_at = '{deleted_at}' WHERE id = {id}"
     try:
         conexion.cursor.execute(sql)
         conexion.closeConexion()
