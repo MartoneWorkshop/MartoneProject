@@ -5,6 +5,7 @@ import sqlite3
 import customtkinter
 from PIL import Image, ImageTk
 from tkinter import ttk
+from util.util_ventana import loadBackgroundImage, set_opacity, set_window_icon, centerWindow
 from util.util_alerts import set_opacity, save_advice, error_advice, edit_advice, delete_advice
 from util.util_functions import buscarCorrelativo, actualizarCorrelativo
 from functions.ProductDao import product, searchProducts, listProduct, getDepots, getSupplier, getCategory, save_product, edit_product, product_inactive, productDisable
@@ -16,65 +17,79 @@ from tkinter import messagebox
 class FormProducts():
 
     def __init__(self, cuerpo_principal, permisos):
-
         # Crear paneles: barra superior
         self.barra_superior = tk.Frame(cuerpo_principal)
         self.barra_superior.pack(side=tk.TOP, fill=tk.X, expand=False) 
 
         # Crear paneles: barra inferior
-        self.barra_inferior = tk.Frame(cuerpo_principal)
-        self.barra_inferior.pack(side=tk.BOTTOM, fill='both', expand=True)  
+        self.cuerpo_principal = tk.Frame(cuerpo_principal)
+        self.cuerpo_principal.pack(side=tk.BOTTOM, fill='both', expand=True)  
 
-        ruta_imagen = "imagenes/bg1.jpeg"
-        # Cargar la imagen
-        imagen = Image.open(ruta_imagen)
-        imagen_tk = ImageTk.PhotoImage(imagen)
-        self.imagen_tk = imagen_tk
-        # Crear el Label con la imagen de fondo
-        label_fondo = tk.Label(cuerpo_principal, image=imagen_tk)
-        label_fondo.place(x=0, y=0, relwidth=1, relheight=1)
-        self.label_fondo = label_fondo
-        # Configurar el Label para que se ajuste automáticamente al tamaño del frame
-        def adjustImage(event):
-            # Cambiar el tamaño de la imagen para que coincida con el tamaño del frame
-            nueva_imagen = imagen.resize((event.width, event.height))
-            nueva_imagen_tk = ImageTk.PhotoImage(nueva_imagen)
-            self.imagen_tk = nueva_imagen_tk
-            # Actualizar la imagen en el Label de fondo
-            label_fondo.config(image=nueva_imagen_tk)
-        
-        self.barra_inferior.bind("<Configure>", adjustImage)
-
-        # Segundo Label con la imagen
-        self.label_imagen = tk.Label(self.barra_inferior, image=imagen_tk)
-        self.label_imagen.place(x=0, y=0, relwidth=1, relheight=1)
-        self.label_imagen.config(fg="#fff", font=("Roboto", 10), bg=COLOR_FONDO)
-
+        loadBackgroundImage(self)
         self.frame_products = customtkinter.CTkFrame(cuerpo_principal, width=1120, height=800, bg_color="white", fg_color="white")
         self.frame_products.place(relx=0.5, rely=0.5, anchor="center")
 
         set_opacity(self.frame_products, 0.8)
-        ##################################################### BOTONES DE LA TABLA ##################################################
-        self.buttonCreateArt = tk.Button(self.frame_products, text="Crear\n Producto", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                        command=lambda: self.FormCreateProduct(permisos))
-        self.buttonCreateArt.place(x=140, y=50)
+        ##################################################### BOTONES DE LA TABLA ##################################################        ### Nuevo modelo para botones:
+        self.buttonNewProduct = customtkinter.CTkButton(self.frame_products, 
+                                                        text="Nuevo\nProducto",
+                                                        width=80, height=60, 
+                                                        font=("Roboto", 15), 
+                                                        fg_color="#2C3E50", 
+                                                        hover_color="#34495E",
+                                                        text_color="white", 
+                                                        corner_radius=7, 
+                                                        command=lambda: self.FormCreateProduct(permisos))
+        self.buttonNewProduct.place(x=140, y=50)
         if 'ALMA1005' in permisos:
-            self.buttonEditArt = tk.Button(self.frame_products, text="Editar\n Producto", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                            command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']))
-            self.buttonEditArt.place(x=265, y=50)
+            self.buttonEditProduct = customtkinter.CTkButton(self.frame_products, 
+                                                        text="Editar\nProducto",
+                                                        width=80, height=60, 
+                                                        font=("Roboto", 15), 
+                                                        fg_color="#2C3E50", 
+                                                        hover_color="#34495E",
+                                                        text_color="white", 
+                                                        corner_radius=7,
+                                                        state='normal', 
+                                                        command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']))
+            self.buttonEditProduct.place(x=265, y=50)
         else:
-            self.buttonEditArt = tk.Button(self.frame_products, text="Editar\n Producto", font=("Roboto", 12), state='disabled', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                            command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']))
-            self.buttonEditArt.place(x=265, y=50)
+            self.buttonEditProduct = customtkinter.CTkButton(self.frame_products, 
+                                                        text="Editar\nProducto",
+                                                        width=80, height=60, 
+                                                        font=("Roboto", 15), 
+                                                        fg_color="#2C3E50", 
+                                                        hover_color="#34495E",
+                                                        text_color="white", 
+                                                        corner_radius=7,
+                                                        state='disabled', 
+                                                        command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']))
+            self.buttonEditProduct.place(x=265, y=50)
             
         if 'ALMA1006' in permisos:
-            self.buttonDeleteArt = tk.Button(self.frame_products, text="Desactivar\n Producto", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                                command=lambda: self.inactivateProduct(permisos))
-            self.buttonDeleteArt.place(x=390, y=50)
+            self.buttonDeleteProduct = customtkinter.CTkButton(self.frame_products, 
+                                                        text="Editar\nProducto",
+                                                        width=80, height=60, 
+                                                        font=("Roboto", 15), 
+                                                        fg_color="#2C3E50", 
+                                                        hover_color="#34495E",
+                                                        text_color="white", 
+                                                        corner_radius=7,
+                                                        state='normal', 
+                                                        command=lambda: self.inactivateProduct(permisos))
+            self.buttonDeleteProduct.place(x=390, y=50)
         else:
-            self.buttonDeleteArt = tk.Button(self.frame_products, text="Desactivar\n Producto", font=("Roboto", 12), state='disabled', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                            command=lambda: self.inactivateProduct(permisos))
-            self.buttonDeleteArt.place(x=390, y=50)
+            self.buttonDeleteProduct = customtkinter.CTkButton(self.frame_products, 
+                                                        text="Editar\nProducto",
+                                                        width=80, height=60, 
+                                                        font=("Roboto", 15), 
+                                                        fg_color="#2C3E50", 
+                                                        hover_color="#34495E",
+                                                        text_color="white", 
+                                                        corner_radius=7,
+                                                        state='disabled', 
+                                                        command=lambda: self.inactivateProduct(permisos))
+            self.buttonDeleteProduct.place(x=390, y=50)
         
         if 'ALMA1007' in permisos:
             self.switchStatus = tk.BooleanVar(value=True)
@@ -315,7 +330,7 @@ class FormProducts():
         
         categoria = getCategory() 
         self.svcategoria_var = customtkinter.StringVar(value="Categoria")
-        self.multioptioncat = customtkinter.CTkOptionMenu(frame_createProduct, values=[categoria[2] for categoria in categoria], variable=self.svcategoria_var)
+        self.multioptioncat = customtkinter.CTkOptionMenu(frame_createProduct, values=[categoria[1] for categoria in categoria], variable=self.svcategoria_var)
         self.multioptioncat.place(x=200, y=230)
 
         ##Seleccion de Deposito 3.3

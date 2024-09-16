@@ -7,7 +7,7 @@ from tkinter import ttk
 from util.util_alerts import set_opacity, save_advice, error_advice, edit_advice, delete_advice
 from util.util_functions import buscarCorrelativo, actualizarCorrelativo
 from util.util_ventana import loadBackgroundImage, centerWindow, set_window_icon
-from functions.DepotsDao import deposit, searchDepots, listDepot, getDepots,  save_depot, edit_depot, depotDisable
+from functions.DepotsDao import deposit, searchDepots, listDepot, getDepots,  save_depot, edit_depot, depotDisable, listInactiveDepot, recoverDepot
 from config import COLOR_MENU_LATERAL
 import datetime
 from tkinter import messagebox
@@ -29,26 +29,36 @@ class FormDepot():
         self.frame_depot = customtkinter.CTkFrame(cuerpo_principal, width=1120, height=800, bg_color="white", fg_color="white")
         self.frame_depot.place(relx=0.5, rely=0.5, anchor="center")
 
-        set_opacity(self.frame_depot, 0.9)
+        set_opacity(self.frame_depot, 0.94)
         
         ### Nuevo modelo para botones:
-        self.buttonNewDepot = customtkinter.CTkButton(self.frame_depot, text="Nuevo\nDepósito", width=90, height=60, font=("Roboto", 17), fg_color="#2C3E50", hover_color="#34495E", text_color="white", corner_radius=7, command=lambda: self.FormNewDepot(permisos))
+        self.buttonNewDepot = customtkinter.CTkButton(self.frame_depot, text="Nuevo\nDepósito", width=80, height=60, font=("Roboto", 15), fg_color="#2C3E50", hover_color="#34495E", text_color="white", corner_radius=7, command=lambda: self.FormNewDepot(permisos))
         self.buttonNewDepot.place(x=180, y=60)
 
         if 'ALMA1008' in permisos:
-            self.buttonEditDepot = customtkinter.CTkButton(self.frame_depot,  text="Editar\nDepósito", width=90, height=60, state='normal', font=("Roboto", 17),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.FormEditDepot(permisos, self.depotsTable.item(self.depotsTable.selection())['values']))
+            self.buttonEditDepot = customtkinter.CTkButton(self.frame_depot,  text="Editar\nDepósito", width=80, height=60, state='normal', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.FormEditDepot(permisos, self.depotsTable.item(self.depotsTable.selection())['values']))
             self.buttonEditDepot.place(x=290, y=60)
         else: 
-            self.buttonEditDepot = customtkinter.CTkButton(self.frame_depot,  text="Editar\nDepósito", width=90, height=60, state='disabled', font=("Roboto", 17),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.FormEditDepot(permisos, self.depotsTable.item(self.depotsTable.selection())['values']))
+            self.buttonEditDepot = customtkinter.CTkButton(self.frame_depot,  text="Editar\nDepósito", width=80, height=60, state='disabled', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.FormEditDepot(permisos, self.depotsTable.item(self.depotsTable.selection())['values']))
             self.buttonEditDepot.place(x=290, y=60)
             
         if 'ALMA1008' in permisos:
-           self.buttonDisableDepot = customtkinter.CTkButton(self.frame_depot,  text="Desactivar\nDepósito", width=90, height=60, state='normal', font=("Roboto", 17),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.inactivateDepot(permisos))
+           self.buttonDisableDepot = customtkinter.CTkButton(self.frame_depot,  text="Desactivar\nDepósito", width=80, height=60, state='normal', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.inactivateDepot(permisos))
            self.buttonDisableDepot.place(x=400, y=60)
         else:
-            self.buttonDisableDepot = customtkinter.CTkButton(self.frame_depot,  text="Desactivar\nDepósito", width=90, height=60, state='disabled', font=("Roboto", 17),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.inactivateDepot(permisos))
+            self.buttonDisableDepot = customtkinter.CTkButton(self.frame_depot,  text="Desactivar\nDepósito", width=80, height=60, state='disabled', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.inactivateDepot(permisos))
             self.buttonDisableDepot.place(x=400, y=60)
 
+        #Switch de activos/inactivos
+        if 'ALMA1010' in permisos:
+            self.switchStatus = tk.BooleanVar(value=True)
+            self.switchStatus = customtkinter.CTkSwitch(self.frame_depot, variable=self.switchStatus, state='normal', text="Activos", font=("Roboto", 12), command=lambda: self.showStatus(permisos))
+            self.switchStatus.place(x=800, y=130)
+        else:
+            self.switchStatus = tk.BooleanVar(value=True)
+            self.switchStatus = customtkinter.CTkSwitch(self.frame_depot, variable=self.switchStatus, state='disabled', text="Activos", font=("Roboto", 12), command=lambda: self.showStatus(permisos))
+            self.switchStatus.place(x=800, y=130)
+        
         where = ""
         if len(where) > 0:
             self.depositList = searchDepots(where)
@@ -57,7 +67,7 @@ class FormDepot():
             self.depositList.reverse()
 
         self.depotsTable = ttk.Treeview(self.frame_depot, column=('codDep','name_dep','date_create','updated_at'), height=18)
-        self.depotsTable.place(x=180, y=140)
+        self.depotsTable.place(x=180, y=165)
 
         self.depotsTable.heading('#0',text="ID")
         self.depotsTable.heading('#1',text="CodDeposito")
@@ -73,11 +83,11 @@ class FormDepot():
 
         # Crear el estilo personalizado
         style = ttk.Style()
-
         # Cambiar el fondo y el color de texto de las filas
         style.configure("Treeview", 
                         background="white",
                         foreground="black",
+                        relief="flat",
                         rowheight=32,   # Altura de cada fila
                         fieldbackground="white")
 
@@ -117,6 +127,66 @@ class FormDepot():
             self.depotsTable.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4]), tags=(tag,))
         
         self.depotsTable.bind('<Double-1>', lambda event: self.FormEditDepot(event, self.depotsTable.item(self.depotsTable.selection())['values']))
+
+    def showStatus(self, permisos):
+        if self.switchStatus.get() == True:
+            self.switchStatus.configure(text="Activos")
+            self.showActive(permisos)
+        else:
+            self.switchStatus.configure(text="Inactivos")
+            self.showInactive(permisos)
+     
+    def showActive(self, permisos):
+        self.buttonNewDepot = customtkinter.CTkButton(self.frame_depot, text="Nuevo\nDepósito", width=80, height=60, font=("Roboto", 15), fg_color="#2C3E50", hover_color="#34495E", text_color="white", corner_radius=7, command=lambda: self.FormNewDepot(permisos))
+        self.buttonNewDepot.place(x=180, y=60)
+        if 'ALMA1008' in permisos:
+            self.buttonEditDepot = customtkinter.CTkButton(self.frame_depot,  text="Editar\nDepósito", width=80, height=60, state='normal', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.FormEditDepot(permisos, self.depotsTable.item(self.depotsTable.selection())['values']))
+            self.buttonEditDepot.place(x=290, y=60)
+        else: 
+            self.buttonEditDepot = customtkinter.CTkButton(self.frame_depot,  text="Editar\nDepósito", width=80, height=60, state='disabled', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.FormEditDepot(permisos, self.depotsTable.item(self.depotsTable.selection())['values']))
+            self.buttonEditDepot.place(x=290, y=60)
+        if 'ALMA1010' in permisos:
+            self.buttonDisableDepot = customtkinter.CTkButton(self.frame_depot,  text="Desactivar\nDepósito", width=80, height=60, state='enabled', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.inactivateDepot(permisos))
+            self.buttonDisableDepot.place(x=400, y=60)
+        else:
+            self.buttonDisableDepot = customtkinter.CTkButton(self.frame_depot,  text="Desactivar\nDepósito", width=80, height=60, state='disabled', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.inactivateDepot(permisos))
+            self.buttonDisableDepot.place(x=400, y=60)
+        # Borrar los elementos existentes en la tabla de permisos
+        self.depotsTable.delete(*self.depotsTable.get_children())
+        self.depotsTable.heading('#4', text='Updated_at')
+        # Obtener la lista de permisos activos
+        active_depots = listDepot()
+        # Insertar los permisos activos en la tabla
+        for i, p in enumerate(active_depots):
+                tag = 'even' if i % 2 == 0 else 'odd'
+                self.depotsTable.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4]), tags=(tag,))
+
+    def showInactive(self, permisos):
+        if 'ALMA1011' in permisos:
+            self.buttonNewDepot = customtkinter.CTkButton(self.frame_depot, text="Restaurar\nDepósito", width=80, height=60, state='normal',font=("Roboto", 15), fg_color="#2C3E50", hover_color="#34495E", text_color="white", corner_radius=7, command=lambda: self.restoreDepot(permisos))
+            self.buttonNewDepot.place(x=180, y=60)
+        else:
+            self.buttonNewDepot = customtkinter.CTkButton(self.frame_depot, text="Restaurar\nDepósito", width=80, height=60, state='disabled', font=("Roboto", 15), fg_color="#2C3E50", hover_color="#34495E", text_color="white", corner_radius=7, command=lambda: self.restoreDepot(permisos))
+            self.buttonNewDepot.place(x=180, y=60)
+        if 'ALMA1008' in permisos:
+            self.buttonEditDepot = customtkinter.CTkButton(self.frame_depot,  text="Editar\nDepósito", width=80, height=60, state='disabled', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.FormEditDepot(permisos, self.depotsTable.item(self.depotsTable.selection())['values']))
+            self.buttonEditDepot.place(x=290, y=60)
+        else: 
+            self.buttonEditDepot = customtkinter.CTkButton(self.frame_depot,  text="Editar\nDepósito", width=80, height=60, state='disabled', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.FormEditDepot(permisos, self.depotsTable.item(self.depotsTable.selection())['values']))
+            self.buttonEditDepot.place(x=290, y=60)
+        if 'ALMA1010' in permisos:
+            self.buttonDisableDepot = customtkinter.CTkButton(self.frame_depot,  text="Desactivar\nDepósito", width=80, height=60, state='disabled', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.inactivateDepot(permisos))
+            self.buttonDisableDepot.place(x=400, y=60)
+        else:
+            self.buttonDisableDepot = customtkinter.CTkButton(self.frame_depot,  text="Desactivar\nDepósito", width=80, height=60, state='disabled', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.inactivateDepot(permisos))
+            self.buttonDisableDepot.place(x=400, y=60)
+            
+        self.depotsTable.delete(*self.depotsTable.get_children())
+        self.depotsTable.heading('#4', text='Deleted_at')
+        inactive_depots = listInactiveDepot()
+        for i, p in enumerate(inactive_depots):
+                tag = 'even' if i % 2 == 0 else 'odd'
+                self.depotsTable.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[5]), tags=(tag,))
 
 
     def FormNewDepot(self, permisos):
@@ -238,6 +308,24 @@ class FormDepot():
 
             if confirmar:
                 depotDisable(self.id)
+
+            self.updateTable()
+
+        except Exception as e:
+            error_advice()
+            mensaje = f'Error en inactivateDepot, form_adjustdepot: {str(e)}'
+            with open('error_log.txt', 'a') as file:
+                file.write(mensaje + '\n')
+                
+    def restoreDepot(self, permisos):
+        try:
+            self.id = self.depotsTable.item(self.depotsTable.selection())['text']
+            confirmar = messagebox.askyesno("Confirmar", "¿Estas seguro de que deseas restaurar este deposito?")
+
+            if confirmar:
+                recoverDepot(self.id)
+                self.switchStatus.select(True)
+                self.showStatus(permisos)
                 self.updateTable()
 
         except Exception as e:
@@ -252,10 +340,9 @@ class FormDepot():
         codDep = codDep + 1
 
         fecha_actual = datetime.datetime.now()
-        created_at = fecha_actual.strftime("%Y-%M-%d")
-        updated_at = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
+        created_at = fecha_actual.strftime("%Y-%m-%d")
+        updated_at = fecha_actual.strftime("%Y-%m-%d %H:%M:%S")
         deleted_at = 'NULL'
-        
         
         deposito = deposit(
             codDep,
@@ -264,6 +351,7 @@ class FormDepot():
             updated_at,
             deleted_at
         )
+        
         if self.id is None:
             save_depot(deposito)
             actualizarCorrelativo('deposito')
@@ -279,10 +367,10 @@ class FormDepot():
             self.depotsTable.delete(*self.depotsTable.get_children())
 
             if where is not None and len(where) > 0:
-                self.depotList = searchDepots(where)
+                self.depositList = searchDepots(where)
             else:
-                self.depotList = listDepot()
-                self.depotList.reverse()
+                self.depositList = listDepot()
+                self.depositList.reverse()
             for i, p in enumerate(self.depositList):
                 tag = 'even' if i % 2 == 0 else 'odd'
                 self.depotsTable.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4]), tags=(tag,))

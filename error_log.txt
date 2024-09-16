@@ -22,3 +22,5 @@ Error en GuardarProveedor, form_suppliers: suppliers.__init__() missing 1 requir
 Error en GuardarProveedor, form_suppliers: suppliers.__init__() missing 1 required positional argument: 'deleted_at'
 Error en SaveUser, form_users: user.__init__() missing 1 required positional argument: 'deleted_at'
 Error en DepotDisable, en DepotsDao: no such function: NOW
+Error en inactivateDepot, form_adjustdepot: FormDepot.showStatus() missing 1 required positional argument: 'permisos'
+Error en inactivateDepot, form_adjustdepot: 'CTkSwitch' object has no attribute 'set'

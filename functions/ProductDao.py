@@ -20,7 +20,7 @@ def getSupplier():
 def getCategory():
     try:
         conexion = ConexionDB()
-        sql = f"""SELECT id, id_cat, name_category FROM category WHERE activo = 1"""
+        sql = f"""SELECT id, name_category FROM category WHERE activo = 1"""
         conexion.execute_consult(sql)
         resultados = conexion.get_results()
         

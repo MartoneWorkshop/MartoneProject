@@ -36,6 +36,25 @@ def listDepot():
             file.write(mensaje + '\n')
     return listDepot
 
+def listInactiveDepot():
+    conexion = ConexionDB()
+    listDepot = []
+    sql = 'SELECT * FROM deposit WHERE activo = 0'
+
+    try:
+        conexion.cursor.execute(sql)
+        listDepot = conexion.cursor.fetchall()
+        conexion.closeConexion()
+    except Exception as e:
+        conexion.closeConexion()
+        error_advice()
+        mensaje = f'Error en listInactiveDepot, DepotsDao: {str(e)}'
+        with open('error_log.txt', 'a') as file:
+            file.write(mensaje + '\n')
+    return listDepot
+
+
+
 def searchDepots(where):
     conexion = ConexionDB()
     listardeposit = []
@@ -55,7 +74,7 @@ def searchDepots(where):
 def depotDisable(id):
     conexion = ConexionDB()
     fecha_actual = datetime.datetime.now()
-    deleted_at = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
+    deleted_at = fecha_actual.strftime("%Y-%m-%d %H:%M:%S")
     sql = f"UPDATE deposit SET activo = 0, deleted_at = '{deleted_at}' WHERE id = {id}"
     try:
         conexion.cursor.execute(sql)
@@ -66,6 +85,23 @@ def depotDisable(id):
         error_advice()
         conexion.closeConexion()
         mensaje = f'Error en DepotDisable, en DepotsDao: {str(e)}'
+        with open('error_log.txt', 'a') as file:
+            file.write(mensaje + '\n')
+            
+def recoverDepot(id):
+    conexion = ConexionDB()
+    fecha_actual = datetime.datetime.now()
+    updated_at = fecha_actual.strftime("%Y-%m-%d %H:%M:%S")
+    sql = f"UPDATE deposit SET activo = 1, updated_at = '{updated_at}' WHERE id = {id}"
+    try:
+        conexion.cursor.execute(sql)
+        conexion.closeConexion()
+        save_advice()
+
+    except Exception as e:
+        error_advice()
+        conexion.closeConexion()
+        mensaje = f'Error en recoverDepot, en DepotsDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
 
