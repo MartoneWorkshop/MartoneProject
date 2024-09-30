@@ -233,20 +233,17 @@ class FormProducts():
     def FormCreateProduct(self, permisos):
         self.id = None
         #Creacion del top level
-        self.topCreateProduct = customtkinter.CTkToplevel()
+        self.topCreateProduct = tk.Toplevel()
         self.topCreateProduct.title("Nuevo Producto")
         self.topCreateProduct.w = 600
         self.topCreateProduct.h = 600
         self.topCreateProduct.geometry(f"{self.topCreateProduct.w}x{self.topCreateProduct.h}")
         self.topCreateProduct.resizable(False, False)
-        self.topCreateProduct.configure(bg_color='#6a717e')
-        self.topCreateProduct.configure(fg_color='#6a717e')
+        self.topCreateProduct.configure(background='#6a717e')
+        #self.topCreateProduct.configure(fg_color='#6a717e')
         #Centrar la ventana en la pantalla
-        screen_width = self.topCreateProduct.winfo_screenwidth()
-        screen_height = self.topCreateProduct.winfo_screenheight()
-        x = (screen_width - self.topCreateProduct.w) // 2
-        y = (screen_height - self.topCreateProduct.h) // 2
-        self.topCreateProduct.geometry(f"+{x}+{y}")
+        centerWindow(self.topCreateProduct)
+        set_window_icon(self.topCreateProduct)
         self.topCreateProduct.lift()
         self.topCreateProduct.grab_set()
         self.topCreateProduct.transient()
@@ -380,9 +377,20 @@ class FormProducts():
 
         self.descripcionProd.bind("<KeyRelease>", on_text_change)
         
-        self.buttonGuardarArt = tk.Button(frame_createProduct, text="Guardar Producto", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                            command=lambda: self.GuardarProducto())
-        self.buttonGuardarArt.place(x=200, y=450)
+        #self.buttonGuardarArt = tk.Button(frame_createProduct, text="Guardar Producto", font=("Roboto", 12), state='normal', bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
+        #                                    command=lambda: self.GuardarProducto())
+        #self.buttonGuardarArt.place(x=200, y=450)
+
+        self.buttonSaveProduct = customtkinter.CTkButton(frame_createProduct, 
+                                                        text="Guardar\nProducto",
+                                                        width=80, height=60, 
+                                                        font=("Roboto", 15), 
+                                                        fg_color="#2C3E50", 
+                                                        hover_color="#34495E",
+                                                        text_color="white", 
+                                                        corner_radius=7, 
+                                                        command=lambda: self.GuardarProducto())
+        self.buttonSaveProduct.place(x=250, y=450)
 
     def GuardarProducto(self):
         try:
@@ -390,8 +398,8 @@ class FormProducts():
             codpdt = buscarCorrelativo('producto')
             codpdt = codpdt + 1
             fecha_actual = datetime.datetime.now()
-            created_at = fecha_actual.strftime("%Y-%M-%d")
-            updated_at = fecha_actual.strftime("%Y-%M-%d %H:%M:%S")
+            created_at = fecha_actual.strftime("%Y-%m-%d")
+            updated_at = fecha_actual.strftime("%Y-%m-%d %H:%M:%S")
 
             producto = product(
                 self.svcodProducto.get(),
@@ -459,20 +467,16 @@ class FormProducts():
             self.editardescripcionProd = self.productTable.item(self.productTable.selection())['values'][9]
             
             
-            self.topEditProduct = customtkinter.CTkToplevel()
+            self.topEditProduct = tk.Toplevel()
             self.topEditProduct.title("Editar Producto")
             self.topEditProduct.w = 600
             self.topEditProduct.h = 600
             self.topEditProduct.geometry(f"{self.topEditProduct.w}x{self.topEditProduct.h}")
             self.topEditProduct.resizable(False, False)
-            self.topEditProduct.configure(bg_color='#6a717e')
-            self.topEditProduct.configure(fg_color='#6a717e')
+            self.topEditProduct.configure(background='#6a717e')
             #Centrar la ventana en la pantalla
-            screen_width = self.topEditProduct.winfo_screenwidth()
-            screen_height = self.topEditProduct.winfo_screenheight()
-            x = (screen_width - self.topEditProduct.w) // 2
-            y = (screen_height - self.topEditProduct.h) // 2
-            self.topEditProduct.geometry(f"+{x}+{y}")
+            centerWindow(self.topEditProduct)
+            set_window_icon(self.topEditProduct)
             self.topEditProduct.lift()
             self.topEditProduct.grab_set()
             self.topEditProduct.transient()
@@ -543,7 +547,7 @@ class FormProducts():
             ##Costo del producto 3.1
             self.lblcostoProducto = customtkinter.CTkLabel(frame_editProducts, text='Costo Producto', font=("Roboto", 13))
             self.lblcostoProducto.place(x=50, y=200)
-#   
+#   a
             self.svcostoProducto = customtkinter.StringVar(value=self.editarcostoProducto)
             self.entrycostoProducto = ttk.Entry(frame_editProducts, style='Modern.TEntry', textvariable=self.svcostoProducto)
             self.entrycostoProducto.place(x=45, y=230)
@@ -555,7 +559,7 @@ class FormProducts():
 
             categoria = getCategory() 
             self.svcategoria_var = customtkinter.StringVar(value=self.editarcategoria_var)
-            self.multioption = customtkinter.CTkOptionMenu(frame_editProducts, values=[categoria[2] for categoria in categoria], variable=self.svcategoria_var)
+            self.multioption = customtkinter.CTkOptionMenu(frame_editProducts, values=[categoria[1] for categoria in categoria], variable=self.svcategoria_var)
             self.multioption.place(x=200, y=230)
 
             ##Seleccion de Deposito 3.3
@@ -625,4 +629,5 @@ class FormProducts():
             mensaje = f'Error en inactivateProduct, form_products: {str(e)}'
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')
+
 
