@@ -58,7 +58,7 @@ class FormDepot():
             self.switchStatus = tk.BooleanVar(value=True)
             self.switchStatus = customtkinter.CTkSwitch(self.frame_depot, variable=self.switchStatus, state='disabled', text="Activos", font=("Roboto", 12), command=lambda: self.showStatus(permisos))
             self.switchStatus.place(x=800, y=130)
-        
+        ################## Informacion de la tabla #############
         where = ""
         if len(where) > 0:
             self.depositList = searchDepots(where)
@@ -153,7 +153,7 @@ class FormDepot():
             self.buttonDisableDepot.place(x=400, y=60)
         # Borrar los elementos existentes en la tabla de permisos
         self.depotsTable.delete(*self.depotsTable.get_children())
-        self.depotsTable.heading('#4', text='Updated_at')
+        
         # Obtener la lista de permisos activos
         active_depots = listDepot()
         # Insertar los permisos activos en la tabla

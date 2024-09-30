@@ -1,5 +1,6 @@
 from .conexion import ConexionDB
 from tkinter import messagebox
+import datetime
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 
 def getSupplier():
@@ -63,6 +64,23 @@ def edit_product(product, id):
         mensaje = f'Error en EditArt, ProductDao: {str(e)}'
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
+def recoverProduct(id):
+    conexion = ConexionDB()
+    fecha_actual = datetime.datetime.now()
+    updated_at = fecha_actual.strftime("%Y-%m-%d %H:%M:%S")
+    sql = f"UPDATE product SET activo = 1, updated_at = '{updated_at}' WHERE id = {id}"
+    try:
+        conexion.cursor.execute(sql)
+        conexion.closeConexion()
+        save_advice()
+
+    except Exception as e:
+        error_advice()
+        conexion.closeConexion()
+        mensaje = f'Error en recoverProduct, en ProductDao: {str(e)}'
+        with open('error_log.txt', 'a') as file:
+            file.write(mensaje + '\n')
+
 def save_product(product):
     conexion = ConexionDB()
     sql = f"""INSERT INTO product (codProducto, codDep, id_cat, codProv, nombre_producto,  

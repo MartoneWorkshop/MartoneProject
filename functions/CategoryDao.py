@@ -1,7 +1,7 @@
 from .conexion import ConexionDB
 from tkinter import messagebox
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
-
+import datetime
 
 def save_cat(category):
     conexion = ConexionDB()
@@ -48,6 +48,22 @@ def listCategory():
         with open('error_log.txt', 'a') as file:
             file.write(mensaje + '\n')
     return listCategory
+def recoverCategory(id):
+    conexion = ConexionDB()
+    fecha_actual = datetime.datetime.now()
+    updated_at = fecha_actual.strftime("%Y-%m-%d %H:%M:%S")
+    sql = f"UPDATE category SET activo = 1, updated_at = '{updated_at}' WHERE id = {id}"
+    try:
+        conexion.cursor.execute(sql)
+        conexion.closeConexion()
+        save_advice()
+
+    except Exception as e:
+        error_advice()
+        conexion.closeConexion()
+        mensaje = f'Error en recoverProduct, en ProductDao: {str(e)}'
+        with open('error_log.txt', 'a') as file:
+            file.write(mensaje + '\n')
 def inactive_cat():
     conexion = ConexionDB()
     listCategory = []
