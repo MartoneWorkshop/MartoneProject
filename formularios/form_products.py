@@ -30,7 +30,7 @@ class FormProducts():
         self.frame_products = customtkinter.CTkFrame(cuerpo_principal, width=1120, height=800, bg_color="white", fg_color="white")
         self.frame_products.place(relx=0.5, rely=0.5, anchor="center")
 
-        set_opacity(self.frame_products, 0.8)
+        set_opacity(self.frame_products, 0.94)
         ##################################################### BOTONES DE LA TABLA ##################################################        ### Nuevo modelo para botones:
         self.buttonNewProduct = customtkinter.CTkButton(self.frame_products, text="Nuevo\nProducto",width=80, height=60, font=("Roboto", 15), fg_color="#2C3E50", hover_color="#34495E",text_color="white", corner_radius=7, command=lambda: self.FormCreateProduct(permisos))
         self.buttonNewProduct.place(x=140, y=50)

@@ -54,28 +54,29 @@ class FormCategory():
         self.frame_category = customtkinter.CTkFrame(cuerpo_principal, width=1120, height=800, bg_color="white", fg_color="white")
         self.frame_category.place(relx=0.5, rely=0.5, anchor="center")
 
-        set_opacity(self.frame_category, 0.8)
+        set_opacity(self.frame_category, 0.94)
         
-        self.buttonCreateCategory = tk.Button(self.frame_category, text="Crear\n Categoria", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                            command=lambda: self.FormCreateCategory(permisos))
-        self.buttonCreateCategory.place(x=260, y=60)
+        self.buttonNewCategory = customtkinter.CTkButton(self.frame_category, text="Nueva\nCategoria",width=80, height=60, font=("Roboto", 15), fg_color="#2C3E50", hover_color="#34495E",text_color="white", corner_radius=7, 
+                                                         command=lambda: self.FormCreateCategory(permisos))
+        self.buttonNewCategory.place(x=260, y=60)
+        
         if 'ALMA1004' in permisos:
-            self.buttonEditCategory = tk.Button(self.frame_category, text="Editar\n Categoria", state='normal', font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                                command=lambda: self.FormEditCategory(permisos, self.categoryTable.item(self.categoryTable.selection())['values']))
+            self.buttonEditCategory = customtkinter.CTkButton(self.frame_category, text="Editar\ncategoria",width=80, height=60, font=("Roboto", 15), fg_color="#2C3E50", hover_color="#34495E",text_color="white", corner_radius=7,state='normal', 
+            command=lambda: self.FormEditCategory(permisos, self.CategoryTable.item(self.CategoryTable.selection())['values']))
             self.buttonEditCategory.place(x=375, y=60)
         else:
-            self.buttonEditCategory = tk.Button(self.frame_category, text="Editar\n Categoria", state="disabled", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                                command=lambda: self.FormEditCategory(permisos, self.categoryTable.item(self.categoryTable.selection())['values']))
+            self.buttonEditCategory = customtkinter.CTkButton(self.frame_category, text="Editar\ncategoria",width=80, height=60, font=("Roboto", 15), fg_color="#2C3E50", hover_color="#34495E",text_color="white", corner_radius=7,state='disabled', 
+            command=lambda: self.FormEditCategory(permisos, self.CategoryTable.item(self.CategoryTable.selection())['values']))
             self.buttonEditCategory.place(x=375, y=60)
+            
         if 'ALMA1013' in permisos:
-            self.buttonDisableCategory = tk.Button(self.frame_category, text="Desactivar\n Categoria", state="normal", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                                command=lambda: self.categoryDisable(permisos))
-            self.buttonDisableCategory.place(x=490, y=60)
+            self.buttonDeleteCategory = customtkinter.CTkButton(self.frame_category, text="Desactivar\ncategoria",width=80, height=60, font=("Roboto", 15), fg_color="#2C3E50", hover_color="#34495E",text_color="white", corner_radius=7,state='normal', 
+            command=lambda: self.inactivateCategory(permisos))
+            self.buttonDeleteCategory.place(x=490, y=60)
         else:
-            self.buttonDisableCategory = tk.Button(self.frame_category, text="Desactivar\n Categoria", state="disabled", font=("Roboto", 12), bg=COLOR_MENU_LATERAL, bd=0,fg="white", anchor="w", compound=tk.LEFT, padx=10, 
-                                                command=lambda: self.categoryDisable(permisos))
-            self.buttonDisableCategory.place(x=490, y=60)
-
+            self.buttonDeleteCategory = customtkinter.CTkButton(self.frame_category, text="Desactivar\ncategoria",width=80, height=60, font=("Roboto", 15), fg_color="#2C3E50", hover_color="#34495E",text_color="white", corner_radius=7,state='disabled', 
+            command=lambda: self.inactivateCategory(permisos))
+            self.buttonDeleteCategory.place(x=490, y=60)
         
         ###################################################### BUSCADOR DE LA TABLA #################################################
         search_image = Image.open("imagenes/icons/search.png")
@@ -126,7 +127,7 @@ class FormCategory():
         self.categoryTable.column("#2", width=162, stretch=False)
         self.categoryTable.column("#3", width=161, stretch=False)
 
-# Crear el estilo personalizado
+        # Crear el estilo personalizado
         style = ttk.Style()
         # Cambiar el fondo y el color de texto de las filas
         style.configure("Treeview", 
@@ -336,6 +337,7 @@ class FormCategory():
             self.buttonActualizarcategory.place(x=178, y=160)
         else:
             messagebox.showerror("Error", "Debe seleccionar una categoria")
+            
     def SaveCategory(self):
         id_cat = buscarCorrelativo('categoria')
         id_cat = id_cat + 1
