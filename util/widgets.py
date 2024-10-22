@@ -39,10 +39,7 @@ class Switch:
                                             button_color="#1ABC9C", 
                                             button_hover_color="#16A085")
         self.switch.place(x=x, y=y)  
-        
-    #def get(self):
-    #    # Devuelve el estado actual del switch (True para activos, False para inactivos)
-    #    return svariable.get()      
+            
 
 class SearchBar:
     def __init__(self, frame, icon_path, keybind, x, y):

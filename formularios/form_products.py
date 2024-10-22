@@ -14,7 +14,6 @@ import datetime
 from tkinter import messagebox
 from util.widgets import Button, Switch, SearchBar, Table
 
-
 class FormProducts():
 
     def __init__(self, cuerpo_principal, permisos):
@@ -42,8 +41,7 @@ class FormProducts():
                                        text="Nuevo\nProducto",
                                        command=lambda: self.FormCreateProduct(permisos),
                                        x=140,y=50)
-        
-        
+
         
         if 'ALMA1005' in permisos:
             self.buttonEditProduct = Button(self.frame_products, text="Editar\nProducto",
@@ -80,16 +78,20 @@ class FormProducts():
     
 
         ###################################################### BUSCADOR DE LA TABLA #################################################
-        search_image = Image.open("imagenes/icons/search.png")
-        search_resized = search_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        self.search_icon = ImageTk.PhotoImage(search_resized)
-        self.lblsearch_productos = customtkinter.CTkLabel(self.frame_products, text='', image=self.search_icon, font=("Roboto", 14))
-        self.lblsearch_productos.place(x=65, y=155)
-
-        self.sventrysearch_productos = customtkinter.StringVar()
-        self.entrysearch_productos = ttk.Entry(self.frame_products, textvariable=self.sventrysearch_productos, style='Modern.TEntry', width=30)
-        self.entrysearch_productos.place(x=100, y=157)
-        self.entrysearch_productos.bind('<KeyRelease>', self.updateSearch)
+        #search_image = Image.open("imagenes/icons/search.png")
+        #search_resized = search_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
+        #self.search_icon = ImageTk.PhotoImage(search_resized)
+        #self.lblsearch_productos = customtkinter.CTkLabel(self.frame_products, text='', image=self.search_icon, font=("Roboto", 14))
+        #self.lblsearch_productos.place(x=65, y=155)
+#
+        #self.sventrysearch_productos = customtkinter.StringVar()
+        #self.entrysearch_productos = ttk.Entry(self.frame_products, textvariable=self.sventrysearch_productos, style='Modern.TEntry', width=30)
+        #self.entrysearch_productos.place(x=100, y=157)
+        #self.entrysearch_productos.bind('<KeyRelease>', self.updateSearch)
+        self.search_bar = SearchBar(self.frame_products,
+                                    icon_path="imagenes/icons/search.png",
+                                    command=self.updateSearch,
+                                    x=65,y=155)
 
         #################################################### INFORMACION DE LA TABLA ####################################################
         where = ""
@@ -181,25 +183,35 @@ class FormProducts():
 
     def showStatus(self, permisos):
         if self.switchStatus.switch.get():
+            self.switchStatus.switch.configure(text="Activos")
             self.showActive(permisos)
         else:
+            self.switchStatus.switch.configure(text="Inactivos")
             self.showInactive(permisos) 
      
     def showActive(self, permisos):
-        self.buttonNewProduct = customtkinter.CTkButton(self.frame_products, text="Nuevo\nProducto", width=80, height=60, font=("Roboto", 15), fg_color="#2C3E50", hover_color="#34495E", text_color="white", corner_radius=7, command=lambda: self.FormCreateProduct(permisos))
-        self.buttonNewProduct.place(x=140, y=50)
+        self.buttonNewProduct = Button(self.frame_products, 
+                                       text="Nuevo\nProducto",
+                                       command=lambda: self.FormCreateProduct(permisos),
+                                       x=140,y=50)
         if 'ALMA1008' in permisos:
-            self.buttonEditProduct = customtkinter.CTkButton(self.frame_products,  text="Editar\nProducto", width=80, height=60, state='normal', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']))
-            self.buttonEditProduct.place(x=265, y=50)
+            self.buttonEditProduct = Button(self.frame_products, text="Editar\nProducto",
+                                            command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']),
+                                            x=265, y=50)
         else: 
-            self.buttonEditProduct = customtkinter.CTkButton(self.frame_products,  text="Editar\nProducto", width=80, height=60, state='disabled', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']))
-            self.buttonEditProduct.place(x=265, y=50)
+            self.buttonEditProduct = Button(self.frame_products, text="Editar\nProducto",
+                                            command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']),
+                                            state='disabled',
+                                            x=265, y=50)
         if 'ALMA1010' in permisos:
-            self.buttonDeleteProduct = customtkinter.CTkButton(self.frame_products,  text="Desactivar\nProducto", width=80, height=60, state='enabled', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.inactivateProduct(permisos))
-            self.buttonDeleteProduct.place(x=390, y=50)
+            self.buttonDeleteProduct = Button(self.frame_products, text="Desactivar\nProducto",
+                                              command=lambda: self.inactivateProduct(permisos),
+                                              x=390, y=50)
         else:
-            self.buttonDeleteProduct = customtkinter.CTkButton(self.frame_products,  text="Desactivar\nProducto", width=80, height=60, state='disabled', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.inactivateProduct(permisos))
-            self.buttonDeleteProduct.place(x=390, y=50)
+            self.buttonDeleteProduct = Button(self.frame_products, text="Desactivar\nProducto",
+                                              command=lambda: self.inactivateProduct(permisos),
+                                              state='disabled',
+                                              x=390, y=50)
         # Borrar los elementos existentes en la tabla de permisos
         self.productTable.delete(*self.productTable.get_children())
         # Obtener la lista de permisos activos
@@ -210,23 +222,35 @@ class FormProducts():
 
     def showInactive(self, permisos):
         if 'ALMA1012' in permisos:
-            self.buttonNewProduct = customtkinter.CTkButton(self.frame_products, text="Restaurar\nProducto", width=80, height=60, state='normal',font=("Roboto", 15), fg_color="#2C3E50", hover_color="#34495E", text_color="white", corner_radius=7, command=lambda: self.restoreProduct(permisos))
-            self.buttonNewProduct.place(x=140, y=50)
+            self.buttonNewProduct = Button(self.frame_products, 
+                                       text="Restaurar\nProducto",
+                                       command=lambda: self.FormCreateProduct(permisos),
+                                       x=140,y=50)
         else:
-            self.buttonNewProduct = customtkinter.CTkButton(self.frame_products, text="Restaurar\nProducto", width=80, height=60, state='disabled', font=("Roboto", 15), fg_color="#2C3E50", hover_color="#34495E", text_color="white", corner_radius=7, command=lambda: self.restoreProduct(permisos))
-            self.buttonNewProduct.place(x=140, y=50)
+            self.buttonNewProduct = Button(self.frame_products, 
+                                       text="Restaurar\nProducto",
+                                       command=lambda: self.FormCreateProduct(permisos),
+                                       x=140,y=50)
         if 'ALMA1005' in permisos:
-            self.buttonEditProduct = customtkinter.CTkButton(self.frame_products,  text="Editar\nProducto", width=80, height=60, state='disabled', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']))
-            self.buttonEditProduct.place(x=265, y=50)
+            self.buttonEditProduct = Button(self.frame_products, text="Editar\nProducto",
+                                            command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']),
+                                            state='disabled',
+                                            x=265, y=50)
         else: 
-            self.buttonEditProduct = customtkinter.CTkButton(self.frame_products,  text="Editar\nProducto", width=80, height=60, state='disabled', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']))
-            self.buttonEditProduct.place(x=265, y=50)
+            self.buttonEditProduct = Button(self.frame_products, text="Editar\nProducto",
+                                            command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']),
+                                            state='disabled',
+                                            x=265, y=50)
         if 'ALMA1006' in permisos:
-            self.buttonDisableProduct = customtkinter.CTkButton(self.frame_products,  text="Desactivar\nProducto", width=80, height=60, state='disabled', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.inactivateProduct(permisos))
-            self.buttonDisableProduct.place(x=390, y=50)
+            self.buttonDeleteProduct = Button(self.frame_products, text="Desactivar\nProducto",
+                                              command=lambda: self.inactivateProduct(permisos),
+                                              state='disabled',
+                                              x=390, y=50)
         else:
-            self.buttonDeleteProduct = customtkinter.CTkButton(self.frame_products,  text="Desactivar\nProducto", width=80, height=60, state='disabled', font=("Roboto", 15),  fg_color="#2C3E50",  hover_color="#34495E",  text_color="white",  corner_radius=7, command=lambda: self.inactivateProduct(permisos))
-            self.buttonDeleteProduct.place(x=390, y=50)
+            self.buttonDeleteProduct = Button(self.frame_products, text="Desactivar\nProducto",
+                                              command=lambda: self.inactivateProduct(permisos),
+                                              state='disabled',
+                                              x=390, y=50)
 
 
         self.productTable.delete(*self.productTable.get_children())
