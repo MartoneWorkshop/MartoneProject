@@ -2,7 +2,7 @@ import customtkinter
 import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
-
+import sqlite3
 
 class Button:
     def __init__(self, frame, text, command, x, y, state='normal'):
@@ -32,17 +32,23 @@ class Switch:
         self.switch = customtkinter.CTkSwitch(frame,
                                             text=text,
                                             state=state,
-                                            command=command,
+                                            command=lambda: command,
                                             variable=variable,
                                             fg_color="#2C3E50",
                                             progress_color="#34495E", 
                                             button_color="#1ABC9C", 
                                             button_hover_color="#16A085")
         self.switch.place(x=x, y=y)  
-            
+        
+    #def get(self):
+    #    # Devuelve el estado actual del switch (True para activos, False para inactivos)
+    #    return svariable.get()      
 
 class SearchBar:
-    def __init__(self, frame, icon_path, keybind, x, y):
+    def __init__(self, frame, icon_path, x, y, db_table, search_fields):
+        self.db_table = db_table
+        self.search_fields = search_fields
+        
         # Cargar y redimensionar la imagen del ícono de búsqueda
         search_image = Image.open(icon_path)
         search_resized = search_image.resize((30, 30))  # Puedes ajustar el tamaño del ícono aquí
@@ -60,13 +66,47 @@ class SearchBar:
                                       style='Modern.TEntry', width=30)
         self.entry_search.place(x=x+35, y=y+2)
         # Asignar el comando para ejecutar al escribir en el campo de búsqueda
-        self.entry_search.bind('<KeyRelease>', keybind)
+        self.entry_search.bind('<KeyRelease>', self.updateSearch)
         
     def get_search_text(self):
         return self.sv_entry_search.get()
 
     def set_search_text(self, text):
         self.sv_entry_search.set(text)
+        
+    def updateSearch(self, Table, productList):
+        # Conectar a la base de datos
+        connection = sqlite3.connect('database/database.db')
+        cursor = connection.cursor()
+
+        # Obtener el contenido del Entry
+        content = self.sv_entry_search.get()
+
+        # Crear la consulta SQL dinámica
+        query = f"SELECT * FROM {self.db_table} WHERE " + " OR ".join([f"{field} LIKE ?" for field in self.search_fields])
+
+        # Ejecutar la consulta
+        cursor.execute(query, tuple(f"%{content}%" for _ in self.search_fields))
+
+        # Obtener los resultados de la consulta
+        result = cursor.fetchall()
+
+        # Filtrar los registros según el contenido ingresado
+        filtered_results = []
+        for p in productList:
+            if any(content.lower() in str(p[i]).lower() for i in range(len(p))):
+                filtered_results.append(p)
+
+        # Borrar los elementos existentes en la tabla
+        Table.delete(*Table.get_children())
+
+        # Insertar los nuevos resultados en la tabla
+        for p in filtered_results:
+            Table.insert('', 0, text=p[0], values=p[1:])
+
+        # Cerrar la conexión a la base de datos
+        cursor.close()
+        connection.close()
 
 
 class Table:

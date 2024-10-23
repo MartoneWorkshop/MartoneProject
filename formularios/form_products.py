@@ -86,13 +86,15 @@ class FormProducts():
 #
         #self.sventrysearch_productos = customtkinter.StringVar()
         #self.entrysearch_productos = ttk.Entry(self.frame_products, textvariable=self.sventrysearch_productos, style='Modern.TEntry', width=30)
-        #self.entrysearch_productos.place(x=100, y=157)
+        #self.entrysearch_productos.place(x=100, y=157)ta
         #self.entrysearch_productos.bind('<KeyRelease>', self.updateSearch)
+        self.search_bar.updateSearch(self.otherTable, self.otherProductList)
+
         self.search_bar = SearchBar(self.frame_products,
                                     icon_path="imagenes/icons/search.png",
-                                    command=self.updateSearch,
-                                    x=65,y=155)
-
+                                    x=65,y=155,
+                                    db_table='product', 
+                                    search_fields=['id', 'codProducto','nombre_producto','codDep','marca','modelo','serial','costo','descripcion','created_at','updated_at'])
         #################################################### INFORMACION DE LA TABLA ####################################################
         where = ""
         if len(where) > 0:
@@ -280,7 +282,7 @@ class FormProducts():
         self.connection = sqlite3.connect('database/database.db')
         self.cursor = self.connection.cursor()
     # Obtener el contenido del Entry
-        self.content = self.entrysearch_productos.get()
+        self.content = self.search_bar.get_se()
     # Realizar la consulta
         self.cursor.execute("""SELECT * FROM product WHERE
                         id LIKE ? OR 
