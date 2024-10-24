@@ -45,9 +45,11 @@ class Switch:
     #    return svariable.get()      
 
 class SearchBar:
-    def __init__(self, frame, icon_path, x, y, db_table, search_fields):
+    def __init__(self, frame, icon_path, x, y, db_table, search_fields, dataList, dataTable):
         self.db_table = db_table
         self.search_fields = search_fields
+        self.dataList = dataList
+        self.dataTable = dataTable
         
         # Cargar y redimensionar la imagen del ícono de búsqueda
         search_image = Image.open(icon_path)
@@ -74,13 +76,13 @@ class SearchBar:
     def set_search_text(self, text):
         self.sv_entry_search.set(text)
         
-    def updateSearch(self, Table, productList):
+    def updateSearch(self, event=None):
         # Conectar a la base de datos
         connection = sqlite3.connect('database/database.db')
         cursor = connection.cursor()
 
         # Obtener el contenido del Entry
-        content = self.sv_entry_search.get()
+        content = self.sv_entry_search.get().lower()
 
         # Crear la consulta SQL dinámica
         query = f"SELECT * FROM {self.db_table} WHERE " + " OR ".join([f"{field} LIKE ?" for field in self.search_fields])
@@ -93,18 +95,16 @@ class SearchBar:
 
         # Filtrar los registros según el contenido ingresado
         filtered_results = []
-        for p in productList:
+        for p in self.dataList:
             if any(content.lower() in str(p[i]).lower() for i in range(len(p))):
                 filtered_results.append(p)
 
         # Borrar los elementos existentes en la tabla
-        Table.delete(*Table.get_children())
-
+        self.dataTable.clear_table()
         # Insertar los nuevos resultados en la tabla
         for p in filtered_results:
-            Table.insert('', 0, text=p[0], values=p[1:])
-
-        # Cerrar la conexión a la base de datos
+            self.dataTable.insert_row(p)
+        # Cerrar la conexión a la base de datosc
         cursor.close()
         connection.close()
 

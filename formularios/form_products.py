@@ -74,114 +74,23 @@ class FormProducts():
                                        command=lambda: self.showStatus(permisos),
                                        state='disabled',
                                        x=900, y=157)
-
-    
-
-        ###################################################### BUSCADOR DE LA TABLA #################################################
-        #search_image = Image.open("imagenes/icons/search.png")
-        #search_resized = search_image.resize((WIDTH_LOGO, HEIGHT_LOGO))
-        #self.search_icon = ImageTk.PhotoImage(search_resized)
-        #self.lblsearch_productos = customtkinter.CTkLabel(self.frame_products, text='', image=self.search_icon, font=("Roboto", 14))
-        #self.lblsearch_productos.place(x=65, y=155)
-#
-        #self.sventrysearch_productos = customtkinter.StringVar()
-        #self.entrysearch_productos = ttk.Entry(self.frame_products, textvariable=self.sventrysearch_productos, style='Modern.TEntry', width=30)
-        #self.entrysearch_productos.place(x=100, y=157)ta
-        #self.entrysearch_productos.bind('<KeyRelease>', self.updateSearch)
-        self.search_bar.updateSearch(self.otherTable, self.otherProductList)
-
+                
+        self.productList = listProduct()
+        self.productList.reverse()
+        headers_product = ['CodProudcto', 'Deposito', 'Categoria', 'Nomb Producto', 
+                           'Marca', 'Modelo', 'Serial', 'Costo', 'Descripcion']
+        self.productTable = Table(self.frame_products, 
+                                  headers=headers_product, 
+                                  data_list=self.productList, 
+                                  edit_command=self.FormEditProduct)
+        
         self.search_bar = SearchBar(self.frame_products,
-                                    icon_path="imagenes/icons/search.png",
-                                    x=65,y=155,
-                                    db_table='product', 
-                                    search_fields=['id', 'codProducto','nombre_producto','codDep','marca','modelo','serial','costo','descripcion','created_at','updated_at'])
-        #################################################### INFORMACION DE LA TABLA ####################################################
-        where = ""
-        if len(where) > 0:
-            self.productList = searchProducts(where)
-        else:
-            self.productList = listProduct()
-            self.productList.reverse()
-
-        self.productTable = ttk.Treeview(self.frame_products, column=('codProducto','codDep','codgrupo','codProv','nombre_producto','marca','modelo','serial','costo','descripcion'), height=25)
-        self.productTable.place(x=32, y=200)
-
-        self.scroll = ttk.Scrollbar(self.frame_products, orient='vertical', command=self.productTable.yview)
-        self.scroll.place(x=1084, y=200, height=526)
-
-        self.productTable.configure(yscrollcommand=self.scroll.set)
-        self.productTable.tag_configure('evenrow')
-
-        self.productTable.heading('#0',text="ID" )
-        self.productTable.heading('#1',text="CodProducto")
-        self.productTable.heading('#2',text="Deposito")
-        self.productTable.heading('#3',text="Categoria")
-        self.productTable.heading('#4',text="Proveedor")
-        self.productTable.heading('#5',text="Nomb Producto")
-        self.productTable.heading('#6',text="Marca")
-        self.productTable.heading('#7',text="Modelo")
-        self.productTable.heading('#8',text="Serial")
-        self.productTable.heading('#9',text="Costo")
-        self.productTable.heading('#10',text="Descripcion")
-
-        self.productTable.column("#0", width=50, stretch=True, anchor='w')
-        self.productTable.column("#1", width=100, stretch=True)
-        self.productTable.column("#2", width=100, stretch=True)
-        self.productTable.column("#3", width=100, stretch=True)
-        self.productTable.column("#4", width=100, stretch=True)
-        self.productTable.column("#5", width=100, stretch=True)
-        self.productTable.column("#6", width=100, stretch=True)
-        self.productTable.column("#7", width=100, stretch=True)
-        self.productTable.column("#8", width=100, stretch=True)
-        self.productTable.column("#9", width=100, stretch=True)
-        self.productTable.column("#10", width=100, stretch=True)
-
-         # Crear el estilo personalizado
-        style = ttk.Style()
-        # Cambiar el fondo y el color de texto de las filas
-        style.configure("Treeview", 
-                        background="white",
-                        foreground="black",
-                        relief="flat",
-                        rowheight=32,   # Altura de cada fila
-                        fieldbackground="white")
-
-        # Cambiar el fondo de las filas seleccionadas
-        style.map("Treeview", 
-                  background=[("selected", "#347083")],  # Color de la fila seleccionada
-                  foreground=[("selected", "white")])    # Texto de la fila seleccionada
-        
-        def sort_column(tree, col, reverse):
-            # Si es la columna #0 (ID), utiliza el valor de 'text'
-            if col == '#0':
-                data_list = [(tree.item(child, 'text'), child) for child in tree.get_children('')]
-            else:
-                # Para las otras columnas, usa 'set' para obtener el valor
-                data_list = [(tree.set(child, col), child) for child in tree.get_children('')]
-
-            # Ordenar la lista (en orden ascendente o descendente)
-            data_list.sort(reverse=reverse)
-
-            # Reordenar los elementos en el Treeview
-            for index, (val, child) in enumerate(data_list):
-                tree.move(child, '', index)
-
-            # Actualizar el encabezado para invertir la ordenación en el próximo clic
-            tree.heading(col, command=lambda: sort_column(tree, col, not reverse))
-
-        # Configurar los encabezados para poder hacer clic y ordenar las columnas
-        for col in ('#0', '#1', '#2', '#3', '#4', '#5', '#6', '#7', '#8', '#9', '#10'):
-            self.productTable.heading(col, command=lambda _col=col: sort_column(self.productTable, _col, False))
-
-        # Alternancia de colores en las filas
-        self.productTable.tag_configure('odd', background='#E8E8E8')   # Estilo para filas impares
-        self.productTable.tag_configure('even', background='#DFDFDF')  # Estilo para filas pares
-
-        for i, p in enumerate(self.productList):
-            tag = 'even' if i % 2 == 0 else 'odd'
-            self.productTable.insert('',0,text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6],p[7],p[8],p[9],p[10]), tags=(tag,))
-        
-        self.productTable.bind('<Double-1>', lambda event: self.FormEditProduct(event, self.productTable.item(self.productTable.selection())['values']))
+                            icon_path="imagenes/icons/search.png",
+                            x=65, y=155,
+                            db_table='product',
+                            search_fields=['codProducto', 'nombre_producto', 'marca'],
+                            dataList=self.productList,
+                            dataTable=self.productTable)
 
     def showStatus(self, permisos):
         if self.switchStatus.switch.get():
