@@ -8,6 +8,7 @@ from tkinter import ttk
 from util.util_ventana import loadBackgroundImage, set_opacity, set_window_icon, centerWindow
 from util.util_alerts import set_opacity, save_advice, error_advice, edit_advice, delete_advice
 from util.util_functions import buscarCorrelativo, actualizarCorrelativo
+from util.functions import create_button_with_permission, perform_restore_action
 from functions.ProductDao import product, getDepots, searchProducts, listProduct, recoverProduct, getSupplier, getCategory, save_product, edit_product, product_inactive, productDisable
 from config import  COLOR_FONDO, WIDTH_LOGO, HEIGHT_LOGO, COLOR_MENU_LATERAL, ANCHO_MENU, ALTO_MENU
 import datetime
@@ -24,9 +25,9 @@ class FormProducts():
         # Crear paneles: barra inferior
         self.cuerpo_principal = tk.Frame(cuerpo_principal)
         self.cuerpo_principal.pack(side=tk.BOTTOM, fill='both', expand=True)  
-
+        #################### Carga del fondo 
         loadBackgroundImage(self)
-
+        ################### Creacion dele frame #######################
         self.frame_products = customtkinter.CTkFrame(cuerpo_principal, 
                                                      width=1120,
                                                      height=800, 
@@ -34,56 +35,59 @@ class FormProducts():
                                                      fg_color="white")
         
         self.frame_products.place(relx=0.5, rely=0.5, anchor="center")
-
+        ######### Transparencia al frame
         set_opacity(self.frame_products, 0.94)
+        ######################## Generar los botones #################
+        self.buttonNewProduct = create_button_with_permission(
+            self.frame_products,
+            text="Nuevo\nProducto",
+            command=lambda: self.FormCreateProduct(permisos),
+            required_permission=None,  # No necesita permisos específicos
+            permisos=permisos,
+            x=140,
+            y=50
+        )
+        self.buttonEditProduct = create_button_with_permission(
+            self.frame_products,
+            text="Editar\nProducto",
+            command=lambda: self.FormEditProduct(permisos, self.productTable.get_selected_row_values()),
+            required_permission="ALMA1005",
+            permisos=permisos,
+            x=265,
+            y=50
+        )
 
-        self.buttonNewProduct = Button(self.frame_products, 
-                                       text="Nuevo\nProducto",
-                                       command=lambda: self.FormCreateProduct(permisos),
-                                       x=140,y=50)
-
+        self.buttonDeleteProduct = create_button_with_permission(
+            self.frame_products,
+            text="Desactivar\nProducto",
+            command=lambda: self.inactivateProduct(permisos),
+            required_permission="ALMA1006",
+            permisos=permisos,
+            x=390,
+            y=50
+        )
+        #################### Generar el switch ##############
+        self.switch =  Switch(
+            frame=self.frame_products,
+            permisos=permisos,
+            show_active=self.showActive,
+            show_inactive=self.showInactive,
+            x=900,y=157)
         
-        if 'ALMA1005' in permisos:
-            self.buttonEditProduct = Button(self.frame_products, text="Editar\nProducto",
-                                            command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']),
-                                            x=265, y=50)
-        else:
-            self.buttonEditProduct = Button(self.frame_products, text="Editar\nProducto",
-                                            command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']),
-                                            state='disabled',
-                                            x=265, y=50)
-            
-        if 'ALMA1006' in permisos:
-            self.buttonDeleteProduct = Button(self.frame_products, text="Desactivar\nProducto",
-                                              command=lambda: self.inactivateProduct(permisos),
-                                              x=390, y=50)
-        else:
-            self.buttonDeleteProduct = Button(self.frame_products, text="Desactivar\nProducto",
-                                              command=lambda: self.inactivateProduct(permisos),
-                                              state='disabled',
-                                              x=390, y=50)
-        
-        if 'ALMA1007' in permisos:
-            self.switchStatus = Switch(self.frame_products,
-                                       variable=True,
-                                       command=lambda: self.showStatus(permisos),
-                                       x=900, y=157)
-        else:
-            self.switchStatus = Switch(self.frame_products,
-                                       variable=True,
-                                       command=lambda: self.showStatus(permisos),
-                                       state='disabled',
-                                       x=900, y=157)
-                
+        ###################### Carga de tabla ################## 
         self.productList = listProduct()
         self.productList.reverse()
-        headers_product = ['CodProudcto', 'Deposito', 'Categoria', 'Nomb Producto', 
+        headers_product = ['CodProudcto', 'Deposito', 'Categoria', 'Proveedor','Nomb Producto', 
                            'Marca', 'Modelo', 'Serial', 'Costo', 'Descripcion']
         self.productTable = Table(self.frame_products, 
                                   headers=headers_product, 
                                   data_list=self.productList, 
-                                  edit_command=self.FormEditProduct)
+                                  edit_command=(lambda values: 
+                                      self.FormEditProduct(permisos, values)) if "ALMA1005" in permisos else None
+                                  ) 
         
+
+        #################### Renderizado de search bar ##############
         self.search_bar = SearchBar(self.frame_products,
                             icon_path="imagenes/icons/search.png",
                             x=65, y=155,
@@ -92,82 +96,35 @@ class FormProducts():
                             dataList=self.productList,
                             dataTable=self.productTable)
 
-    def showStatus(self, permisos):
-        if self.switchStatus.switch.get():
-            self.switchStatus.switch.configure(text="Activos")
-            self.showActive(permisos)
-        else:
-            self.switchStatus.switch.configure(text="Inactivos")
-            self.showInactive(permisos) 
-     
+
     def showActive(self, permisos):
-        self.buttonNewProduct = Button(self.frame_products, 
-                                       text="Nuevo\nProducto",
-                                       command=lambda: self.FormCreateProduct(permisos),
-                                       x=140,y=50)
-        if 'ALMA1008' in permisos:
-            self.buttonEditProduct = Button(self.frame_products, text="Editar\nProducto",
-                                            command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']),
-                                            x=265, y=50)
-        else: 
-            self.buttonEditProduct = Button(self.frame_products, text="Editar\nProducto",
-                                            command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']),
-                                            state='disabled',
-                                            x=265, y=50)
-        if 'ALMA1010' in permisos:
-            self.buttonDeleteProduct = Button(self.frame_products, text="Desactivar\nProducto",
-                                              command=lambda: self.inactivateProduct(permisos),
-                                              x=390, y=50)
-        else:
-            self.buttonDeleteProduct = Button(self.frame_products, text="Desactivar\nProducto",
-                                              command=lambda: self.inactivateProduct(permisos),
-                                              state='disabled',
-                                              x=390, y=50)
-        # Borrar los elementos existentes en la tabla de permisos
-        self.productTable.delete(*self.productTable.get_children())
-        # Obtener la lista de permisos activos
+        # Ajuste de estados y cambio del texto en botones
+        self.buttonNewProduct.buton.configure(text="Nuevo\nProducto", state='normal')
+        self.buttonEditProduct.buton.configure(state='normal')
+        self.buttonDeleteProduct.buton.configure(state='normal')
+        # Borrar los elementos existentes en la tabla de produtos
+        self.productTable.clear_table()
+        # Obtener la lista de productos activos
         active_product = listProduct()
-        # Insertar los permisos activos en la tabla
-        for p in active_product:
-            self.productTable.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5],p[6],p[7],p[8],p[9],p[10]))
+        # Insertar los productos activos en la tabla
+        for  p in active_product:
+            self.productTable.insert_row(p)
 
     def showInactive(self, permisos):
+        #Ajuste de estado y cambio de texto en botones
         if 'ALMA1012' in permisos:
-            self.buttonNewProduct = Button(self.frame_products, 
-                                       text="Restaurar\nProducto",
-                                       command=lambda: self.FormCreateProduct(permisos),
-                                       x=140,y=50)
+            self.buttonNewProduct.buton.configure(text="Restaurar\nProducto", state='normal')
         else:
-            self.buttonNewProduct = Button(self.frame_products, 
-                                       text="Restaurar\nProducto",
-                                       command=lambda: self.FormCreateProduct(permisos),
-                                       x=140,y=50)
-        if 'ALMA1005' in permisos:
-            self.buttonEditProduct = Button(self.frame_products, text="Editar\nProducto",
-                                            command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']),
-                                            state='disabled',
-                                            x=265, y=50)
-        else: 
-            self.buttonEditProduct = Button(self.frame_products, text="Editar\nProducto",
-                                            command=lambda: self.FormEditProduct(permisos, self.productTable.item(self.productTable.selection())['values']),
-                                            state='disabled',
-                                            x=265, y=50)
-        if 'ALMA1006' in permisos:
-            self.buttonDeleteProduct = Button(self.frame_products, text="Desactivar\nProducto",
-                                              command=lambda: self.inactivateProduct(permisos),
-                                              state='disabled',
-                                              x=390, y=50)
-        else:
-            self.buttonDeleteProduct = Button(self.frame_products, text="Desactivar\nProducto",
-                                              command=lambda: self.inactivateProduct(permisos),
-                                              state='disabled',
-                                              x=390, y=50)
-
-
-        self.productTable.delete(*self.productTable.get_children())
-        permisos_desactivados = product_inactive()
-        for p in permisos_desactivados:
-            self.productTable.insert('',0, text=p[0], values=(p[1],p[2],p[3],p[4],p[5],p[6],p[7],p[8],p[9],p[10]))
+            self.buttonNewProduct.buton.configure(text="Restaurar\nProducto", state='disabled')
+        self.buttonEditProduct.buton.configure(state='disabled')
+        self.buttonDeleteProduct.buton.configure(state='disabled')
+        #Borrar elementos de la tabla
+        self.productTable.clear_table()
+        #Obtener lista de inactivos
+        inactive_products = product_inactive()
+        #Insertar lista de inactivos en tabla
+        for p in inactive_products:
+            self.productTable.insert_row(p)
 
     def restoreProduct(self, permisos):
         try:
@@ -186,54 +143,6 @@ class FormProducts():
             with open('error_log.txt', 'a') as file:
                 file.write(mensaje + '\n')
              
-    def updateSearch(self, event=None):
-    # Conectar a la base de datos
-        self.connection = sqlite3.connect('database/database.db')
-        self.cursor = self.connection.cursor()
-    # Obtener el contenido del Entry
-        self.content = self.search_bar.get_se()
-    # Realizar la consulta
-        self.cursor.execute("""SELECT * FROM product WHERE
-                        id LIKE ? OR 
-                        codProducto LIKE ? OR 
-                        codDep LIKE ? OR 
-                        id_cat LIKE ? OR
-                        nombre_producto LIKE ? OR
-                        marca LIKE ? OR
-                        modelo LIKE ? OR
-                        serial LIKE ? OR
-                        costo LIKE ? OR
-                        descripcion LIKE ? OR
-                        created_at LIKE ? OR
-                        updated_at LIKE ?""", 
-                        ('%' + self.content + '%',
-                        '%' + self.content + '%',  
-                        '%' + self.content + '%',
-                        '%' + self.content + '%',
-                        '%' + self.content + '%',
-                        '%' + self.content + '%',
-                        '%' + self.content + '%',
-                        '%' + self.content + '%',
-                        '%' + self.content + '%',
-                        '%' + self.content.strip() + '%',
-                        '%' + self.content.strip() + '%',
-                        '%' + self.content.strip() + '%'))
-        self.result = self.cursor.fetchall()
-    # Filtrar los registros según el contenido ingresado
-        filtered_results = []
-        for p in self.productList:
-            if self.content.lower() in str(p[0]).lower() or self.content.lower() in str(p[1]).lower() or self.content.lower() in str(p[2]).lower() or self.content.lower() in str(p[3]).lower() or self.content.lower() in str(p[4]).lower() or self.content.lower() in str(p[5]).lower() or self.content.lower() in str(p[6]).lower() or self.content.lower() in str(p[7]).lower() or self.content.lower() in str(p[8]).lower() or self.content.lower() in str(p[9]).lower() or self.content.lower() in str(p[10]).lower()or self.content.lower() in str(p[11]).lower()or self.content.lower() in str(p[12]).lower():              
-                filtered_results.append(p)
-
-    # Borrar los elementos existentes en la tablaEquipos
-        self.productTable.delete(*self.productTable.get_children())
-
-    # Insertar los nuevos resultados en la tablaEquipos
-        for p in filtered_results:
-            self.productTable.insert('', 0, text=p[0], values=(p[1], p[2], p[3], p[4], p[5],p[6], p[7], p[8], p[9], p[10]))
-        self.cursor.close()
-        self.connection.close()
-        
     def FormCreateProduct(self, permisos):
         self.id = None
         #Creacion del top level
@@ -244,7 +153,6 @@ class FormProducts():
         self.topCreateProduct.geometry(f"{self.topCreateProduct.w}x{self.topCreateProduct.h}")
         self.topCreateProduct.resizable(False, False)
         self.topCreateProduct.configure(background='#6a717e')
-        #self.topCreateProduct.configure(fg_color='#6a717e')
         #Centrar la ventana en la pantalla
         centerWindow(self.topCreateProduct)
         set_window_icon(self.topCreateProduct)
@@ -450,18 +358,17 @@ class FormProducts():
     def FormEditProduct(self, permisos, values):
         #Creacion del top level
         if values:
-            self.id = self.productTable.item(self.productTable.selection())['text']
-            self.editarcodProducto = self.productTable.item(self.productTable.selection())['values'][0]
-            self.editarnombProducto = self.productTable.item(self.productTable.selection())['values'][4]
-            self.editarproveedor = self.productTable.item(self.productTable.selection())['values'][3]
-            self.editarmarcaProducto = self.productTable.item(self.productTable.selection())['values'][5]
-            self.editarmodeloProducto = self.productTable.item(self.productTable.selection())['values'][6]
-            self.editarserialProducto = self.productTable.item(self.productTable.selection())['values'][7]
-            self.editarcostoProducto = self.productTable.item(self.productTable.selection())['values'][8]
-            self.editarcategoria_var = self.productTable.item(self.productTable.selection())['values'][2]
-            self.editardepositos_var = self.productTable.item(self.productTable.selection())['values'][1]
-            self.editardescripcionProd = self.productTable.item(self.productTable.selection())['values'][9]
-            
+            self.id = values[0]
+            self.editarcodProducto = values[1][0]
+            self.editarnombProducto = values[1][4]
+            self.editarproveedor = values[1][3]
+            self.editarmarcaProducto = values[1][5]
+            self.editarmodeloProducto = values[1][6]
+            self.editarserialProducto = values[1][7]
+            self.editarcostoProducto = values[1][8]
+            self.editarcategoria_var = values[1][2]
+            self.editardepositos_var = values[1][1]
+            self.editardescripcionProd = values[1][9]
             
             self.topEditProduct = tk.Toplevel()
             self.topEditProduct.title("Editar Producto")

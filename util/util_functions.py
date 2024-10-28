@@ -1,13 +1,14 @@
 import sqlite3
 from functions.conexion import ConexionDB
 from util.util_alerts import edit_advice, error_advice, save_advice, set_opacity
+
+
 def getModule():
         try:
                 conexion = ConexionDB()
                 sql = f"""SELECT id, name, codmod FROM modules WHERE activo = 1"""
                 conexion.execute_consult(sql)
                 resultados = conexion.get_results()
-                
                 modulos = resultados
                 conexion.closeConexion()
                 return modulos

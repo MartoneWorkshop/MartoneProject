@@ -21,28 +21,96 @@ class Button:
         self.buton.place(x=x, y=y)
 
 class Switch:
-    def __init__(self, frame, command, x, y, text="", state='normal', variable=None):
-        if variable is True:
-            variable = tk.BooleanVar(value=True)
-            text="Activos"
-        else:
-            text="Inactivos"
-            variable = tk.BooleanVar(value=False)
-            
+    def __init__(self, frame, permisos, show_active, show_inactive, x, y, text="", state='normal', variable=None):
+        self.permisos = permisos
+        self.show_active = show_active
+        self.show_inactive = show_inactive
+        self.variable = tk.BooleanVar(value='ALMA1007' in permisos)
+        text = "Activos" if self.variable.get() else "Inactivos"
+
         self.switch = customtkinter.CTkSwitch(frame,
-                                            text=text,
-                                            state=state,
-                                            command=lambda: command,
-                                            variable=variable,
-                                            fg_color="#2C3E50",
-                                            progress_color="#34495E", 
-                                            button_color="#1ABC9C", 
-                                            button_hover_color="#16A085")
+                                               text=text,
+                                               state=state,
+                                               command=self.toggle_status,
+                                               variable=self.variable,
+                                               fg_color="#2C3E50",
+                                               progress_color="#34495E", 
+                                               button_color="#1ABC9C", 
+                                               button_hover_color="#16A085")
         self.switch.place(x=x, y=y)  
+
+        if 'ALMA1007' not in permisos:
+            self.switch.configure(text="Activos")
+            self.switch.configure(state='disabled')
+        else:
+            self.switch.configure(state='normal')
+            
+    def toggle_status(self):
+        # Alternar el estado del switch y ejecutar el comando correspondiente
+        if self.variable.get():
+            self.switch.configure(text="Activos")
+            self.show_active(self.permisos)
+        else:
+            self.switch.configure(text="Inactivos")
+            self.show_inactive(self.permisos)
         
-    #def get(self):
-    #    # Devuelve el estado actual del switch (True para activos, False para inactivos)
-    #    return svariable.get()      
+class EntityController:
+    def __init__(self, frame, entity_name, table_headers, data_list, button_commands, edit_command, x=0, y=0):
+        self.frame = frame
+        self.entity_name = entity_name
+        self.data_list = data_list
+
+        # Crear y configurar el Switch para activar/inactivar, con toggle_entity_state como comando
+        self.switch = Switch(
+            frame,
+            entity_name=entity_name,
+            command=self.toggle_entity_state,  # Comando que alterna los datos en la tabla
+            x=x,
+            y=y
+        )
+
+        # Crear la tabla para mostrar la lista de entidades
+        self.table = Table(
+            frame=frame,
+            headers=table_headers,
+            data_list=data_list,
+            edit_command=edit_command,
+            x=x,
+            y=y+50  # Posición de la tabla debajo del switch
+        )
+
+        # Crear botones de acciones
+        self.buttons = []
+        button_y_position = y + 300  # Posición de los botones debajo de la tabla
+        for text, command in button_commands.items():
+            button = Button(frame, text=text, command=command, x=x, y=button_y_position)
+            self.buttons.append(button)
+            button_y_position += 60  # Espaciado vertical entre botones
+
+    def toggle_entity_state(self):
+        # Alterna el estado del switch y actualiza la tabla en función de ese estado
+        current_state = self.switch.get_state()
+        if current_state:
+            # Filtrar datos activos para la tabla
+            active_data = self._filter_data_by_state(active=True)
+            self.table.clear_table()
+            for row in active_data:
+                self.table.insert_row(row)
+        else:
+            # Filtrar datos inactivos para la tabla
+            inactive_data = self._filter_data_by_state(active=False)
+            self.table.clear_table()
+            for row in inactive_data:
+                self.table.insert_row(row)
+
+    def _filter_data_by_state(self, active):
+        # Filtrar los datos en función del estado de los elementos
+        # Esta función se puede personalizar para cada entidad
+        return [row for row in self.data_list if row['active'] == active]
+
+    def _edit_item(self, item_values):
+        # Lógica para editar un elemento al hacer doble clic
+        print(f"Editando: {item_values}")
 
 class SearchBar:
     def __init__(self, frame, icon_path, x, y, db_table, search_fields, dataList, dataTable):
@@ -112,7 +180,8 @@ class SearchBar:
 class Table:
     def __init__(self, frame, headers, 
                  data_list, 
-                 edit_command=None, 
+                 edit_command=None,
+                 button_configs=None, 
                  x=32, y=200, 
                  row_height=32, 
                  table_height=25):
@@ -139,9 +208,14 @@ class Table:
         # Llenar la tabla con los datos
         self._fill_table()
 
+        #Diccionario para almacenar botones
+        self.buttons = {}
+        if button_configs:
+            self.create_buttons(button_configs)
+
         # Asociar el evento de doble clic (si se proporciona un comando de edición)
         if edit_command:
-            self.table.bind('<Double-1>', lambda event: self._on_double_click(event))
+            self.set_edit_bind(edit_command)
 
     def _configure_columns(self):
         # Definir encabezados y anchos dinámicos según los headers proporcionados
@@ -176,12 +250,6 @@ class Table:
             tag = 'even' if i % 2 == 0 else 'odd'
             self.table.insert('', 'end', text=data[0], values=data[1:], tags=(tag,))
 
-    def _on_double_click(self, event):
-        # Ejecutar el comando de edición al hacer doble clic en una fila
-        selected_item = self.table.item(self.table.selection())
-        if selected_item['values'] and self.edit_command:
-            self.edit_command(selected_item['values'])
-
     def sort_column(self, col, reverse):
         # Ordenar columna
         if col == '#0':
@@ -215,6 +283,31 @@ class Table:
         tag = 'even' if len(self.table.get_children()) % 2 == 0 else 'odd'
         self.table.insert('', 'end', text=data[0], values=data[1:], tags=(tag,))
 
-
-  
-        
+    def create_buttons(self, button_configs):
+        """Crea botones basados en la configuración proporcionada."""
+        for config in button_configs:
+            name = config.get("name")
+            text = config.get("text")
+            command = config.get("command")
+            x = config.get("x", 0)  # Posición X
+            y = config.get("y", 0)  # Posición Y
+            button = Button(self.frame, text=text, command=command, x=x, y=y)
+            self.buttons[name] = button  # Almacenar el botón en el diccionario
+            
+    def set_edit_bind(self, edit_command):
+        """ Configura el evento de doble clic para editar con un comando personalizado """
+        self.edit_command = edit_command
+        self.table.bind('<Double-1>', self._on_double_click)
+    def _on_double_click(self, event):
+        # Ejecutar el comando de edición al hacer doble clic en una fila
+        values = self.get_selected_row_values()
+        if values and self.edit_command:
+            self.edit_command(values)
+            
+    def get_selected_row_values(self):
+        selected_item_id = self.table.focus()  # Get the focused item ID
+        if selected_item_id:
+            # Retrieve both text (ID) and values (other columns)
+            item_data = self.table.item(selected_item_id)
+            return item_data['text'], item_data['values']  # Returns ID and column values as a tuple
+        return None
