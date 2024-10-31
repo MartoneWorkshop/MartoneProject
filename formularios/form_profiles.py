@@ -1,7 +1,7 @@
 import tkinter as tk
 from config import  COLOR_FONDO, COLOR_MENU_LATERAL
 import customtkinter
-from util.util_alerts import set_opacity
+from util.util_alerts import set_opacity, save_advice, edit_advice, error_advice, delete_advice
 import traceback
 from functions.conexion import ConexionDB
 import datetime
@@ -10,8 +10,7 @@ import sqlite3
 from tkinter import ttk
 from PIL import Image, ImageTk
 from functions.ProfileDao import Roles, listProfiles, searchProfiles, save_profile, edit_profile, ProfileDisable, update_Permiss, InactiveProfiles,saveNewPermiss, cleanPermiss
-from util.util_functions import obtener_permisos, getModuleList, getModulePerm, ObtenerRoles, getModule, getAsignedPerm
-from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
+from util.old_functions import obtener_permisos, getModuleList, getModulePerm, ObtenerRoles, getModule, getAsignedPerm
 from config import WIDTH_LOGO, HEIGHT_LOGO
 
 

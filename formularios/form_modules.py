@@ -1,7 +1,7 @@
 import tkinter as tk
 from config import  COLOR_FONDO, COLOR_MENU_LATERAL
 import customtkinter
-from util.util_alerts import set_opacity
+from util.util_alerts import set_opacity, save_advice, edit_advice, error_advice, delete_advice
 from functions.conexion import ConexionDB
 import datetime
 import sqlite3
@@ -9,7 +9,6 @@ from tkinter import ttk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 from functions.ModuDao import modules, listModules, searchModules, save_module, edit_module, moduleDisable, inactive_modules
-from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 from config import WIDTH_LOGO, HEIGHT_LOGO
 
 

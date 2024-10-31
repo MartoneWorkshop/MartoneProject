@@ -5,10 +5,10 @@ import sqlite3
 import customtkinter
 from PIL import Image, ImageTk
 from tkinter import ttk
-from util.util_ventana import loadBackgroundImage, set_opacity, set_window_icon, centerWindow
+from util.util_screen import loadBackgroundImage, set_window_icon, centerWidget
 from util.util_alerts import set_opacity, save_advice, error_advice, edit_advice, delete_advice
-from util.util_functions import buscarCorrelativo, actualizarCorrelativo
-from util.functions import create_button_with_permission, perform_restore_action
+from util.old_functions import buscarCorrelativo, actualizarCorrelativo
+from util.util_funtions import create_button_with_permission, perform_restore_action
 from functions.ProductDao import product, getDepots, searchProducts, listProduct, recoverProduct, getSupplier, getCategory, save_product, edit_product, product_inactive, productDisable
 from config import  COLOR_FONDO, WIDTH_LOGO, HEIGHT_LOGO, COLOR_MENU_LATERAL, ANCHO_MENU, ALTO_MENU
 import datetime
@@ -154,7 +154,7 @@ class FormProducts():
         self.topCreateProduct.resizable(False, False)
         self.topCreateProduct.configure(background='#6a717e')
         #Centrar la ventana en la pantalla
-        centerWindow(self.topCreateProduct)
+        centerWidget(self.topCreateProduct)
         set_window_icon(self.topCreateProduct)
         self.topCreateProduct.lift()
         self.topCreateProduct.grab_set()
@@ -378,7 +378,7 @@ class FormProducts():
             self.topEditProduct.resizable(False, False)
             self.topEditProduct.configure(background='#6a717e')
             #Centrar la ventana en la pantalla
-            centerWindow(self.topEditProduct)
+            centerWidget(self.topEditProduct)
             set_window_icon(self.topEditProduct)
             self.topEditProduct.lift()
             self.topEditProduct.grab_set()

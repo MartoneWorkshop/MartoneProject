@@ -6,7 +6,7 @@ import customtkinter
 from PIL import Image, ImageTk
 from tkinter import ttk
 from util.util_alerts import set_opacity, save_advice, error_advice, edit_advice, delete_advice
-from util.util_functions import buscarCorrelativo, actualizarCorrelativo
+from util.old_functions import buscarCorrelativo, actualizarCorrelativo
 from functions.ClientsDao import Client, save_client, searchClients, clientDelete, clientesDesactivados, listClient, edit_client 
 from config import  COLOR_FONDO, WIDTH_LOGO, HEIGHT_LOGO, COLOR_MENU_LATERAL, ANCHO_MENU, ALTO_MENU
 import datetime

@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import font
 from config import COLOR_BARRA_SUPERIOR, COLOR_MENU_LATERAL, COLOR_CUERPO_PRINCIPAL, COLOR_MENU_CURSOR_ENCIMA
 from PIL import Image, ImageTk
-import util.util_ventana as util_ventana
+import util.util_screen as util_screen
 import util.util_imagenes as util_img
 from customtkinter import *
 import customtkinter
@@ -37,7 +37,7 @@ class FormularioMaestroDesign(customtkinter.CTk):
         self.geometry(f"{self.w}x{self.h}")
         self.iconbitmap("./imagenes/logo.ico")
         self.w, self.h = 1440, 900        
-        util_ventana.centrar_ventana(self, self.w, self.h)
+        util_screen.center_screen(self, self.w, self.h)
         self.bind("<ButtonPress-1>", self.start_move)
         self.bind("<B1-Motion>", self.move_window)
         self.bind("<Map>", self.on_restore)

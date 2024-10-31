@@ -160,8 +160,7 @@ def buscarCorrelativo(dato):
                 error_advice()
                 mensaje = f'Error en buscarCorrelativo, util_funtions: {str(e)}'
                 with open('error_log.txt', 'a') as file:
-                        file.write(mensaje + '\n')
-                        
+                        file.write(mensaje + '\n')                        
 def actualizarCorrelativo(dato):
         try:
                 correlativoActual = buscarCorrelativo(dato)

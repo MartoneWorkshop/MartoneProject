@@ -1,16 +1,18 @@
 import tkinter as tk
-import util.util_ventana as util_ventana
+import util.util_screen as util_screen
 import util.util_imagenes as util_img
+import platform
 import customtkinter
 from tkinter import font, ttk
 from config import COLOR_BARRA_SUPERIOR, COLOR_MENU_LATERAL, COLOR_FONDO, COLOR_MENU_CURSOR_ENCIMA, COLOR_SUBMENU_LATERAL, COLOR_SUBMENU_CURSOR_ENCIMA, ANCHO_MENU, MITAD_MENU, ALTO_MENU, WIDTH_LOGO, HEIGHT_LOGO, WIDTH_LOGO_MAX, HEIGHT_LOGO_MAX
 from PIL import Image, ImageTk, ImageColor
-from util.util_alerts import edit_advice, error_advice, save_advice, delete_advice, login_correct_advice, login_wrong_advice
+from util.util_alerts import set_opacity, edit_advice, error_advice, save_advice, delete_advice, login_correct_advice, login_wrong_advice
 from customtkinter import *
 from functions.conexion import ConexionDB
 from tkinter import messagebox
 
-from formularios.form_dashboard import formDashboard
+
+from Revisar.form_dashboard import formDashboard
 from formularios.form_clients import FormClient
 from formularios.form_users import FormUsers
 from formularios.form_modules import FormModules
@@ -20,7 +22,7 @@ from formularios.form_suppliers import FormSuppliers
 from formularios.form_depots import FormDepot
 from formularios.form_products import FormProducts
 from formularios.form_category import FormCategory
-from util.util_ventana import set_window_icon, set_opacity, binding_hover_event, binding_hover_submenu_event_min, binding_hover_submenu_event, binding_hover_event_min, cleanPanel, loadBackgroundImage, centerWindow
+from util.util_screen import set_window_icon, binding_hover_event, binding_hover_submenu_event_min, binding_hover_submenu_event, binding_hover_event_min, cleanPanel, loadBackgroundImage, centerWidget
 
 class FormMain(customtkinter.CTk):
     def __init__(self):
@@ -44,11 +46,14 @@ class FormMain(customtkinter.CTk):
         self.bg = util_img.leer_imagen("./imagenes/bg4.jpeg", (1440, 900))
         self.title("H.A.S.T - Herramienta Administrativa para Soporte Tecnico")
         set_window_icon(self)
-
-        #self.geometry(f"{self.w}x{self.h}")
         self.resizable(False, False)
-        self.iconbitmap("./imagenes/icons/logo_ico.ico")
-        #util_ventana.centrar_ventana(self, self.w, self.h)
+
+        if platform.system() == "Windows":
+            self.iconbitmap("./imagenes/icons/logo_ico.ico")
+        else:
+        # Carga el ícono en formato PNG para Linux
+            self.icon = ImageTk.PhotoImage(file="./imagenes/icons/logo.png")
+            self.tk.call('wm', 'iconphoto', self._w, self.icon)
     def createPanels(self):        
         # Crear createPanels:
         #Barra Superior
@@ -419,7 +424,7 @@ class FormMain(customtkinter.CTk):
                 
     def loginSection(self):
         self.w, self.h = 800, 600
-        centerWindow(self)
+        centerWidget(self)
         loadBackgroundImage(self)
 
         frame_login = customtkinter.CTkFrame(self.cuerpo_principal, fg_color="white", width=300, height=250)
@@ -509,7 +514,7 @@ class FormMain(customtkinter.CTk):
         self.w, self.h = 1440, 900
         self.geometry(f"{self.w}x{self.h}")
         self.resizable(True, True)
-        util_ventana.centrar_ventana(self, self.w, self.h)
+        util_screen.center_screen(self, self.w, self.h)
         permisos = self.get_idrol(idrol)
         self.createPanels()
         self.menuControls(permisos)

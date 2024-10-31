@@ -1,6 +1,6 @@
 from util.widgets import Button
 from tkinter import messagebox
-from util_alerts import error_advice
+from util.util_alerts import error_advice
 
 def create_button_with_permission(frame, text, command, required_permission, permisos, x, y):
     # Determina si el botón debe estar habilitado o deshabilitado

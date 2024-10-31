@@ -9,7 +9,7 @@ import traceback
 from tkinter import messagebox
 from tkinter import ttk
 from PIL import Image, ImageTk
-from util.util_functions import getModule, buscarCodigoModulo, updateCodeModule
+from util.old_functions import getModule, buscarCodigoModulo, updateCodeModule
 from functions.PermDao import permiss, listPermissions, searchPermiss, save_permission, edit_permission, PermissDelete
 from util.util_alerts import save_advice, edit_advice, error_advice, delete_advice
 from config import WIDTH_LOGO, HEIGHT_LOGO

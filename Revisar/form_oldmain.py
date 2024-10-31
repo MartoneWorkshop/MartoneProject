@@ -1,5 +1,5 @@
 import tkinter as tk
-import util.util_ventana as util_ventana
+import util.util_screen as util_screen
 import util.util_imagenes as util_img
 import customtkinter
 from tkinter import font, ttk
@@ -10,7 +10,7 @@ from customtkinter import *
 from functions.conexion import ConexionDB
 from tkinter import messagebox
 
-from formularios.form_dashboard import formDashboard
+from Revisar.form_dashboard import formDashboard
 from formularios.form_clients import FormClient
 from formularios.form_users import FormUsers
 from formularios.form_modules import FormModules
@@ -20,7 +20,7 @@ from formularios.form_suppliers import FormSuppliers
 from formularios.form_depots import FormDepot
 from formularios.form_products import FormProducts
 from formularios.form_category import FormCategory
-from util.util_ventana import set_window_icon, set_opacity, binding_hover_event, binding_hover_submenu_event, cleanPanel
+from util.util_screen import set_window_icon, setTransparency, binding_hover_event, binding_hover_submenu_event, cleanPanel
 
 class FormMain(customtkinter.CTk):
     def __init__(self):
@@ -184,7 +184,7 @@ class FormMain(customtkinter.CTk):
     def loginSection(self):
         self.w, self.h = 800, 600
         self.geometry(f"{self.w}x{self.h}")
-        util_ventana.centrar_ventana(self, self.w, self.h)
+        util_screen.center_screen(self, self.w, self.h)
         ############# INICIALIZACION DE LA IMAGEN DE FONDO AUTOEXPANDIBLE #############
         ruta_imagen = "imagenes/bg1.jpeg"
         # Cargar la imagen
@@ -242,7 +242,7 @@ class FormMain(customtkinter.CTk):
                 self.w, self.h = 1440, 900
                 self.geometry(f"{self.w}x{self.h}")
                 self.resizable(True, True)
-                util_ventana.centrar_ventana(self, self.w, self.h)
+                util_screen.center_screen(self, self.w, self.h)
                 self.openFormDashboard()
             else:
                 login_wrong_advice()
@@ -250,7 +250,7 @@ class FormMain(customtkinter.CTk):
         marco_login = customtkinter.CTkFrame(self.cuerpo_principal, fg_color="white", width=300, height=250)
         marco_login.place(relx=0.5, rely=0.5, anchor="center")
 
-        set_opacity(marco_login, 0.9)
+        setTransparency(marco_login, 0.9)
         #Iconos
         user_ico = Image.open("imagenes/icons/user.png")
         user_ico = user_ico.resize((20, 20))  # Cambiar el tamaño si es necesario
@@ -265,7 +265,7 @@ class FormMain(customtkinter.CTk):
         lbluser.pack(pady=1, padx=6)
         lbluser.place(x=55, y=55)
         
-        set_opacity(lbluser, 0.8)
+        setTransparency(lbluser, 0.8)
 
         sv_datauser = customtkinter.StringVar()
         style = ttk.Style()
@@ -278,7 +278,7 @@ class FormMain(customtkinter.CTk):
         lblpass.pack(pady=1, padx=6)
         lblpass.place(x=55, y=125)
 
-        set_opacity(lblpass, 0.8)
+        setTransparency(lblpass, 0.8)
 
         sv_datapass = customtkinter.StringVar()
         #entrypass = customtkinter.CTkEntry(self.cuerpo_principal, textvariable=sv_datapass, show="*", width=150)

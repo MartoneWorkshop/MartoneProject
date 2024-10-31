@@ -7,7 +7,7 @@ from PIL import Image, ImageTk
 from tkinter import messagebox
 from util.util_alerts import edit_advice, error_advice, save_advice, set_opacity
 from functions.conexion import ConexionDB
-from util.util_functions import obtener_permisos, getModuleList, getModulePerm, ObtenerRoles, buscarCorrelativo, actualizarCorrelativo, getModule
+from util.old_functions import obtener_permisos, getModuleList, getModulePerm, ObtenerRoles, buscarCorrelativo, actualizarCorrelativo, getModule
 from functions.SupplierDao import suppliers, searchSupplier, listSupplier, save_supplier, edit_supplier, supplierDisable, inactiveSuppliers
 import sqlite3
 import datetime

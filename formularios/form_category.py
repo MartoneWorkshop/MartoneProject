@@ -4,9 +4,9 @@ import PIL
 import customtkinter
 from PIL import Image, ImageTk
 from tkinter import ttk
-from util.util_ventana import set_window_icon, centerWindow
+from util.util_screen import set_window_icon, centerWidget
 from util.util_alerts import set_opacity, save_advice, error_advice, edit_advice, delete_advice
-from util.util_functions import buscarCorrelativo, actualizarCorrelativo
+from util.old_functions import buscarCorrelativo, actualizarCorrelativo
 from functions.CategoryDao import category, save_cat, edit_cat, searchCategories, listCategory, catDisable, inactive_cat, recoverCategory
 from config import COLOR_MENU_LATERAL
 import datetime
@@ -272,7 +272,7 @@ class FormCategory():
        self.topCreateCat.resizable(False, False)
        self.topCreateCat.configure(bg_color='#6a717e')
        self.topCreateCat.configure(fg_color='#6a717e')
-       centerWindow(self.topCreateCat)
+       centerWidget(self.topCreateCat)
        set_window_icon(self.topCreateCat)
        self.topCreateCat.lift()
        self.topCreateCat.grab_set()
@@ -312,7 +312,7 @@ class FormCategory():
             self.topEditCat.configure(bg_color='#6a717e')
             self.topEditCat.configure(fg_color='#6a717e')
             set_window_icon(self.topEditCat)
-            centerWindow(self.topEditCat)
+            centerWidget(self.topEditCat)
             self.topEditCat.lift()
             self.topEditCat.grab_set()
             self.topEditCat.transient()

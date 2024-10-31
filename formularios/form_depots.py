@@ -5,8 +5,8 @@ import customtkinter
 from PIL import Image, ImageTk
 from tkinter import ttk
 from util.util_alerts import set_opacity, save_advice, error_advice, edit_advice, delete_advice
-from util.util_functions import buscarCorrelativo, actualizarCorrelativo
-from util.util_ventana import loadBackgroundImage, centerWindow, set_window_icon
+from util.old_functions import buscarCorrelativo, actualizarCorrelativo
+from util.util_screen import loadBackgroundImage, centerWidget, set_window_icon
 from functions.DepotsDao import deposit, searchDepots, listDepot, getDepots,  save_depot, edit_depot, depotDisable, listInactiveDepot, recoverDepot
 from config import COLOR_MENU_LATERAL
 import datetime
@@ -199,7 +199,7 @@ class FormDepot():
         self.topNewDepot.geometry(f"{self.topNewDepot.w}x{self.topNewDepot.h}")
         self.topNewDepot.resizable(False, False)
         set_window_icon(self.topNewDepot)
-        centerWindow(self.topNewDepot)
+        centerWidget(self.topNewDepot)
         
         self.topNewDepot.config(bg='#6a717e')
         #self.topNewDepot.config(fg='#6a717e')
@@ -249,7 +249,7 @@ class FormDepot():
             self.topEditDepot.resizable(False, False)
             self.topEditDepot.configure(bg='#6a717e')
             set_window_icon(self.topEditDepot)
-            centerWindow(self.topEditDepot)
+            centerWidget(self.topEditDepot)
             self.topEditDepot.lift()
             self.topEditDepot.grab_set()
             self.topEditDepot.transient()

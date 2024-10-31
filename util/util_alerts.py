@@ -1,16 +1,26 @@
 import tkinter as tk
 from config import  COLOR_FONDO
 import customtkinter
-import ctypes
-from  ctypes import windll
+import platform
 from PIL import Image, ImageTk
+
+if platform.system() == "Windows":
+    from ctypes import windll
+
 def set_opacity(widget, value: float):
-    widget = widget.winfo_id()
-    value = int(255*value) # value from 0 to 1
-    wnd_exstyle = windll.user32.GetWindowLongA(widget, -20)
-    new_exstyle = wnd_exstyle | 0x00080000  
-    windll.user32.SetWindowLongA(widget, -20, new_exstyle)  
-    windll.user32.SetLayeredWindowAttributes(widget, 0, value, 2)
+    if platform.system() == "Windows":
+        from ctypes import windll
+
+        widget = widget.winfo_id()
+        value = int(255*value) # value from 0 to 1
+        wnd_exstyle = windll.user32.GetWindowLongA(widget, -20)
+        new_exstyle = wnd_exstyle | 0x00080000  
+        windll.user32.SetWindowLongA(widget, -20, new_exstyle)  
+        windll.user32.SetLayeredWindowAttributes(widget, 0, value, 2)
+    else:
+        pass
+
+    
 
 def save_advice():
     top = customtkinter.CTkToplevel()

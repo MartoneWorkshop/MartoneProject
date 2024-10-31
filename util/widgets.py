@@ -176,7 +176,6 @@ class SearchBar:
         cursor.close()
         connection.close()
 
-
 class Table:
     def __init__(self, frame, headers, 
                  data_list, 
